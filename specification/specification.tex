@@ -1,5 +1,8 @@
 \documentclass[a4paper,fleqn,12pt]{article}
 
+\usepackage[style=ieee]{biblatex}
+\addbibresource{../common/ref.bib}
+
 %%%%%%%%%%%%%%%%%%%%
 
 \input{../common/common.tex}
@@ -30,13 +33,155 @@
 \pagestyle{plain}
 
 \section{Introduction}
+Informally, Zero-Knowledge (ZK) proofs are protocols that allow a prover to prove to a verifier that a particular statement is true, while revealing no additional information except the validity of their assertion. ZK proofs for disjunctive statements have been a core target of a long line of research, as disjunctive statements have very useful properties that occur commonly in practice. One such use case is for a prover to show the existence of a bug in a verifier's code base \cite{StackedGF}.
 
-% \input{introduction.tex}
-% \input{background.tex}
-% \input{progress.tex}
-% \input{project-management.tex}
+In their 1994 paper, Cramer, Damg{\aa}rd, and Schoenmakers \cite{CDS94} provide a generic compiler to transform a ZK proof, which makes an assertion about an individual statement, into a new ZK proof for a disjunctive statement. The ZK proofs that can be transformed by their compiler are 3-round public coin proofs of knowledge, or more succinctly (and more popularly) known as $\Sigma$-protocols. %perhaps discuss more
+More recently, Goel {\em et al.} \cite{StackingSigmas} improved on this further, providing a generic compiler for a large class of $\Sigma$-protocols and also reducing the size of the resulting proof. 
 
-\bibliographystyle{../common/plainnat}
-\bibliography{../common/bibliography}
+While extensive research has been conducted, there is a lack of notable real-world implementations of these results
+\footnote{It should be noted that Hall-Andersen \cite{MHAStackSig} has provided a benchmark of applying the compiler in \cite{StackingSigmas} to Schnorr's discrete log protocol \cite{Schnorr}.}. 
+This project seeks to build upon initial research and implement the compilers described in \cite{CDS94} and \cite{StackingSigmas}, we shall refer to the two designs as CDS and SS respectively. Once implemented, we will be able to benchmark both protocols against each other and explore, as well as measure, how they differ. This will hopefully provide some valuable insights as to how these designs perform in practice, which may in turn lead to further improvements in the future. 
 
+% You need to justify choosing your particular project by identifying the specific problem(s) it solves or knowledge it contributes. For example, a software development project may provide a system with useful functionality which doesn't currently exist (at least, not in the form you propose). The problem is not one requiring original research, but rather a significant exercise applying the skills of your particular degree to a topical area of interest for that degree subject. 
+
+% It's important that whatever project you choose you can demonstrate that it is a suitably challenging one for a 3rd year project for your degree. You should therefore convey a sense of the "challenge" of your project. If you're using your own project idea, discussion with your supervisor should help you arrive at something that is challenging but feasible.
+
+\section{Objectives}
+The objective of this project is to implement the generic compilers mentioned in the previous section, and to benchmark them against one another, as well as with any other known implementations such as Hall-Andersen's benchmark of the SS compiler \cite{StackingSigmas} applied to Schnorr's discrete log protocol \cite{Schnorr}. 
+
+In this section we outline the key objectives and sub-goals of the project. Numbered items represent core objectives, while nested bulleted items are the sub-goals that will contribute to the completion of the main objective (in the paragraph after this list, we explain salient points in more detail):
+\begin{enumerate}
+    \item Complete our implementation of CDS.
+    \begin{itemize}
+        \item Conduct background reading.
+        \item Select an appropriate $\Sigma$-protocol for the compiler.
+        \item Extract requirements from the research paper. 
+    \end{itemize}
+    \item Benchmark our implementation of CDS, with Hall-Andersen's implementation \cite{MHAStackSig} of the SS compiler.
+    \begin{itemize}
+        \item Research on possible testing frameworks in Rust. 
+        \item Design a test plan to benchmark different compilers. 
+        \item Look for existing implementations of other disjunctive ZK proof compilers.
+    \end{itemize}
+    \item Complete our implementation of SS using the same $\Sigma$-protocol as our CDS compiler.
+    \begin{itemize}
+        \item Study the literature.
+        \item Construct requirements based on the research paper.
+    \end{itemize}
+    \item Benchmark all 3 implementations (Hall-Andersen's implementation of SS, and our two implementations) and record findings.
+\end{enumerate}
+The first part of the project will be focused on reading necessary background reading and implementing the CDS compiler. An appropriate $\Sigma$-protocol such as Schnorr's discrete log protocol \cite{Schnorr} or Guillour-Quisquater's RSA root protocol \cite{Guillou1988APZ} will have to be selected as its input. Some time will also have to be dedicated to learning Rust \cite{Rust} -- the programming language of choice for this project\footnote{Justification on why we choose Rust is given in a later section.}. Once this is complete, we will benchmark our implementation of CDS against Hall-Andersen's SS. A test plan will have to be designed to appropriately compare the performances of each technique.
+
+The remaining half of the project will be dedicated to implementing the SS compiler. That said, we will use a different commitment scheme that is used by Hall-Andersen \cite{MHAStackSig}, so that we can achieve some meaningful results when comparing the two. Again, once implemented, we will benchmark each implementation against one another according to the same plan that was designed for the first pair.
+
+\subsection{Possible Extensions}
+
+If time allows for it, we will attempt to implement a compiler that transforms a SNARK (Succinct Non-Interactive Argument of Knowledge) into a SNARK for a disjunctive statement. This is based on recent work by Goel, Hall-Andersen, Kaptchuk, and Spooner \cite{SpeedStacking}.
+
+
+% The objectives of a project relate to the "problem" you've outlined. They set out the goals which will combine to produce your solution. For some projects, you'll have a pretty fixed agenda right from the start. For others it may be appropriate to allow some flexibility by identifying "must have" objectives plus additional areas which you may have time to explore. Breaking the challenge down into a set of objectives helps you to assess feasibility and where your time is going to be spent. This will lead in to the timetable.
+
+\section{Methods}
+This project will entail a mix of research and software development. For each of the two compilers that we will implement, we will first conduct research and study of the source literature to ensure that we gain the necessary context and understanding to implement it. After which, we will extract the requirements from the design and proceed with implementation. Finally, we will have to evaluate the accuracy and performance of our compiler. Since the requirements of our software will be based on the research papers we refer to, we will be tackling this project using a plan-based development methodology. Each compiler's development can be planned before implementation begins, and should not require any changes. In such cases, the added flexibility of using Agile methods would not have any added benefit. Hence, we decided that a plan-based approach would be most suitable.
+
+This gives us three separate phases for each implementation: research, implementation, and evaluation.
+
+\subsection{Research}
+Before proceeding with implementation, a good understanding of the design will be important in ensuring the accuracy of the implementation. Background reading in group theory, linear algebra, interactive proofs, and ZK will be beneficial (or even crucial) for understanding the main results in \cite{CDS94} and \cite{StackingSigmas}. Justin Thaler's draft survey \cite{PAZK} will be consulted to learn core concepts surrounding interactive proofs and ZK. 
+
+\subsection{Implementation}
+As we begin our implementation, we start by translating the design of each compiler into a set of requirements that it must have. This will help to identify the respective components that are required, and can help with time management and project planning. These requirements will be compiled into a document that can be easily referred to throughout the development process. 
+
+\textbf{Version Control.} Git will be used for version control along with Github for source code management. Commits will be regularly made to the remote repository to synchronise local repositories that may exist on different machines. 
+
+\textbf{Programming Language.} While the compilers can be built with any programming languages, initial research into existing implementations of various cryptographic protocols show that a large majority of them are implemented in Rust. These include $\Sigma$-protocols that will be given to our compilers as input. In fact, Hall-Andersen's SS compiler is also implemented in the language. Hence, Rust is the obvious choice to ensure that our benchmarks are comparable. 
+
+\subsection{Evaluation}
+The accuracy of our implementation will be evaluated through black-box testing that check if the resulting protocol our compiler produces have the properties it should have. These include the \textit{witness indistinguishable} or \textit{witness hiding} property in the case of CDS. Inputs to our compilers will also have to be tested to ensure they adhere to the properties that they are supposed to have. 
+
+A benchmark test plan will be designed to evaluate the performance of our CDS implementation. Benchmarks will have to be consistent with each other in order for a fair comparison of performance. Since we are using Rust, employing \texttt{cargo bench} \cite{cargobench} together with Rust's native testing and benchmarking framework \texttt{libtest} should be sufficient. Another candidate is \texttt{criterion} -- a statistics driven open source benchmarking tool that provides statistical confidence when comparing different test runs. This may provide more insightful data to compare the performance of our implementations. More research will be done on whether \texttt{libtest} or \texttt{criterion} suits this project better.
+% How are you going to approach your project? If system development is required, how will you be managing that? Is it appropriate to apply an accepted development methodology? If so, which one? If not, how are you approaching the development? If you're investigating a business topic what methods will you be using? Common ones might be literature review, case study, survey and interview. If you're conducting a survey, are you aware of good survey design? If you're planning interviews, what methodology will you use to analyse and represent the responses? Whatever the nature of your project - what methods are you using to ensure that it stays on track and achieves its goals?
+
+\section{Timetable}
+
+In table \ref{table:timetable} below, we outline our draft proposal for our project plan. It should be mentioned that this timetable is likely to evolve as the project progresses. Additionally, this timetable serves as a rough guide of what we should be focusing on at a certain point in the next 6 months. In reality, multiple tasks that were not included will be worked on concurrently to maintain consistent progress. 
+
+\textbf{Meetings.} Weekly meetings will be held on Thursdays with the project supervisor for updates on the project. This time will be used to ask questions, clarify doubts, and request advice on the progress of the project. 
+
+\textbf{Project Management.} \textit{Notion} will be used to manage milestones, tasks, and micro-objectives of this project. \textit{Notion} is a note-taking application that doubles as a project management tool as it provides Kanban boards, a calendar, in addition to pages for note taking. This will serve as the centralised location for all information related to the project. 
+
+\newcommand{\rowheight}{0.7em}
+
+\begin{table}[H]
+\centering
+\caption{Project Plan}
+\begin{tabular}{p{0.15\linewidth}p{0.5\linewidth}p{0.3\linewidth}}
+\toprule
+\bf Week & \bf Main Task & \bf Goal \\ 
+\midrule
+T1 W1-2
+& Conduct necessary background reading and research.
+& Submit project specification. \\\addlinespace[\rowheight]
+T1 W3-4
+& Understand the literature and extract requirements from the design of CDS.
+& Must be capable of explaining CDS protocol to project supervisor. \\\addlinespace[\rowheight]
+T1 W5-8
+& Begin implementation of CDS. Design test plan to benchmark implementations.
+& Submit progress report. \\\addlinespace[\rowheight]
+T1 W9-10
+& Continue work on CDS.
+& - \\\addlinespace[\rowheight]
+Christmas Holidays
+& Initial write up of final report.
+& Complete implementation of CDS. \\\addlinespace[\rowheight]
+T2 W1-2
+& Benchmark our CDS compiler and compare it with Hall-Andersen's SS compiler.
+& Present data collected to project supervisor. \\\addlinespace[\rowheight]
+T2 W3-6
+& Implementation of SS compiler.
+& - \\\addlinespace[\rowheight]
+T2 W7-8
+& Preparation for final presentation
+& Complete implementation of SS. \\\addlinespace[\rowheight]
+T2 W9-10
+& Benchmark our SS and compare it with data collected in week 1 and 2.
+& Final Presentation. \\\addlinespace[\rowheight]
+Easter Holidays
+& Write up of final report. 
+& Proof read and check report. \\\addlinespace[\rowheight]
+T3 W1
+& -
+& Submit final report. \\
+\bottomrule
+\end{tabular}
+\label{table:timetable}
+\end{table}
+
+\section{Resources}
+
+Aside from the various software that we will be using to manage and work on this project (which we have discussed in previous sections), this project is only dependent on the source literature \cite{CDS94} \cite{StackingSigmas}, and on the fact that we have access to Hall-Andersen's compiler implementation \cite{MHAStackSig}. The University provides institutional access to research papers and there should be no issues retaining access to our first two resources. In the worst case, these papers have been legally downloaded and will be accessible offline. Hall-Andersen's code is licensed under GNU GPLv3 \cite{GPLv3}, which allows anyone to copy, modify, and use the source code provided that it remains under the same license. Therefore, to ensure that we can retain access to the source code, we have made a fork of the repository, which is legally permitted under the current license. 
+
+\section{Risk}
+In this section we highlight the dependencies of the project and present potential risks and our plan to mitigate such risks:
+\begin{itemize}
+    \item This project relies on existing implementations of cryptographic protocols; before using any of them, a thorough check should be made to ensure that we are not violating any license agreements.
+    \item The benchmark tests should not be resource intensive and working on the department's machines should be sufficient in the worst case. 
+    \item Understanding the literature and learning Rust may require more time than expected, and we may not be able to complete our implementation of the SS compiler.
+    \begin{itemize}
+        \item If Rust happens to be the bottleneck of the project, we may choose to interop Rust and Python with \texttt{rust-cpython} to speed up the development process. This allows us to write sections of our compiler requiring high performance in Rust, exporting it as a Python module, and importing it into Python where we will implement the other sections.
+        \item In the case that our implementation of CDS only completes after Term 2 Week 4, we will not implement SS and instead look at measuring how CDS performs when provided different $\Sigma$-protocols on input.
+    \end{itemize}
+    \item Proper version control practices will be crucial in ensuring that we can continue work on a different machine if our primary computer were to malfunction.
+\end{itemize}
+ 
+
+
+
+% What resources does your project rely on? For example, the list might include the hardware to be used, any non-standard software, data that a company has promised to provide or even subjects to take part in an interview. Have you thought about what would happen if any of these resources became unavailable? What is your back-up plan? This part of the specification should show that you've thought these issues through and that you have appropriate back-up plans in place where necessary. For more discussion on resources and managing risk, check out the information on equipment and other resources.
+
+\section{Legal, social, ethical and professional issues}
+
+For the next 6 months, work on the project will remain private, and made available only to direct stakeholders. That said, there is a chance that our work may be made public and published in the future, and users could accidentally or willfully misuse our program. As such, we currently intend to host the program publicly on Github under the GNU General Public License v3 (GPLv3), which is a free, copyleft license for software \cite{GPLv3}. More research will be done to ascertain if this is the most appropriate license for the project. Moreover, the program may not be ready for production the moment it is published; in such a case, a disclaimer will be made warning potential users. 
+
+\printbibliography
 \end{document}
