@@ -1,4 +1,4 @@
-\documentclass[a4paper,fleqn,twoside,12pt]{article}
+\documentclass[a4paper,fleqn,11pt]{article} %twoside
 
 %%%%%%%%%%%%%%%%%%%%
 
@@ -15,10 +15,13 @@
 \makeatletter
 \fancypagestyle{plain}{
 	\fancyhf{}
-	\fancyhead[LE]{\thepage}
-	\fancyhead[RE]{\textit{\@author}}
-	\fancyhead[RO]{\thepage}
-	\fancyhead[LO]{\textit{\@title}}
+% 	Settings for twoside document
+% 	\fancyhead[LE]{\thepage}
+% 	\fancyhead[RE]{\textit{\@author}}
+% 	\fancyhead[RO]{\thepage}
+% 	\fancyhead[LO]{\textit{\@title}}
+    \fancyhead[R]{\thepage}
+    \fancyhead[L]{\textit{\@title}}
 }
 \makeatother
 

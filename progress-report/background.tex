@@ -1,4 +1,49 @@
 \section{Background}
 \label{sec:background}
+Here we introduce the relevant background knowledge needed to have an understanding of the project. 
 
-Your literature review goes here. \citet{hughes1989functional} discusses the advantages of functional programming by exploring \emph{e.g.}\ lists, trees, and noughts and crosses in a functional programming language. 
+\subsection{Schnorr's Identification Protocol}
+Intro to schnorr.
+
+\subsubsection{The Elliptic Curve Discrete Logarithm Problem}
+Suppose $E$ is an elliptic curve over $\Z/p\Z$ and $P \in E(\Z/p\Z)$. Given a multiple $Q$ of $P$, the \textbf{elliptic curve discrete log problem} is to find $n \in \Z$ such that $n \cdot P = Q$.
+
+\subsubsection{Elliptic curve version of Schnorr's protocol}
+The prover, $P$, and verifier, $V$, agree on an elliptic curve $E$ over the field $\F_q$, and a generator $G \in E(\F_q)$. They both know $H \in E(\F_q)$, and the prover claims to know $x_P$ such that $H = x_P \cdot G$. Suppose that $H = x \cdot G$, then Schnorr's protocol is as follows:
+
+\begin{enumerate}
+    \item $P$ generates random $r \in \F_q$, and computes the point $U = r \cdot G$. $P$ sends the point $U$ to the $V$
+    \item $V$ computes a random $c \in \F_q$, and sends $c$ to the $P$.
+    \item $P$ computes $z = (r + c \cdot x_P) \mod n$, and sends $z$ to the $V$.
+    \item $V$ checks that $z \cdot G = U + c \cdot H$
+\end{enumerate} 
+
+Evaluating the final equation, we can easily see that $V$ accepts if and only if $x = x_P$. 
+
+\begin{equation*}
+    z \cdot G = U + c \cdot H \iff
+    r \cdot G + c \cdot x_P \cdot G  = r \cdot G + c \cdot x \cdot G \iff
+    x  =  x_P
+\end{equation*}
+
+\subsubsection{The Simulator}
+To fulfil the requirements of a \textbf{honest-verifier zero knowledge (HVZK)} protocol, for every $g, h \in \G$, the protocol has to have an algorithm (Fact check) -- called the simulator -- that produces a simulated exchange of the messages between $P$ and $V$. The distribution of these messages have to be indistinguishable from the distribution of transcripts (explain transcripts).
+
+We can construct a simulator for Schnorr's protocol by running it "in reverse":
+
+\begin{center}
+    \begin{problem}[]{Let our simulator be $S(H)$}
+    $z \xleftarrow{\text{\scriptsize R}} \F_q$
+    
+    $c \xleftarrow{\text{\scriptsize R}} \F_q$
+    
+    $U = z \cdot G - c \cdot H$
+    \tcblower
+    \textbf{output} $(U,c,z)$
+    \end{problem}
+\end{center}
+
+
+
+\subsection{Shamir's Secret Sharing Scheme}
+

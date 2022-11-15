@@ -23,6 +23,24 @@
 \usepackage{minted}
 \usepackage{csquotes}
 \usepackage{booktabs}
+\usepackage[most]{tcolorbox}
+\newtcolorbox[auto counter]{problem}[2][]{%
+    enhanced,
+    breakable,
+    width=\linewidth/2,
+    colback=white,
+    colbacktitle=white,
+    coltitle=black,
+    fonttitle=\bfseries,
+    boxrule=.6pt,
+    titlerule=.2pt,
+    toptitle=3pt,
+    bottomtitle=3pt,
+    title={#2}, %Problem~\thetcbcounter
+    #1
+}
+\usepackage[style=ieee]{biblatex}
+\addbibresource{../common/ref.bib}
 
 \hypersetup{
 	colorlinks=true,
@@ -47,3 +65,7 @@
 \makeatletter
 
 \newtoggle{IsDissertation}
+
+\newcommand{\Z}[0]{\mathbb{Z}}
+\newcommand{\F}[0]{\mathbb{F}}
+\newcommand{\G}[0]{\mathbb{G}}
