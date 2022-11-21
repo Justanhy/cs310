@@ -1,46 +1,51 @@
 \section{Introduction}
 
-Informally, Zero-Knowledge (ZK) proofs are protocols that allow a prover to prove to a verifier that a particular statement is true, while revealing no additional information except the validity of their assertion. ZK proofs for disjunctive statements have been a core target of a long line of research, as disjunctive statements have very useful properties that occur commonly in practice. One such use case is for a prover to show the existence of a bug in a verifier's code base \cite{StackedGF}.
+Zero-Knowledge proofs \cite{GMR85} are protocols that allow a prover to convince a verifier that an NP statement is true, while revealing no additional information except the validity of their assertion. Early research proved that all languages in NP have zero-knowledge proof systems \cite{DBLP:conf/focs/GoldreichMW86}, and recent results have provided more efficient zero-knowledge proofs that are being used in practice. 
 
-In their 1994 paper, Cramer, Damg{\aa}rd, and Schoenmakers \cite{CDS94} provide a generic compiler to transform a ZK proof, which makes an assertion about an individual statement, into a new ZK proof for a disjunctive statement. The ZK proofs that can be transformed by their compiler are 3-round public coin proofs of knowledge, or more succinctly (and more popularly) known as $\Sigma$-protocols. %perhaps discuss more
+In many cases, it is desirable to have a zero-knowledge proof for a disjunctive statement, which is an NP statement with a set of clauses that are connected with logical ORs. Disjunctive statements have very useful properties that occur commonly in practice, such as proving ones membership to a particular group, or showing the existence of a bug in a verifier's code base \cite{StackedGF}. Zero-knowledge becomes an important property in cases where revealing the exact clause (or clauses) that is true may reveal private information about the prover, such as their identity. A long line of research has focussed on how $n$ zero-knowledge proofs, each for one statement, can be composed into a new zero-knowledge proof of the disjunction of these statements. 
+
+In their 1994 paper, Cramer, Damg{\aa}rd, and Schoenmakers \cite{CDS94} provide a generic compiler to compose 3-round public coin proofs of knowledge, or more succinctly (and more popularly) known as $\Sigma$-protocols. %perhaps discuss more
 More recently, Goel {\em et al.} \cite{StackingSigmas} improved on this further, providing a generic compiler for a large class of $\Sigma$-protocols and also reducing the size of the resulting proof. 
 
 While extensive research has been conducted, there is a lack of notable real-world implementations of these results
-\footnote{It should be noted that Hall-Andersen \cite{MHAStackSig} has provided a benchmark of applying the compiler in \cite{StackingSigmas} to Schnorr's discrete log protocol \cite{Schnorr}.}. 
-This project seeks to build upon initial research and implement the compilers described in \cite{CDS94} and \cite{StackingSigmas}, we shall refer to the two designs as CDS and SS respectively. Once implemented, we will be able to benchmark both protocols against each other and explore, as well as measure, how they differ. This will hopefully provide some valuable insights as to how these designs perform in practice, which may in turn lead to further improvements in the future.
+\footnote{It should be noted that Hall-Andersen \cite{MHAStackSig} has provided a benchmark of applying the compiler in \cite{StackingSigmas} to Schnorr's discrete log protocol \cite{Schnorr}.}. This project seeks to build upon their work by implementing the compilers described in \cite{CDS94} and \cite{StackingSigmas}. Once implemented, we aim to provide a benchmark for both protocols to explore and measure how they differ. This will hopefully provide some valuable insights as to how these designs perform in practice, which may in turn lead to further improvements in the future that may have a broad impact on existing and upcoming cryptographic systems that rely on such a use case. 
 
 \subsection{Related work}
+\label{sec:related_work}
+Hall-Andersen
+
+Stacked Garbling implementation
 
 Discuss related work.
 
-\section{Objectives}
-The objective of this project is to implement the generic compilers mentioned in the previous section, and to benchmark them against one another, as well as with any other known implementations such as Hall-Andersen's benchmark of the SS compiler \cite{StackingSigmas} applied to Schnorr's discrete log protocol \cite{Schnorr}. 
+% \section{Objectives}
+% The objective of this project is to implement the generic compilers mentioned in the previous section, and to benchmark them against one another, as well as with any other known implementations such as Hall-Andersen's benchmark of the SS compiler \cite{StackingSigmas} applied to Schnorr's discrete log protocol \cite{Schnorr}. 
 
-In this section we outline the key objectives and sub-goals of the project. Numbered items represent core objectives, while nested bulleted items are the sub-goals that will contribute to the completion of the main objective (in the paragraph after this list, we explain salient points in more detail):
-\begin{enumerate}
-    \item Complete our implementation of CDS.
-    \begin{itemize}
-        \item Conduct background reading.
-        \item Select an appropriate $\Sigma$-protocol for the compiler.
-        \item Extract requirements from the research paper. 
-    \end{itemize}
-    \item Benchmark our implementation of CDS, with Hall-Andersen's implementation \cite{MHAStackSig} of the SS compiler.
-    \begin{itemize}
-        \item Research on possible testing frameworks in Rust. 
-        \item Design a test plan to benchmark different compilers. 
-        \item Look for existing implementations of other disjunctive ZK proof compilers.
-    \end{itemize}
-    \item Complete our implementation of SS using the same $\Sigma$-protocol as our CDS compiler.
-    \begin{itemize}
-        \item Study the literature.
-        \item Construct requirements based on the research paper.
-    \end{itemize}
-    \item Benchmark all 3 implementations (Hall-Andersen's implementation of SS, and our two implementations) and record findings.
-\end{enumerate}
-The first part of the project will be focused on reading necessary background reading and implementing the CDS compiler. An appropriate $\Sigma$-protocol such as Schnorr's discrete log protocol \cite{Schnorr} or Guillour-Quisquater's RSA root protocol \cite{Guillou1988APZ} will have to be selected as its input. Some time will also have to be dedicated to learning Rust \cite{Rust} -- the programming language of choice for this project\footnote{Justification on why we choose Rust is given in a later section.}. Once this is complete, we will benchmark our implementation of CDS against Hall-Andersen's SS. A test plan will have to be designed to appropriately compare the performances of each technique.
+% In this section we outline the key objectives and sub-goals of the project. Numbered items represent core objectives, while nested bulleted items are the sub-goals that will contribute to the completion of the main objective (in the paragraph after this list, we explain salient points in more detail):
+% \begin{enumerate}
+%     \item Complete our implementation of CDS.
+%     \begin{itemize}
+%         \item Conduct background reading.
+%         \item Select an appropriate $\Sigma$-protocol for the compiler.
+%         \item Extract requirements from the research paper. 
+%     \end{itemize}
+%     \item Benchmark our implementation of CDS, with Hall-Andersen's implementation \cite{MHAStackSig} of the SS compiler.
+%     \begin{itemize}
+%         \item Research on possible testing frameworks in Rust. 
+%         \item Design a test plan to benchmark different compilers. 
+%         \item Look for existing implementations of other disjunctive zk proof compilers.
+%     \end{itemize}
+%     \item Complete our implementation of SS using the same $\Sigma$-protocol as our CDS compiler.
+%     \begin{itemize}
+%         \item Study the literature.
+%         \item Construct requirements based on the research paper.
+%     \end{itemize}
+%     \item Benchmark all 3 implementations (Hall-Andersen's implementation of SS, and our two implementations) and record findings.
+% \end{enumerate}
+% The first part of the project will be focused on reading necessary background reading and implementing the CDS compiler. An appropriate $\Sigma$-protocol such as Schnorr's discrete log protocol \cite{Schnorr} or Guillour-Quisquater's RSA root protocol \cite{Guillou1988APZ} will have to be selected as its input. Some time will also have to be dedicated to learning Rust \cite{Rust} -- the programming language of choice for this project\footnote{Justification on why we choose Rust is given in a later section.}. Once this is complete, we will benchmark our implementation of CDS against Hall-Andersen's SS. A test plan will have to be designed to appropriately compare the performances of each technique.
 
-The remaining half of the project will be dedicated to implementing the SS compiler. That said, we will use a different commitment scheme that is used by Hall-Andersen \cite{MHAStackSig}, so that we can achieve some meaningful results when comparing the two. Again, once implemented, we will benchmark each implementation against one another according to the same plan that was designed for the first pair.
+% The remaining half of the project will be dedicated to implementing the SS compiler. That said, we will use a different commitment scheme that is used by Hall-Andersen \cite{MHAStackSig}, so that we can achieve some meaningful results when comparing the two. Again, once implemented, we will benchmark each implementation against one another according to the same plan that was designed for the first pair.
 
-\subsection{Possible Extensions}
+% \subsection{Possible Extensions}
 
-If time allows for it, we will attempt to implement a compiler that transforms a SNARK (Succinct Non-Interactive Argument of Knowledge) into a SNARK for a disjunctive statement. This is based on recent work by Goel, Hall-Andersen, Kaptchuk, and Spooner \cite{SpeedStacking}.
+% If time allows for it, we will attempt to implement a compiler that transforms a SNARK (Succinct Non-Interactive Argument of Knowledge) into a SNARK for a disjunctive statement. This is based on recent work by Goel, Hall-Andersen, Kaptchuk, and Spooner \cite{SpeedStacking}.

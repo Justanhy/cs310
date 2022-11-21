@@ -1,35 +1,4 @@
-\documentclass[a4paper,fleqn,12pt]{article}
-
-%%%%%%%%%%%%%%%%%%%%
-
-\input{../common/common.tex}
-\input{../common/project.tex}
-
-\assignment{Project specification}
-
-%%%%%%%%%%%%%%%%%%%%
-
-\pagestyle{plain}
-\renewcommand{\headrulewidth}{0.0pt}
-
-\makeatletter
-\fancypagestyle{plain}{
-	\fancyhf{}
-	\fancyhead[R]{\textit{\@title} - \textit{\@assignment}}
-    \fancyhead[L]{\textit{\@author}}
-    \fancyfoot[C]{\thepage}
-}
-\makeatother
-
-%%%%%%%%%%%%%%%%%%%%
-
-\begin{document}
-
-\input{../common/titlepage.tex}
-
-\pagestyle{plain}
-
-\section{Introduction}
+\subsection{Introduction}
 Informally, Zero-Knowledge (ZK) proofs are protocols that allow a prover to prove to a verifier that a particular statement is true, while revealing no additional information except the validity of their assertion. ZK proofs for disjunctive statements have been a core target of a long line of research, as disjunctive statements have very useful properties that occur commonly in practice. One such use case is for a prover to show the existence of a bug in a verifier's code base \cite{StackedGF}.
 
 In their 1994 paper, Cramer, Damg{\aa}rd, and Schoenmakers \cite{CDS94} provide a generic compiler to transform a ZK proof, which makes an assertion about an individual statement, into a new ZK proof for a disjunctive statement. The ZK proofs that can be transformed by their compiler are 3-round public coin proofs of knowledge, or more succinctly (and more popularly) known as $\Sigma$-protocols. %perhaps discuss more
@@ -43,7 +12,7 @@ This project seeks to build upon initial research and implement the compilers de
 
 % It's important that whatever project you choose you can demonstrate that it is a suitably challenging one for a 3rd year project for your degree. You should therefore convey a sense of the "challenge" of your project. If you're using your own project idea, discussion with your supervisor should help you arrive at something that is challenging but feasible.
 
-\section{Objectives}
+\subsection{Objectives}
 The objective of this project is to implement the generic compilers mentioned in the previous section, and to benchmark them against one another, as well as with any other known implementations such as Hall-Andersen's benchmark of the SS compiler \cite{StackingSigmas} applied to Schnorr's discrete log protocol \cite{Schnorr}. 
 
 In this section we outline the key objectives and sub-goals of the project. Numbered items represent core objectives, while nested bulleted items are the sub-goals that will contribute to the completion of the main objective (in the paragraph after this list, we explain salient points in more detail):
@@ -78,28 +47,29 @@ If time allows for it, we will attempt to implement a compiler that transforms a
 
 % The objectives of a project relate to the "problem" you've outlined. They set out the goals which will combine to produce your solution. For some projects, you'll have a pretty fixed agenda right from the start. For others it may be appropriate to allow some flexibility by identifying "must have" objectives plus additional areas which you may have time to explore. Breaking the challenge down into a set of objectives helps you to assess feasibility and where your time is going to be spent. This will lead in to the timetable.
 
-\section{Methods}
+\subsection{Methods}
 This project will entail a mix of research and software development. For each of the two compilers that we will implement, we will first conduct research and study of the source literature to ensure that we gain the necessary context and understanding to implement it. After which, we will extract the requirements from the design and proceed with implementation. Finally, we will have to evaluate the accuracy and performance of our compiler. Since the requirements of our software will be based on the research papers we refer to, we will be tackling this project using a plan-based development methodology. Each compiler's development can be planned before implementation begins, and should not require any changes. In such cases, the added flexibility of using Agile methods would not have any added benefit. Hence, we decided that a plan-based approach would be most suitable.
 
 This gives us three separate phases for each implementation: research, implementation, and evaluation.
 
-\subsection{Research}
+\subsubsection{Research}
 Before proceeding with implementation, a good understanding of the design will be important in ensuring the accuracy of the implementation. Background reading in group theory, linear algebra, interactive proofs, and ZK will be beneficial (or even crucial) for understanding the main results in \cite{CDS94} and \cite{StackingSigmas}. Justin Thaler's draft survey \cite{PAZK} will be consulted to learn core concepts surrounding interactive proofs and ZK. 
 
-\subsection{Implementation}
+\subsubsection{Implementation}
 As we begin our implementation, we start by translating the design of each compiler into a set of requirements that it must have. This will help to identify the respective components that are required, and can help with time management and project planning. These requirements will be compiled into a document that can be easily referred to throughout the development process. 
 
 \textbf{Version Control.} Git will be used for version control along with Github for source code management. Commits will be regularly made to the remote repository to synchronise local repositories that may exist on different machines. 
 
 \textbf{Programming Language.} While the compilers can be built with any programming languages, initial research into existing implementations of various cryptographic protocols show that a large majority of them are implemented in Rust. These include $\Sigma$-protocols that will be given to our compilers as input. In fact, Hall-Andersen's SS compiler is also implemented in the language. Hence, Rust is the obvious choice to ensure that our benchmarks are comparable. 
 
-\subsection{Evaluation}
+\subsubsection{Evaluation}
 The accuracy of our implementation will be evaluated through black-box testing that check if the resulting protocol our compiler produces have the properties it should have. These include the \textit{witness indistinguishable} or \textit{witness hiding} property in the case of CDS. Inputs to our compilers will also have to be tested to ensure they adhere to the properties that they are supposed to have. 
 
 A benchmark test plan will be designed to evaluate the performance of our CDS implementation. Benchmarks will have to be consistent with each other in order for a fair comparison of performance. Since we are using Rust, employing \texttt{cargo bench} together with Rust's native testing and benchmarking framework \texttt{libtest} should be sufficient. Another candidate is \texttt{criterion} -- a statistics driven open source benchmarking tool that provides statistical confidence when comparing different test runs. This may provide more insightful data to compare the performance of our implementations. More research will be done on whether \texttt{libtest} or \texttt{criterion} suits this project better.
 % How are you going to approach your project? If system development is required, how will you be managing that? Is it appropriate to apply an accepted development methodology? If so, which one? If not, how are you approaching the development? If you're investigating a business topic what methods will you be using? Common ones might be literature review, case study, survey and interview. If you're conducting a survey, are you aware of good survey design? If you're planning interviews, what methodology will you use to analyse and represent the responses? Whatever the nature of your project - what methods are you using to ensure that it stays on track and achieves its goals?
 
-\section{Timetable}
+\subsection{Timetable}
+\label{sec:timetable}
 
 In table \ref{table:timetable} below, we outline our draft proposal for our project plan. It should be mentioned that this timetable is likely to evolve as the project progresses. Additionally, this timetable serves as a rough guide of what we should be focusing on at a certain point in the next 6 months. In reality, multiple tasks that were not included will be worked on concurrently to maintain consistent progress. 
 
@@ -154,11 +124,11 @@ T3 W1
 \label{table:timetable}
 \end{table}
 
-\section{Resources}
+\subsection{Resources}
 
 Aside from the various software that we will be using to manage and work on this project (which we have discussed in previous sections), this project is only dependent on the source literature \cite{CDS94, StackingSigmas}, and on the fact that we have access to Hall-Andersen's compiler implementation \cite{MHAStackSig}. The University provides institutional access to research papers and there should be no issues retaining access to our first two resources. In the worst case, these papers have been legally downloaded and will be accessible offline. Hall-Andersen's code is licensed under GNU GPLv3 \cite{GPLv3}, which allows anyone to copy, modify, and use the source code provided that it remains under the same license. Therefore, to ensure that we can retain access to the source code, we have made a fork of the repository, which is legally permitted under the current license. 
 
-\section{Risk}
+\subsection{Risk}
 In this section we highlight the dependencies of the project and present potential risks and our plan to mitigate such risks:
 \begin{itemize}
     \item This project relies on existing implementations of cryptographic protocols; before using any of them, a thorough check should be made to ensure that we are not violating any license agreements.
@@ -176,9 +146,6 @@ In this section we highlight the dependencies of the project and present potenti
 
 % What resources does your project rely on? For example, the list might include the hardware to be used, any non-standard software, data that a company has promised to provide or even subjects to take part in an interview. Have you thought about what would happen if any of these resources became unavailable? What is your back-up plan? This part of the specification should show that you've thought these issues through and that you have appropriate back-up plans in place where necessary. For more discussion on resources and managing risk, check out the information on equipment and other resources.
 
-\section{Legal, social, ethical and professional issues}
+\subsection{Legal, social, ethical and professional issues}
 
 For the next 6 months, work on the project will remain private, and made available only to direct stakeholders. That said, there is a chance that our work may be made public and published in the future, and users could accidentally or willfully misuse our program. As such, we currently intend to host the program publicly on Github under the GNU General Public License v3 (GPLv3), which is a free, copyleft license for software \cite{GPLv3}. More research will be done to ascertain if this is the most appropriate license for the project. Moreover, the program may not be ready for production the moment it is published; in such a case, a disclaimer will be made warning potential users.
-
-\printbibliography
-\end{document}

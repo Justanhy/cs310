@@ -1,75 +1,50 @@
 \section{Progress}
 \label{sec:progress}
+Currently, a basic implementation of Schnorr's protocol and CDS94 has been completed. More work is required to ensure that the compiler is truly witness-indistinguishable, as the implementation thus far does not adhere exactly to the protocol defined. (Will explain in more detail if this cannot be completed before Week 9). This is primarily because existing libraries of Shamir's secret sharing scheme do not provide the ability to reconstruct shares to a qualified set given the secret and an unqualified set. It is not surprising that such a feature is unimplemented as it is not relevant to using the scheme to distribute a secret. However, it is a crucial feature for the CDS94 compiler as the secret sharing scheme is used to ensure that the prover will have to generate a random $c_i$ for each statement $x_i$, and cannot cheat. To overcome this, we will implement Shamir's secret sharing scheme with this feature, instead of relying on an external crate. 
 
-\subsection{CDS94 Compiler}
-In this implementation of the compiler, we will use 
+Aside from this, we have dedicated time to review our choice of tools and software development methodology for the project. In later sections, we justify why we are committing to use Rust and Github, and why we are changing our decision on Notion for project management and using a plan-based software development methodology. Additionally, a significant portion of time was spent studying the results in \cite{CDS94} and extracting the requirements from its design. We have also conducted preliminary reading of \cite{StackingSigmas} to understand if there are any components that can be shared by both compilers and therefore must be prioritised. 
 
-\begin{itemize}
-    \item the elliptic curve version of Schnorr's discrete log protocol as our $\Sigma$-protocol, and
-    \item Shamir's secret sharing scheme (SSS)
-\end{itemize}
+Referring to Table \ref{table:timetable} in Section \ref{sec:timetable} of the appendix, our current progress is inline with our initial project plan. In fact, we are likely to complete our implementation of CDS94 early. This in part due to our initial underestimate of how much progress can be made, and the lack of context of the problem before work began. Hence, we have provided an updated project plan in the later section (reference). In the following subsections, we present the core requirements of our system, our benchmark plan, and discuss changes that we have made from the project specification. 
 
-to demonstrate the compilation of $\Sigma$-protocol into a disjunctive/threshold $\Sigma$-protocol for $n$ statements. 
+\subsection{Requirements and Design Decisions}
+In this section, we outline the core requirements of our system and present solutions to achieve them.
 
-We will attempt to make the implementation as general as possible to open up for the future possibiity to take any $\Sigma$-protocol that suits our requirements and transform it into a $\Sigma$-protocol for $n$ statements.  
+\textbf{Interoperability.} A core requirement of our project is to have a good interface for developers to use or extend our compiler. This will require that we develop an API that strictly defines its required inputs and expected outputs, which should not only be clear within the source code but must be thoroughly documented as well.  
 
-\subsubsection{The Witness Indistinguishable (WI) compilation}
+Within Rust, we can enforce the properties of inputs to our API with Rust traits\footnote{Traits in Rust are similar to interfaces in Java, and most similar to typeclasses in Haskell.} and generics. This tells \textit{rustc} (the Rust compiler) to conduct type checks at compile-time to ensure that developers are appropriately interfacing with our API. For example, the $\Sigma$-protocols composed by the CDS94 compiler must have a way to simulate transcripts and we can enforce this through a \texttt{SigmaProtocol} trait that requires the implementation of a \texttt{simulate()} method. 
 
-In their paper, Cramer {\em{et al}} presents 2 primary ways to construct a WI protocol from a $\Sigma$-protocol $\mathcal P$ (Theorem 8 and 9). 
+Comprehensive documentation can be achieved by using \texttt{rustdoc}: a tool to automatically generate documentation that comes with the standard Rust distribution. It parses comments in a Rust project and produces HTML, CSS, and JavaScript, that can then be viewed from a browser. This will help developers understand how to use our system. 
 
-\begin{itemize}
-    \item Theorem 8 requires a smooth secret sharing scheme, and a HVZK $\Sigma$-protocol, while
-    \item Theorem 9 requires special honest verifier ZK (SHVZK) with at least a semi-smooth secret sharing scheme.
-\end{itemize}
+Furthermore, many existing cryptography tools are implemented in Rust -- we discuss our project's dependencies in Section \ref{sec:dependencies}.
 
-Since, SSS is a smooth threshold secret sharing scheme (required for 8), and Schnorr's protocol is SHVZK (required for 9), we can choose either construction. 
-\textit{We will use \textbf{Theorem 8} in this project.}
+\textbf{Maintainability.} As more work is done, it will become increasingly important that our code is maintainable and easily extensible. Therefore, each component of our system that has a distinct responsibility should be separated into its own Rust \textit{crate}\footnote{Crates are Rust's equivalent of libraries or modules in other programming languages.} and must provide an interface for other crates to use it. This aligns with the microservices architecture that many software applications are built upon. 
 
-\textbf{Theorem 8}. Given $\mathcal P$, $R_\Gamma$, $\Gamma$, and $\mathcal S(k)$ where
+Considering this, we have organised our source code into a mono-repository using \textit{cargo workspaces}. This enables us to separate each software component (for CDS94, schnorr's protocol, and shamir's scheme) into distinct crates, where its dependencies are defined and managed in isolation. At the same time, cargo optimises the compilation and build process of all the crates in the workspace, fetching shared dependencies once instead of several times if each crate was in a different workspace. If required, we can easily move each crate into its own repository in the future. Having a mono-repository also has the added benefit of improving the development process, as all source code is housed in a central repository. 
 
-\begin{itemize}
-    \item $\mathcal P$ is a 3-round public coin ($\Sigma$-protocol) HVZK proof of knowledge for relation $R$, which satisfies the special soundness property.
-    \item $\Gamma = \{ \Gamma(k) \}$ is a family of monotone access structures
-    \item $\{\mathcal S(k)\}$ is a family of smooth secret sharing schemes such that the access structure of $\mathcal S(k)$ is $\Gamma(k)^*$
-    \item $R_\Gamma$ is a relation where $((x_1,\ldots,x_m),(w_1,\ldots,w_m)) \in R_\Gamma$ if and only if ($\iff$)
-    \begin{itemize}
-        \item all $x_i$'s are of the same length $k$, and 
-        \item the set of indices $i$ for which $(x_i,w_i) \in R$ corresponds to a qualified set in $\Gamma(k)$
-    \end{itemize}
-\end{itemize}
+\textbf{Testing.} We are implementing a cryptographic system and will require rigorous and comprehensive testing to ensure it is robust. Unit and integration tests must be written for each crate and these must include both positive and negative tests. Test coverage should be one of the metrics that we use to ensure we are covering as many features as possible. Ideally, tests should be written as early as possible to ensure that each part of our system fulfils its requirements. Regression testing will also help to catch bugs when changes are made and should be executed frequently. This will not only improve code quality, but also make development more efficient. 
 
-Then, there exists a $\Sigma$-protocol that is witness indistinguishable for the relation $R_\Gamma$. (The proof of Theorem 8 and 9 is given in their paper.)
+Rust has a native testing framework that we can easily use to test our code, and we can use \textit{rustc} (Rust's compiler) to generate code coverage reports. We plan to use Test-Driven-Development (TDD) in our software development process to prioritise testing and to ensure that requirements are being met. TDD is a programming style where tests are written based on requirements before features that aim to pass these tests are implemented. After which, code is refactored to be more simple and readable if possible. This appropriately prioritises functionality over readability, but still upholds written code to a high quality of design. 
 
-\subsubsection{Protocol Description}
-Let $A \in \Gamma$ denote the set of indices $i$ for which our prover $P$ knows a witness for $x_i$
+\textbf{Benchmarking.} The main of goal of this project is to provide benchmarks to compare different compilers for composing $\Sigma$-protocols into a disjunctive zero-knowledge proof. These benchmarks should measure the performance of each compiler on different proof sizes, and measure the run-times of the verifier and prover respectively. These metrics are discussed further in Section \ref{sec:benchmarks}. 
 
+Benchmarking is not a simple endeavour without the right tools, as algorithm run-times depend on the state of the computer during benchmark tests. Therefore, we will use the \texttt{criterion} crate \cite{criterion} which is a statistics-driven micro-benchmarking tool. It collects and stores statistical information from each run and can provide statistical confidence of run-times, allowing us to provide some statistical guarantee for our results. Furthermore, the crate also provides plots and graphs to visualise the performance of each benchmark.
+
+Hence, we conclude that Rust is the most appropriate language to use for our project, as it has the capability to fulfil our core requirements. 
+
+\subsection{Dependencies}
+\label{sec:dependencies}
+
+\subsection{Benchmark Plan}
+\label{sec:benchmarks}
+To ensure fair results, we have to benchmark the compilers on the same set of $\Sigma$-protocols. (With this in mind, I am not sure if we can appropriately compare Mattias' Stacking Sigmas implementation with CDS94 because his implementation uses Schnorr to construct Ring signatures -- that uses Fiat-Shamir transformation. Can we apply Schnorr with Ring signatures to CDS94? Need to read Stacking Sigmas and look at Ring Signatures over the next week.) 
+
+Here, we present the metrics that we will be measuring during our benchmarks:
 \begin{enumerate}
-    \item For each $i \in \bar A$, $P$ runs a simulator on input $x_i$ to produce transcripts of conversations in the form $(m_1^i, c_i, m_2^i)$.
-    \begin{itemize}
-        \item For each $i \in A$, $P$ inputs the witness $w_i$ for $x_i$ to $\mathcal P$ and takes what the prover $P^*$ in $\mathcal P$ sends as $m_1$ as $m_1^i$.
-        \item Essentially we take the return value of the first round of $\mathcal P$ as our message $m_1^i$.
-        \item Finally, $P$ sends all $m_1^i$ to $V$, where $i = 1, \ldots, n$
-    \end{itemize}
-    \item $V$ chooses a $t$-bit string $s$ at random and sends it to $P$
-    \item $P$ forms challenges $c_i$ for $i \in A$, such that $share(c_i) \cup \{share(c_j)|j \in \bar A\}$ is a qualified set in $\Gamma$ consistent with $s$.
-    \begin{itemize}
-        \item For $i \in A$, $P$ uses it's knowledge of $w(x_i)$ to compute a valid $m_2^i$ for $(m_1^i, c_i)$ by running the prover's algorithm in $\mathcal P$.
-        \item $P$ then sends $c_i, m_2^i$ for $i = 1 ,\ldots, n$ to $V$. 
-    \end{itemize}
-    \item $V$ checks that all conversations $(m_1^i, c_i, m_2^i)$ would lead to acceptance by the verifier in $\mathcal P$
-    \begin{itemize}
-        \item During this process, $V$ checks that $share(c_i)$ is consistent with secret $s$.
-        \item Accept if all true, otherwise reject. 
-    \end{itemize}
+    \item Proof size (in bytes)
+    \item Prover runtime
+    \item Verifier runtime
+    \item Total runtime(?)
+    \item (What other metrics?)
 \end{enumerate}
 
-Requirements
-Schnorr
-- Have a simulator we can call publically
-- Compiler will interface through protocol (can't access prover directly(?))
-- Function for each round of protocol
-
-SSS
- - If we have $n$ statements, and we want $P$ to prove that they know $d$ out of $n$ we have to use SSS with threshold $n-d+1$.
- - API for qualified set completion.
-
+Instructions on how to run our benchmarks will be provided to allow anyone to reproduce results on a machine of their choice.

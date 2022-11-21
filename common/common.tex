@@ -1,6 +1,6 @@
 
 \usepackage[textwidth=450pt]{geometry}
-\usepackage[latin1]{inputenc}
+% \usepackage[latin1]{inputenc}
 \usepackage[UKenglish]{babel}
 \usepackage[UKenglish]{isodate}
 \usepackage{amsmath}
@@ -39,7 +39,7 @@
     title={#2}, %Problem~\thetcbcounter
     #1
 }
-\usepackage[style=ieee]{biblatex}
+\usepackage[style=alphabetic, sorting=anyvt]{biblatex}
 \addbibresource{../common/ref.bib}
 
 \hypersetup{
@@ -69,3 +69,4 @@
 \newcommand{\Z}[0]{\mathbb{Z}}
 \newcommand{\F}[0]{\mathbb{F}}
 \newcommand{\G}[0]{\mathbb{G}}
+\newcommand{\randselect}[0]{\xleftarrow{\text{\scriptsize R}}}
