@@ -21,18 +21,51 @@ Furthermore, many existing cryptography tools are implemented in Rust -- we disc
 
 Considering this, we have organised our source code into a mono-repository using \textit{cargo workspaces}. This enables us to separate each software component (for CDS94, schnorr's protocol, and shamir's scheme) into distinct crates, where its dependencies are defined and managed in isolation. At the same time, cargo optimises the compilation and build process of all the crates in the workspace, fetching shared dependencies once instead of several times if each crate was in a different workspace. If required, we can easily move each crate into its own repository in the future. Having a mono-repository also has the added benefit of improving the development process, as all source code is housed in a central repository. 
 
-\textbf{Testing.} We are implementing a cryptographic system and will require rigorous and comprehensive testing to ensure it is robust. Unit and integration tests must be written for each crate and these must include both positive and negative tests. Test coverage should be one of the metrics that we use to ensure we are covering as many features as possible. Ideally, tests should be written as early as possible to ensure that each part of our system fulfils its requirements. Regression testing will also help to catch bugs when changes are made and should be executed frequently. This will not only improve code quality, but also make development more efficient. 
-
-Rust has a native testing framework that we can easily use to test our code, and we can use \textit{rustc} (Rust's compiler) to generate code coverage reports. We plan to use Test-Driven-Development (TDD) in our software development process to prioritise testing and to ensure that requirements are being met. TDD is a programming style where tests are written based on requirements before features that aim to pass these tests are implemented. After which, code is refactored to be more simple and readable if possible. This appropriately prioritises functionality over readability, but still upholds written code to a high quality of design. 
-
 \textbf{Benchmarking.} The main of goal of this project is to provide benchmarks to compare different compilers for composing $\Sigma$-protocols into a disjunctive zero-knowledge proof. These benchmarks should measure the performance of each compiler on different proof sizes, and measure the run-times of the verifier and prover respectively. These metrics are discussed further in Section \ref{sec:benchmarks}. 
 
 Benchmarking is not a simple endeavour without the right tools, as algorithm run-times depend on the state of the computer during benchmark tests. Therefore, we will use the \texttt{criterion} crate \cite{criterion} which is a statistics-driven micro-benchmarking tool. It collects and stores statistical information from each run and can provide statistical confidence of run-times, allowing us to provide some statistical guarantee for our results. Furthermore, the crate also provides plots and graphs to visualise the performance of each benchmark.
 
-Hence, we conclude that Rust is the most appropriate language to use for our project, as it has the capability to fulfil our core requirements. 
+\textbf{Testing.} We are implementing a cryptographic system and will require rigorous and comprehensive testing to ensure not only meets its requirements but is also robust against potential attack vectors. We split testing into two categories: \textit{application} and \textit{security} testing. We discuss our approach to application testing in Section \ref{sec:application_testing}, and our considerations and methods for security testing in Section \ref{sec:security_testing}.
+
+\subsection{Application Testing}
+\label{sec:application_testing}
+Unit and integration tests must be written for every feature in each crate and these must include both positive and negative tests. Test coverage should be used to reveal parts of the code that are not covered by our tests. This will help identify branches of code that are either redundant or are not yet tested.
+
+To prioritise functionality and validate that our features meet their requirements, we plan to use Test-Driven-Development (TDD) in our software development process. TDD is a programming style where tests are written based on requirements before features that aim to pass these tests are implemented. We show an illustration of the TDD software development lifecycle in Figure \ref{fig:tdd} below.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{TDD_Global_Lifecycle.png}
+    \caption{TDD Lifecycle \cite{Wikimedia:TDD}}
+    \label{fig:tdd}
+\end{figure}
+
+TDD places an emphasis on first producing code that is minimally sufficient to pass the written tests. After which, code is refactored until it fulfils standard best practices such as readability, modularity, encapsulation etcetera. This appropriately prioritises functionality over readability, but still upholds written code to a high quality of design. Writing tests before implementation also helps during regression testing, to identify bugs when changes are made. This will not only improve code quality, but also make development more efficient. 
+
+We will use Rust's native testing framework which provides a convenient interface to write both unit and integration tests. Additionally, the compiler \textit{rustc} can be configured to generate code coverage reports, which we can use to monitor development progress. Testing can be automated using Travis and Github Actions to incorporate tests into the software development lifecycle, although this is not a priority.
+
+\subsection{Security Testing}
+\label{sec:security_testing}
+In this section, we present our security testing strategy. We follow practices suggested by the OWASP Web Security Testing Guide \cite{OWASPv4.2}, where they cover four main testing techniques: (1) manual inspection and reviews, (2) threat modeling, (3) code review, (4) penetration testing. Some practices covered in the guide are not specifically relevant to our system, considering the small-scale of our project. Nevertheless, the core idea remains and informs our approach.
+
+\textbf{Monthly Review and Reporting.} We propose conducting monthly (every 5 weeks) code reviews to identify potential security problems that are difficult to identify through black-box testing. Given that there is only one developer working on this project, this process is still subject to confirmation with the project supervisor. Ideally, the main developer for a feature presents their code to another party, as it is often more natural for a third-party to identify potential problems. Otherwise, it is still possible for the main developer to conduct a personal source code review. This can be done after a certain amount of time passes since implementing the feature, after initial assumptions that were made during development have been forgotten. Our proposed duration is 5 weeks. That said, we acknowledge the potential problems with this proposal, bringing us to our second initiative. 
+
+\textbf{Threat Modeling.} A popular technique to help system designers think about potential security threats that their system might face. We employ this technique in our software development process to ensure that we incorporate security into the design of our features, before development even begins. These design requirements should be captured within our application tests if possible. In this way, threat modeling and TDD complement each other. Refer to Section \ref{sec:threat-model-appendix} for our current threat model (as of November 27 2022). 
+    
+This section details the software architecture of our system from a security perspective and how various components interact. We identify trust boundaries and channels which may have potential vulnerabilities, and outline the potential attack vectors and our mitigation strategy. Currently, this section is still premature and more emphasis will be placed on it for subsequent sprint cycles. The threat model should be updated in every sprint cycle, whenever new features are added, or when a code review identifies an issue. Git and Github will be used to control the threat model version. We currently use OWASP Threat Dragon to create our threat model \cite{OWASP-Dragonv1.6}. 
+
+
+\textbf{Fuzzing.} We have limited resources for this project, and carrying out penetration tests is infeasible. To compensate for this, we intend to use fuzz testing to carry out black-box testing. Fuzzing is a technique to automatically inject random, invalid, and unexpected data into our API. This may help to identify bugs and edge cases that can cause problems. To do this, we will use \texttt{afl.rs} \cite{AFL-Rust} -- Rust's variant of a popular fuzzing tool for C and C++ called AFL (American fuzzy lop) \cite{AFL}.
+
+\textbf{Static Analysis.} Static code analysis can be used to provide metrics that may help identify coding issues that could lead to deeper security bugs. We will use Mozilla's Rust Code Analysis library to carry out static code analysis \cite{ARDITO2020100635}.
+
+
+
 
 \subsection{Dependencies}
 \label{sec:dependencies}
+
+
 
 \subsection{Benchmark Plan}
 \label{sec:benchmarks}

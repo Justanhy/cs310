@@ -25,7 +25,7 @@
     author = {Mathias Hall-Andersen},
     title = {StackSig; Ring Signatures from Stacking},
     year = {2021},
-    note = {\url{https://github.com/rot256/research-stacksig}},
+    note = {Online; accessed October 25, 2022},
     url = {https://github.com/rot256/research-stacksig}
 }
 
@@ -69,17 +69,20 @@
   pages={136}
 }
 
-@unpublished{SpeedStacking,
-    author={Aarushi Goel and Mathias Hall-Andersen and Gabriel Kaptchuk and Nicholas Spooner},
-    title={Speed-Stacking: Fast Sublinear Zero-Knowledge Proofs of Disjunctions},
-    year={2022},
-    note={unpublished}
+@misc{SpeedStacking,
+      author = {Aarushi Goel and Mathias Hall-Andersen and Gabriel Kaptchuk and Nicholas Spooner},
+      title = {Speed-Stacking: Fast Sublinear Zero-Knowledge Proofs for Disjunctions},
+      howpublished = {Cryptology ePrint Archive, Paper 2022/1419},
+      year = {2022},
+      note = {\url{https://eprint.iacr.org/2022/1419}},
+      url = {https://eprint.iacr.org/2022/1419}
 }
 
 @misc{GPLv3,
    author= {GNU},
    year = {2007},
    title = {The GNU General Public License v3.0 - GNU Project - Free Software Foundation},
+   note = {Online; accessed October 25, 2022}, 
    url = {https://www.gnu.org/licenses/gpl-3.0.html},
 }
 
@@ -118,7 +121,7 @@ series = {STOC '85}
 @misc{ristretto_web,
    author = {Henry de Valence and Jack Grigg and Mike Hamburg and Isis Lovecruft and George Tankersley and Filippo Valsorda},
    title = {Ristretto - The Ristretto Group},
-   note = {\url{https://ristretto.group/ristretto.html}},
+   note = {Online; accessed November 8, 2022},
    url = {https://ristretto.group/ristretto.html},
 }
 
@@ -171,11 +174,64 @@ series = {STOC '85}
   bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@web_page{criterion,
+@misc{criterion,
    author = {Brook Heisler},
    title = {criterion - crates.io: Rust Package Registry},
-   note = {Retrieved November 21, 2022},
+   note = {Online; accessed November 21, 2022},
    url = {https://crates.io/crates/criterion},
-   
 }
 
+@misc{Wikimedia:TDD,
+    author = {Xavier Pigeon},
+    title = {TDD Global Lifecycle},
+    year = {2015},
+    note = {Online; accessed November 27, 2022},
+    url = {https://commons.wikimedia.org/wiki/File:TDD_Global_Lifecycle.png}
+}
+
+@misc{OWASPv4.2,
+    author = {Elie Saad and Rick Mitchell},
+    title = {Web Security Testing Guide v4.2},
+    year = {2020},
+    note = {Online; accesed November 27, 2022},
+    url = {https://owasp.org/www-project-web-security-testing-guide/v42/}
+}
+
+@misc{OWASP-Dragonv1.6,
+    author = {Mike Goodwin and Jon Gadsden and Leo Reading and Arnold Kokoroko}, 
+    title = {OWASP Threat Dragon},
+    year = {2021},
+    note = {Online; accessed November 27, 2022},
+    url = {https://owasp.org/www-project-threat-dragon/}
+}
+
+@misc{AFL-Rust,
+    author = {Rust Fuzzing Authority},
+    title = {afl.rs},
+    year = {2022},
+    month = {2},
+    note = {Online; accessed November 27, 2022},
+    url = {https://github.com/rust-fuzz/afl.rs}
+}
+
+@misc{AFL,
+    author = {Michal Zalewski},
+    title = {American fuzzy lop},
+    year = {2017},
+    note = {Online; accessed November 27, 2022},
+    url = {https://lcamtuf.coredump.cx/afl/}
+}
+
+@article{ARDITO2020100635,
+    title = {rust-code-analysis: A Rust library to analyze and extract maintainability information from source codes},
+    journal = {SoftwareX},
+    volume = {12},
+    pages = {100635},
+    year = {2020},
+    issn = {2352-7110},
+    doi = {https://doi.org/10.1016/j.softx.2020.100635},
+    url = {https://www.sciencedirect.com/science/article/pii/S2352711020303484},
+    author = {Luca Ardito and Luca Barbato and Marco Castelluccio and Riccardo Coppola and Calixte Denizet and Sylvestre Ledru and Michele Valsesia},
+    keywords = {Algorithm, Software metrics, Software maintainability, Software quality},
+    abstract = {The literature proposes many software metrics for evaluating the source code non-functional properties, such as its complexity and maintainability. The literature also proposes several tools to compute those properties on source codes developed with many different software languages. However, the Rust language emergence has not been paired by the community’s effort in developing parsers and tools able to compute metrics for the Rust source code. Also, metrics tools often fall short in providing immediate means of comparing maintainability metrics between different algorithms or coding languages. We hence introduce rust-code-analysis, a Rust library that allows the extraction of a set of eleven maintainability metrics for ten different languages, including Rust. rust-code-analysis, through the Abstract Syntax Tree (AST) of a source file, allows the inspection of the code structure, analyzing source code metrics at different levels of granularity, and finding code syntax errors before compiling time. The tool also offers a command-line interface that allows exporting the results in different formats. The possibility of analyzing source codes written in different programming languages enables simple and systematic comparisons between the metrics produced from different empirical and large-scale analysis sources.}
+}

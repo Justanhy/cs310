@@ -1,6 +1,6 @@
 
 \usepackage[textwidth=450pt]{geometry}
-% \usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[UKenglish]{babel}
 \usepackage[UKenglish]{isodate}
 \usepackage{amsmath}
@@ -39,6 +39,7 @@
     title={#2}, %Problem~\thetcbcounter
     #1
 }
+\graphicspath{{./assets/}}
 \usepackage[style=alphabetic, sorting=anyvt]{biblatex}
 \addbibresource{../common/ref.bib}
 
@@ -70,3 +71,11 @@
 \newcommand{\F}[0]{\mathbb{F}}
 \newcommand{\G}[0]{\mathbb{G}}
 \newcommand{\randselect}[0]{\xleftarrow{\text{\scriptsize R}}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\newcommand{\samplefrom}[0]{\xleftarrow{\$}}
+\newcommand{\st}{\ \middle\vert\ }
+\newcommand{\View}{\text{View}}
+\newcommand{\ViewPV}{\View_V(P(x),V(x))}
