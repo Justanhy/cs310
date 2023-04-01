@@ -1,0 +1,35 @@
+\subsection{Partially-Binding Vector Commitments from Discrete Log}
+
+\newcommand{\primefield}[0]{\Z_{|\G|}}
+
+Let $\primefield$ be a prime field (defined additively). Let $\mathcal X \subseteq \primefield$ and for $i \in \mathcal X$ we define 
+$$
+L_{(\mathcal X, i)}(j) := \prod_{m \in \mathcal X, m \ne i} \frac{j - m}{i - m} \in \primefield[j]
+$$
+
+To interpolate, 
+
+$$
+\textbf{for } j \in [l-t]: g_j \leftarrow \sum_{i \in \mathcal X} g_i \cdot L(\mathcal X, i)(j)
+$$
+
+This will enable us to construct the unique degree $|\mathcal X| - 1$ polynomial for which 
+$$
+\forall x \in \mathcal X \setminus \setwith{j}: L_{(\mathcal X, j)} (x) = 0 \land L_{(\mathcal X, j)}(j) = 1
+$$
+
+\paragraph{$(ck, ek) \leftarrow Gen(pp, B)$.} Given the public parameters $pp$ and the set of binding indexes $B$, output the commitment key and equivocation key $ck$ and $ek$. 
+\begin{enumerate}
+    \item Let $E = [l] \setminus B$ be the set of equivocal indexes. 
+    \item Generate trapdoors for $l - t$ indexes: \textbf{for} $i \in E: y_i \samplefrom \Z_{|G|}, g_i \leftarrow h \cdot y_i$
+    \begin{itemize}
+        \item Sample $y_i$ randomly from our prime-ordered field. 
+        \item Obtain $g_i$ by multiplying $h$ with $y_i$
+    \end{itemize}
+    \item Interpolate the first $[l-t]$ elements: \textbf{for} $j \in [l-t]: g_j \leftarrow \prod_{i\in E\cup \setwith{0}} g_j \cdot L_{(E\cup \setwith{0}, i)}(j)$
+    \item Let $ck$ be the tuple $(g_1, \ldots, g_{l-t})$
+    \item Let $ek$ be the tuple $(g_1, \ldots, g_{l-t}, \setwith{y_i}_{i \in E}, E, B)$. Note that the $ek$ should be kept secret to the entity that calls the $Gen$ function.
+    \item \textbf{return} $(ck, ek)$
+\end{enumerate}
+
+\paragraph{$(com, aux) \leftarrow EquivCom(pp, ek, \mathbf{v}; r)$.} Given the public parameter $pp$, equivocation key $ek$, $l$-tuple $\mathbf{v}$, and randomness $r$: output a partially-binding commitment $com$ and auxiliary equivocation information $aux$.

@@ -1,10 +1,77 @@
 \section{Project management}
+In this section, we first cover two notable project management changes since the project specification. We then present our updated plan for term 2 and risk management plan.
 
-Discuss why we switch from Notion to using GitHub Projects. 
+\subsection{Software Development Methodology} 
+We have opted to change from an incremental plan-based methodology, to Scrum, an agile software development methodology. After the first few weeks of development, we found that many necessary requirements of a real-world implementation of the compiler are not covered in research papers. This is not unexpected as the protocol's description within literature focuses on the essence of the design rather than how it can be practically built. Moreover, many requirements become obvious only after the initial implementation, implying that a more agile approach is necessary. In light of this, having the flexibility of an agile methodology like Scrum will allow us to iteratively design our compiler, starting from minimally functioning code and continuously improving on its design. This is a more natural prioritisation of functioning code and testing instead of spending time designing a comprehensive plan that has a high probability of changing.
 
-Discuss why we change from plan-based to agile development. 
+\textbf{Scrum Sprints.} Our sprints will be split into four phases: (1) Feature creation, (2) Scrum planning, (3) Implementation and Testing, (4) Sprint Review. During feature creation, we begin by translating user requirements into application features. Each feature will have a one-to-one mapping to a Github Issue, which will be created to keep track of the progress toward implementing said feature. Next, scrum planning is about starting the new sprint which we represent with Github Milestones. During this process, we assign issues that are on the backlog to the current sprint, signifying that these features should be completed by the end of the two weeks and, thus, quantifying our milestone. Lastly, the sprint review process will involve documenting the progress made in the last sprint, introducing new issues if applicable, and updating the roadmap of the project. These will be documented using Github Wiki.
 
-Present timetable/plan for term 2. Mention extension to SNARKS.
+\subsubsection{Project Management Tools}
+We decided to make a switch from Notion to Github for project management. This is primarily due to the integration of Github Projects and our Github repositories. While Notion provides more note taking capabilities, it is limited in its integration with Github. For example, when a task is created on Notion, there is no integration with Github to automatically create an issue on the repository. We found that having issues recorded on Github is a useful way to document the features of our system while keeping track of current task, all while helping to manage source code history. 
 
-Outline risk management plan. Explain why we have not conducted all research necessary, such as for Stacking Sigmas and SNARKS. Explain that Stacking Sigmas is much more complicated and work on CDS is required to familiarise with the cryptographic concepts. Explain that it is an ideal plan that is possible, but there are also likely to be unexpected issues and we have plan B. 
+Hence, we decide on using Github's native project management tools like Github Projects, Issues, and Milestones. We will be using Github Milestones to manage our two-week long sprints. Github Projects will be used to manage issues and tasks across repositories. Github Issues will be created and linked to a Milestone (or Sprint) and define tasks that should be completed by the end of the sprint. Lastly, Github Wiki shall be used as a replacement for Notion's note taking capabilities, serving as a convenient place to document work on the project.
+
+\subsection{Updated Timetable}
+\label{sec:timetablev2}
+
+In the following updated schedule, we present a more ambitious project plan which aims to complete an implementation of \cite{SpeedStacking} before the start of Easter. This timetable will be adjusted accordingly based on our sprint reviews, and any adjustments will be made known to the project supervisor. 
+
+\begin{table}[H]
+\centering
+\caption{Updated Project Plan}
+\begin{tabular}{p{0.2\linewidth}p{0.45\linewidth}p{0.25\linewidth}}
+\toprule
+\bf Sprint & \bf Main Task & \bf Goal \\ 
+\midrule
+0 (T1 W9-10)
+& Complete basic implementation of CDS94 (WI \& WH)
+& - \\\addlinespace[\rowheight]
+\sout{1 (Christmas)}
+& \sout{Set up security tests and benchmark tests. Study \cite{StackingSigmas}.}
+& \xout{-} \\\addlinespace[\rowheight]
+\sout{2 (Christmas)}
+& \sout{Continue from previous sprint. Attempt basic implementation of SS.}
+& \sout{Complete benchmarks for CDS94 and collect data.} \\\addlinespace[\rowheight]
+3 (T2 W1-2)
+& \sout{Implementation of SS compiler. Update benchmark tests if necessary.} Tidy up CDS tests and documentation. Benchmark tests. 
+& \xout{-} Complete benchmarks for CDS94 and collect data \\\addlinespace[\rowheight]
+4 (T2 W3-4)
+& \sout{Implement final features of SS compiler. Study \cite{SpeedStacking}.} Begin implementation of SS compiler. Update benchmark tests if necessary.
+& Complete implementation of SS. \\\addlinespace[\rowheight]
+5 (T2 W5-6)
+& Benchmark SS compiler and organise data collected for final presentation. Attempt basic implementation of \cite{SpeedStacking}.
+& Able to explain concepts in \cite{SpeedStacking} to project supervisor. \\\addlinespace[\rowheight]
+6 (T2 W7-8)
+& Preparation for final presentation. Continue with \cite{SpeedStacking}.
+& Final Presentation. \\\addlinespace[\rowheight]
+7 (T2 W9-10)
+& Complete implementation of \cite{SpeedStacking}.
+& Benchmark \cite{SpeedStacking} and collect data. \\\addlinespace[\rowheight]
+Easter Break
+& Write up of final report alongside exam revision.
+& Proof read and check report. \\\addlinespace[\rowheight]
+T3 W1-2
+& -
+& Submit final report. \\
+\bottomrule
+\end{tabular}
+\label{table:timetablev2}
+\end{table}
+
+\subsection{Risk Management Plan}
+In this section we highlight the dependencies of the project and present potential risks and our plan to mitigate such risks:
+\begin{itemize}
+    \item This project relies on existing implementations of cryptographic protocols; before using any of them, a thorough check should be made to ensure that we are not violating any license agreements.
+    \item The benchmark tests should not be resource intensive and working on the department's machines should be sufficient in the worst case. Rust has also been verified to work on the department's machines. In case a different version of Rust is required, a request to the department will be made to install it. 
+    \item Understanding the literature may require more time than expected. In our case, covering \cite{CDS94} before \cite{StackingSigmas} was helpful in familiarising ourselves with cryptographic concepts surrounding zero-knowledge. This is also why not all research for the project has been done yet. 
+    \begin{itemize}
+        \item Currently, we are confident that we can complete the SS compiler. However, if this is not complete before the final presentation, then we will only present the performance of CDS94 and \cite{MHAStackSig}.
+        \item In the case that our implementation of SS only completes by Week 6, we will not implement \cite{SpeedStacking} and instead prioritise our benchmarks for SS and collecting relevant data.
+    \end{itemize}
+    \item Proper version control practices will be crucial in ensuring that we can continue work on a different machine if our primary computer were to malfunction.
+\end{itemize}
+
+\subsection{Legal, social, ethical and professional issues}
+
+For the next 6 months, work on the project will remain private, and made available only to direct stakeholders. That said, there is a chance that our work may be made public and published in the future, and users could accidentally or willfully misuse our program. As such, we currently intend to host the program publicly on Github under the GNU General Public License v3 (GPLv3), which is a free, copyleft license for software \cite{GPLv3}. More research will be done to ascertain if this is the most appropriate license for the project. Moreover, the program may not be ready for production the moment it is published; in such a case, a disclaimer will be made warning potential users.
 

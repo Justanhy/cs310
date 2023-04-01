@@ -24,30 +24,67 @@
 \usepackage{csquotes}
 \usepackage{booktabs}
 \usepackage[most]{tcolorbox}
+\usepackage{ulem}
+\usepackage{listings}
+\lstset{
+    framerule=1pt,
+    frame=tb,
+    emphstyle={\small\ttfamily\bfseries\color{Orange}},
+    numbers=left,
+    numberstyle= \tiny\color{black},
+    basicstyle = \small\ttfamily,
+    keywordstyle    = \bfseries\color{BrickRed},
+    identifierstyle = \bfseries\color{black},
+    stringstyle     = \bfseries\color{ForestGreen},
+    commentstyle    = \bfseries\color{Violet},
+    breaklines      =   true,
+    columns         =   fixed,
+    basewidth       =   .5em,
+    backgroundcolor=\color{Gray!5},
+    tabsize=2,
+    showspaces=false,
+    showstringspaces=false,
+}
 \newtcolorbox[auto counter]{problem}[2][]{%
     enhanced,
-    breakable,
-    width=\linewidth/2,
+    % breakable,
     colback=white,
     colbacktitle=white,
     coltitle=black,
-    fonttitle=\bfseries,
     boxrule=.6pt,
     titlerule=.2pt,
     toptitle=3pt,
+    % lefttitle=1pt,
+    % righttitle=1pt,
     bottomtitle=3pt,
     title={#2}, %Problem~\thetcbcounter
     #1
 }
+\newtcolorbox[auto counter]{protocol}[2][]{%
+    enhanced,
+    % breakable,
+    colback=white,
+    colbacktitle=white,
+    coltitle=black,
+    boxrule=.6pt,
+    titlerule=.2pt,
+    toptitle=3pt,
+    % lefttitle=1pt,
+    % righttitle=1pt,
+    bottomtitle=3pt,
+    title={\textbf{Protocol~\thetcbcounter}. #2}, %
+    #1
+}
+
 \graphicspath{{./assets/}}
 \usepackage[style=alphabetic, sorting=anyvt]{biblatex}
 \addbibresource{../common/ref.bib}
 
 \hypersetup{
 	colorlinks=true,
-	linkcolor=black,
-	urlcolor=black,
-	citecolor=black
+	linkcolor=Brown,
+	urlcolor=blue,
+	citecolor=Blue,
 }
 
 \setlength{\parindent}{0mm}
@@ -70,12 +107,16 @@
 \newcommand{\Z}[0]{\mathbb{Z}}
 \newcommand{\F}[0]{\mathbb{F}}
 \newcommand{\G}[0]{\mathbb{G}}
-\newcommand{\randselect}[0]{\xleftarrow{\text{\scriptsize R}}}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 
 \newcommand{\samplefrom}[0]{\xleftarrow{\$}}
+\newcommand{\setwith}[1]{\{#1\}}
+\newcommand{\randselect}[0]{\samplefrom_s}
 \newcommand{\st}{\ \middle\vert\ }
 \newcommand{\View}{\text{View}}
-\newcommand{\ViewPV}{\View_V(P(x),V(x))}
+\newcommand{\ViewPV}{\View_V(P(x,w),V(x))}
+\newcommand{\verify}{\overset {?} {=}}
+% Tables
+\newcommand{\rowheight}{0.7em}

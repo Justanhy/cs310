@@ -1,4 +1,18 @@
-\chapter{Implementation}
+\section{Implementation}
 \label{ch:implementation}
 
 In this chapter, we describe the implementation of the design we described in \Cref{ch:design}. You should \textbf{not} describe every line of code in your implementation. Instead, you should focus on the interesting aspects of the implementation: that is, the most challenging parts that would not be obvious to an average Computer Scientist. Include diagrams, short code snippets, etc. for illustration. 
+
+\begin{enumerate}
+    \item Translating protocol description from math and words into code.
+    \begin{enumerate}
+        \item Difficult because it is not a 1-1 mapping
+        \item Need to think about efficiency and speed
+        \item Even after that, you may make mistakes in the implementation and debugging becomes difficult because you have to conduct static analysis to understand what has gone wrong. For example, in 1 case I didn't realise that I unknowingly passed the same vector into two functions that were supposed to receive two different vectors. Really requires understanding ....
+    \end{enumerate}
+    \item Debugging 
+    \begin{enumerate}
+        \item Even when implementing code according to the description of the protocol; there are times when it still doesn't work.
+        \item A unique way of debugging where static analysis is the only reasonable way
+    \end{enumerate}
+\end{enumerate}

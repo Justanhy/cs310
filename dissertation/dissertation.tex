@@ -1,4 +1,4 @@
-\documentclass[a4paper,fleqn,twoside,12pt]{report}
+\documentclass[a4paper,fleqn,11pt]{article} %report
 
 %%%%%%%%%%%%%%%%%%%%
 
@@ -14,11 +14,14 @@
 
 \makeatletter
 \fancypagestyle{plain}{
-	\fancyhf{}
-	\fancyhead[LE]{\thepage}
-	\fancyhead[RE]{\textit{\@author}}
-	\fancyhead[RO]{\thepage}
-	\fancyhead[LO]{\textit{\@title}}
+    \fancyhf{}
+    % 	Settings for twoside document
+    % 	\fancyhead[LE]{\thepage}
+    % 	\fancyhead[RE]{\textit{\@author}}
+    % 	\fancyhead[RO]{\thepage}
+    % 	\fancyhead[LO]{\textit{\@title}}
+    \fancyhead[R]{\thepage}
+    \fancyhead[L]{\textit{\@title}}
 }
 \makeatother
 
@@ -30,9 +33,13 @@
 
 \pagestyle{plain}
 
+\newpage
 \input{abstract.tex}
 
+\newpage
 \tableofcontents
+
+\newpage
 
 \input{introduction.tex}
 \input{background.tex}
