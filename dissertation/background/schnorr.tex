@@ -1,0 +1,74 @@
+\subsection{Schnorr's Identification Protocol}\label{sec:schnorr}
+There are two parties in an \textit{identification scheme}, the prover $P$ and the verifier $V$, and the objective of the protocol is for the prover to convince the verifier that they are who they claim to be. In other words, $V$ should be convinced that $P$ knows the private key that corresponds to the public key of $P$. A familiar example is the standard protocol of password authentication.
+
+\textbf{Schnorr's protocol} \cite{Schnorr} is an identification scheme where $P$ proves knowledge of the discrete log $w$ of a group element $H \in \G$, where $H = w \cdot G$ for some generator $G \in \G$. $(\G, +)$ is a finite abelian group with $+$ as the binary operator\footnote{We have chosen to define $\G$ with the $+$ operator because our implementation uses elliptic curves which are finite abelian groups over addition. The discrete log can be defined equivalently with multiplication like so: $h = g^w$}. 
+This protocol relies on the discrete log assumption \cite{Diffie1976NewDI} -- the assumption states that finding $w$ given only $H$ and $G$ is \textit{currently} computationally infeasible, assuming that $\G$ is a sufficiently large group. Conversely, proving that $H = w \cdot G$ given $w$ and $G$ can be computed efficiently. 
+
+In our implementation, we plan to use the Ristretto group \cite{ristretto_web}: a construction of a prime order group from a family of elliptic curves known as Edwards curves \cite{Edwards2007}. 
+
+\begin{definition}[Schnorr's Protocol \cite{Schnorr}]
+Let $\G = E(\F_q)$, where $E$ is an elliptic curve over the finite field $\F_q$. Suppose that both the prover $P$ and verifier $V$ agree on $E$ and $\F_q$, then let $H \in E(\F_q)$ be the public key that corresponds to the private key $w$ such that $H = w \cdot G$. The prover convinces the verifier that they have knowledge of the private key by executing the protocol defined in Figure \ref{prot:schnorr}.
+
+\begin{figure}[h]
+    \centering
+    \begin{protocol}[]{Schnorr's protocol. Public information: $\G = E(\F_q),\ H \in \G$. Statement to prove: $H = w \cdot G$} 
+       \vspace{-0.5cm}
+       \begin{align*}
+           &\text{Prover}(w_p)& 
+           &&
+           &\text{Verifier}& 
+           \\
+           &r \samplefrom \F_q,\ \mathcal A = r \cdot G&
+           &\overset  {\mathcal A} {\xrightarrow{\hspace{3cm}}}&
+           && 
+           \\
+           &&
+           &&
+           &c \samplefrom \F_q&
+           \\
+           &&
+           &\overset c {\xleftarrow{\hspace{3cm}}}&
+           &&
+           \\
+           &z \leftarrow cw_p + r&
+           &&
+           && 
+           \\
+           &&
+           &\overset {z} {\xrightarrow{\hspace{3cm}}}&
+           &z \cdot G \verify \mathcal A + c \cdot H&
+       \end{align*}
+    \end{protocol}
+   \caption{Communication between Prover and Verifier in Schnorr's protocol. Evaluating the final equation, we can easily see that $V$ accepts if and only if $w = w_P$.
+    \[
+    z \cdot G = \mathcal A + c \cdot H \iff
+    r \cdot G + c \cdot w_P \cdot G  = r \cdot G + c \cdot w \cdot G \iff
+    w  =  w_P
+    \]
+    }
+   \label{prot:schnorr}
+\end{figure}
+
+\end{definition}
+
+
+
+\textbf{A simulator for Schnorr's protocol.} From our definition of a Zero Knowledge protocol in Definition \ref{def:zeroknowledge}, we shared that every zero knowledge proof or argument system has a PPT algorithm called a simulator. We can construct a simulator for Schnorr's protocol by running it "in reverse" shown in Figure \ref{fig:schnorr-sim}.
+
+\begin{figure}[h]
+    \centering
+    \begin{problem}[width=\linewidth/2]{Let our simulator be $S(H)$}
+        $z \samplefrom \F_q$ 
+        
+        $c \samplefrom \F_q$
+        
+        $\mathcal A = z \cdot G - c \cdot H$
+        \tcblower
+        \textbf{output} $(\mathcal A,c,z)$
+    \end{problem}
+    \caption{A Simulator for Schnorr}
+    \label{fig:schnorr-sim}
+\end{figure}
+
+Since $z$ and $c$ are both chosen randomly, the resulting $\mathcal A$ is also random, and our output will have the same distribution as the distribution over transcripts in an actual interaction.
+

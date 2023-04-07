@@ -4,7 +4,7 @@
 \subsection{Notation}
 Throughout this paper, we use $\lambda$ to denote the computational security parameter and $\kappa$ to denote the statistical security parameter. Computational security refers to a cryptographic system's security against a computationally bounded adversary, while statistical security refers to security that is not dependent on the computational power of the adversary but instead on the security that negligible statistical probability provides.
 
-We denote by $x \samplefrom \mathcal D$ the sampling of "$x$" from the distribution "$\mathcal D$", and $\verify$ means a boolean assertion of equality on the left-hand side and right-hand side of the symbol.
+We denote by $x \samplefrom \mathcal D$ the sampling of "$x$" from the distribution "$\mathcal D$", and $\verify$ means a boolean assertion of equality on the left-hand side and right-hand side of the symbol. Additionally, we use $\circ$ to indicate the concatenation of bits ($0000 \circ 1111 = 00001111$).
 
 % We denote by $x \randselect \mathcal D$ the process of sampling "$x$" fro the distribution "$\mathcal D$" using pseudorandom coins derived from a pseudo-random generator (PRG) applied to the seed "$s$". 
 
@@ -13,6 +13,7 @@ We denote by $x \samplefrom \mathcal D$ the sampling of "$x$" from the distribut
 \input{dissertation/background/sigma}
 
 % CDS %
+\input{dissertation/background/schnorr}
 \input{dissertation/background/secret-sharing}
 \input{dissertation/background/cds-compiler}
 
@@ -20,9 +21,12 @@ We denote by $x \samplefrom \mathcal D$ the sampling of "$x$" from the distribut
 % Partially Binding Vector Commitment from Discrete Log
 \input{dissertation/background/comm_scheme.tex}
 % Section on stacking sigmas - talk about how stacking works
+\input{dissertation/background/stackable}
 
 % Speed Stacking %
 \input{dissertation/background/homomorphisms}
 % section on compressed sigma protocols (compression mechanism)
+\input{dissertation/background/compressed_sigma}
 % section on speed stacking compiler 
+\input{dissertation/background/speed-stacker}
 

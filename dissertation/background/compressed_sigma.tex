@@ -1,0 +1,31 @@
+\subsection{Compressed $\Sigma$-protocols are stackable}
+\begin{protocol}[]{Base $\Sigma$-protocol $\Pi_0$ for the relation 
+$$\mathcal R_{\text{compressed}} = \{(g \in \G^N, P \in \G, y \in G_T; \mathbf{x} \in \Z_q^N): P = \mathbf{g^x}, y = f(\mathbf{x})\}$$ introduced in \cite{attema}} 
+   \vspace{-0.5cm}
+   \begin{align*}
+       &\text{Prover}& 
+       &&
+       &\text{Verifier}& 
+       \\
+       &r \samplefrom \Z_q^N,\ t = f(\mathbf{r}),\ T = \mathbf{g^r}&
+       &\overset  {t, T} {\xrightarrow{\hspace{3cm}}}&
+       && 
+       \\
+       &&
+       &&
+       &c \samplefrom \Z_q&
+       \\
+       &&
+       &\overset c {\xleftarrow{\hspace{3cm}}}&
+       &&
+       \\
+       &\mathbf{z} \leftarrow c\mathbf{x} + \mathbf{r}&
+       &&
+       &&
+       \\
+       &&
+       &\overset {\mathbf{z}} {\xrightarrow{\hspace{3cm}}}&
+       &f(\mathbf{z}) \verify cy + t, \ \mathbf{g^z} \verify TP^c&
+   \end{align*}
+   \label{prot:base-compressed}
+\end{protocol}

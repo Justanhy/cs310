@@ -1,5 +1,5 @@
 \subsection{$\Sigma$-protocols}
-\begin{definition}[$\Sigma$-Protocol]
+\begin{definition}[$\Sigma$-Protocol \cite{StackingSigmas}]
 Let $\mathcal R$ be an NP relation. A $\Sigma$-protocol $\Pi = (A, Z, \phi)$ for $\mathcal R$ is a 3-round protocol between a prover algorithm $P$ and a verifier algorithm $V$. The protocol consists of a tuple of probabilistic polynomial time algorithms $(A, Z, \phi)$ with the following interfaces:
 \begin{itemize}
     \item $a \leftarrow A(x,w; r^p)$ : Given statement $x$, witness $w \in w(x)$, and prover randomness $r^p$ as input; output the first message $a$ that $P$ sends to $V$ in the first round. 
@@ -23,86 +23,12 @@ A $\Sigma$-protocol has the following properties:
 \end{enumerate}
 \end{definition}
 
-\begin{definition}[Witness Indistinguishable (WI)]
+\begin{definition}[Witness Indistinguishable (WI)]\label{def:wi}
 A $\Sigma$-protocol is witness indistinguishable over $\mathcal R$ if for any $V'$, any large enough input $x$, any $w_1,w_2 \in w(x)$, and for any fixed challenge $c^*$, the distribution over transcripts in the form $(a_1, c, z_1)$ and $(a_2,c,z_2)$ are indistinguishable, where $a_i \leftarrow A(x,w_i;r^p)$ and $z_i \leftarrow Z(x,w_i, c^*; r^p)$ for $i \in \{1,2\}$. This means that the prover reveals no information about which are the active clauses. 
 \end{definition}
 
-\begin{definition}[Informal definition of Witness Hiding (WH)]
+\begin{definition}[Informal definition of Witness Hiding (WH)]\label{def:wh}
 For any $x$ that is generated with a certain probability distribution by a generator $\mathcal G$ which outputs pairs $(x,w) \in \mathcal R$, a $\Sigma$-protocol is witness hiding over $\mathcal G$, if it does not help even a cheating verifier to compute a witness for $x$ with non-negligible probability. Refer to \cite{10.1145/100216.100272} for details. WH is a weaker property than general zero-knowledge, as it only asserts that the verifier cannot learn about the witness (not asserting anything about other information). That said, it can replace zero-knowledge in many protocol constructions, as it is in most $\Sigma$-protocols.
 
 \end{definition}
 
-\subsection{Schnorr's Identification Protocol}
-There are two parties in an \textit{identification scheme}, the prover $P$ and the verifier $V$, and the objective of the protocol is for the prover to convince the verifier that they are who they claim to be. More precisely, $V$ is convinced that $P$ knows the private key that corresponds to the public key of $P$. A familiar example is the standard protocol of password authentication.
-
-Schnorr's protocol \cite{Schnorr} is an identification scheme where $P$ proves knowledge of the discrete log $x$ of a group element $H \in \G$, where $H = x \cdot G$ for some generator $G \in \G$. $(\G, +)$ is a finite abelian group with $+$ as the binary operator\footnote{We have chosen to define $\G$ with the $+$ operator because our implementation uses elliptic curves which are finite abelian groups over addition. The discrete log can be defined equivalently with multiplication like so: $h = g^x$}. The protocol relies on the assumption that finding $x$ given only $H$ and $G$ is computationally difficult -- this is not always the case. The hardness of finding the discrete log depends on the choice of group $\G$ (cite some resource or elaborate). Conversely, proving that $H = x \cdot G$ given $x$ and $G$ can be computed efficiently. 
-
-In our implementation, we plan to use the Ristretto group \cite{ristretto_web}: a construction of a prime order group from a family of elliptic curves known as Edwards curves \cite{Edwards2007}. 
-
-\begin{definition}[Schnorr's Protocol \cite{Schnorr}]
-Let $\G = E(\F_q)$, where $E$ is an elliptic curve over the finite field $\F_q$. Suppose that both the prover $P$ and verifier $V$ agree on $E$ and $\F_q$, then let $H \in E(\F_q)$ be the public key that corresponds to the private key $x$ such that $H = x \cdot G$. The prover convinces the verifier that they have knowledge of the private key by doing the following:
-
-\begin{enumerate}
-    \item $P$ generates random $r \in \F_q$, and computes the point $\mathcal A = r \cdot G$. $P$ sends the point $\mathcal A$ to $V$.
-    \item $V$ computes a random $c \in \F_q$, and sends $c$ to the $P$.
-    \item $P$ computes $z = (r + c \cdot x_P) \mod n$, and sends $z$ to the $V$.x
-    \item $V$ checks that $z \cdot G = \mathcal A + c \cdot H$.
-\end{enumerate} 
-
-Evaluating the final equation, we can easily see that $V$ accepts if and only if $x = x_P$. 
-
-\begin{equation*}
-    z \cdot G = \mathcal A + c \cdot H \iff
-    r \cdot G + c \cdot x_P \cdot G  = r \cdot G + c \cdot x \cdot G \iff
-    x  =  x_P
-\end{equation*}
-\end{definition}
-
-
-\textbf{A simulator for Schnorr's protocol.} We construct a simulator for Schnorr's protocol by running it "in reverse":
-
-\begin{center}
-    \begin{problem}[width=\linewidth/2]{Let our simulator be $S(H)$}
-    $z \samplefrom \F_q$ 
-    
-    $c \samplefrom \F_q$
-    
-    $\mathcal A = z \cdot G - c \cdot H$
-    \tcblower
-    \textbf{output} $(\mathcal A,c,z)$
-    \end{problem}
-\end{center}
-
-Since $z$ and $c$ are both chosen randomly, the resulting $\mathcal A$ is also random, and our output will have the same distribution as the distribution over transcripts in an actual interaction.
-
-\subsection{Compressed $\Sigma$-protocols are stackable}
-\begin{protocol}[]{Base $\Sigma$-protocol $\Pi_0$ for the relation 
-$$\mathcal R_{\text{compressed}} = \{(g \in \G^N, P \in \G, y \in G_T; \mathbf{x} \in \Z_q^N): P = \mathbf{g^x}, y = f(\mathbf{x})\}$$ introduced in \cite{attema}} 
-   \vspace{-0.5cm}
-   \begin{align*}
-       &\text{Prover}& 
-       &&
-       &\text{Verifier}& 
-       \\
-       &r \samplefrom \Z_q^N,\ t = f(\mathbf{r}),\ T = \mathbf{g^r}&
-       &\overset  {t, T} {\xrightarrow{\hspace{3cm}}}&
-       && 
-       \\
-       &&
-       &&
-       &c \samplefrom \Z_q&
-       \\
-       &&
-       &\overset c {\xleftarrow{\hspace{3cm}}}&
-       &&
-       \\
-       &\mathbf{z} \leftarrow c\mathbf{x} + \mathbf{r}&
-       &&
-       &&
-       \\
-       &&
-       &\overset {\mathbf{z}} {\xrightarrow{\hspace{3cm}}}&
-       &f(\mathbf{z}) \verify cy + t, \ \mathbf{g^z} \verify TP^c&
-   \end{align*}
-   \label{prot:base-compressed}
-\end{protocol}
