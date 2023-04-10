@@ -1,41 +1,75 @@
-\subsection{Partially-Binding Vector Commitments}
+% !TeX root = ../dissertation.tex
+\subsubsection{Partially-Binding Vector Commitments}
+In Section 5 of \cite{StackingSigmas}, Goel {\em{et al}} introduce the concept of partially-binding vector commitment schemes. 
+These commitment schemes allow a Prover to make a commitment to a vector of length $l$ with $t$ binding positions; 
+the remaining positions (indexes) in the vector are equivocable. 
+Here, we recall the definition of these commitment schemes and refer interested readers to Figure 2 of \cite{StackingSigmas} for the construction of the general $t$-out-of-$l$ 
+scheme. 
 
-\subsubsection{A 1-out-of-2 Partially-Binding Vector Commitment}
+\subsubsection{Half-Bindings \& Q-Bindings}
+In this work, we make use of the generic 1-out-of-$2^q$ construction provided in Section 5.3 of \cite{StackingSigmas} for our implementation of the Stacking Sigmas compiler. We use this 
+particular construction as it allows us to yield commitments that are logarthmic in size (in bytes) to the original vector of messages. 
+A core ingredient in this construction is a 1-out-of-2 partially-binding vector commitment scheme, which is used recursively to form a \textit{binary} "tree of commitments". 
+For brevity, we refer to the generic construction as "q-bindings" and the 1-out-of-2 construction as "half-bindings".
+The leaves of this tree are the original messages in our vector; intermediate nodes are the resulting commitments to the nodes' children using half-bindings. 
+Essentially, intermediate commitments are regarded as messages as well, and are commited to recursively until there is only 1 root node -- the final commitment. 
 
-\subsubsection{1-out-of-$2^q$ Partially-Binding Vector Commitments}
+While the source material provides the general $t$-out-of-$l$ construction for partially-binding vector commitments, it does not explicitly provide that for half-bindings. 
+In Figure \ref{fig:half-binding}, we provide the construction for half-bindings derived from the general $t$-out-of-$l$ construction. 
+The proof of correctness for this construction is trivial as it can be easily seen to be a specific case of the general construction when $t = 1$ and $l = 2$. 
 
+\begin{figure}
+  \centering
+  \begin{construction}[]
+    \begin{minipage}{0.45\linewidth}
+      \underline{$pp \leftarrow$ Setup$(1^\lambda)$:}
+      \begin{enumerate}
+        \item $\G \leftarrow $ GenGroup$(1^\lambda)$; $g_0, h \samplefrom \G$
+        \item $\textbf{return } pp \leftarrow (\G, g_0, h)$
+      \end{enumerate}  
+    \end{minipage}
+    \begin{minipage}{0.5\linewidth}
+      \underline{$(com, aux) \leftarrow$ EquivCom$(pp, ek, m_1, m_2)$:}
+      \begin{enumerate}
+        \item Extract $ck$ from $ek$
+        \item $r \samplefrom \Z_{|\G|}^2$
+        \item com $\leftarrow$ BindCom$(pp,ck,m_1,m_2,r)$
+        \item \textbf{return} $(\text{com}, r)$
+      \end{enumerate}  
+    \end{minipage}
 
+    \underline{$(ck, ek) \leftarrow$ Gen$(pp, B)$:}
+    \begin{enumerate}
+      \item Let $E = \{1,2\} \setminus B$ be the set of equivocal indexes. $|B| = 1$.
+      \item Generate trapdoor $td$ for $i \in E: td \samplefrom \Z_{|\G|}, g_i \leftarrow h \cdot r_i$
+      \item Interpolate the first element: $g_1 \begin{cases}
+       g_2 - g_0 & \text{if $2 \in E$} \\
+       g_1 & \text{if $1 \in E$}
+      \end{cases}$
+      \item $ck \leftarrow g_1$
+      \item $ek \leftarrow (B, td, ck)$
+      \item \textbf{return} $(ck, ek)$
+    \end{enumerate}
 
-% \newcommand{\primefield}[0]{\Z_{|\G|}}
+    \underline{$com \leftarrow$ BindCom$(pp,ck, m_1,m_2, r)$:}
+    \begin{enumerate}
+      \item Interpolate $g_2$: $g_2 = g_1 + g_0$
+      \item $(r_1, r_2) \leftarrow r$
+      \item Commit individually $\textbf{for} j \in \{1,2\}: com_j \leftarrow h\cdot r_j + g_j \cdot m_j \in \G$
+      \item \textbf{return} $(com_1,com_2)$
+    \end{enumerate}
 
-% Let $\primefield$ be a prime field (defined additively). Let $\mathcal X \subseteq \primefield$ and for $i \in \mathcal X$ we define 
-% $$
-% L_{(\mathcal X, i)}(j) := \prod_{m \in \mathcal X, m \ne i} \frac{j - m}{i - m} \in \primefield[j]
-% $$
+    \underline{$r \leftarrow$ Equiv$(pp, ek, m_1, m_2, m_1', m_2', aux)$:}
+    \begin{enumerate}
+      \item Extract $B$ and $td$ from $ek$; Let $E = \{1,2\} \setminus B$.
+      \item Parse $aux = (r_1, r_2) \in \Z_{|\G|}^2$
+      \item Interpolate $g_2 = g_1 + g_0$
+      \item for $i \in B: r'_i \leftarrow r_i$
+      \item for $i \in E: r'_i \leftarrow r_i - td \cdot (m_i' - m_i)$
+      \item \textbf{return} $r' \leftarrow (r_1', r_2')$
+    \end{enumerate}
+  \end{construction}
+  \caption{Construction of a 1-out-of-2 partially-binding vector commitment scheme.}
+  \label{fig:half-binding}
+\end{figure}
 
-% To interpolate, 
-
-% $$
-% \textbf{for } j \in [l-t]: g_j \leftarrow \sum_{i \in \mathcal X} g_i \cdot L(\mathcal X, i)(j)
-% $$
-
-% This will enable us to construct the unique degree $|\mathcal X| - 1$ polynomial for which 
-% $$
-% \forall x \in \mathcal X \setminus \setwith{j}: L_{(\mathcal X, j)} (x) = 0 \land L_{(\mathcal X, j)}(j) = 1
-% $$
-
-% \paragraph{$(ck, ek) \leftarrow Gen(pp, B)$.} Given the public parameters $pp$ and the set of binding indexes $B$, output the commitment key and equivocation key $ck$ and $ek$. 
-% \begin{enumerate}
-%     \item Let $E = [l] \setminus B$ be the set of equivocal indexes. 
-%     \item Generate trapdoors for $l - t$ indexes: \textbf{for} $i \in E: y_i \samplefrom \Z_{|G|}, g_i \leftarrow h \cdot y_i$
-%     \begin{itemize}
-%         \item Sample $y_i$ randomly from our prime-ordered field. 
-%         \item Obtain $g_i$ by multiplying $h$ with $y_i$
-%     \end{itemize}
-%     \item Interpolate the first $[l-t]$ elements: \textbf{for} $j \in [l-t]: g_j \leftarrow \prod_{i\in E\cup \setwith{0}} g_j \cdot L_{(E\cup \setwith{0}, i)}(j)$
-%     \item Let $ck$ be the tuple $(g_1, \ldots, g_{l-t})$
-%     \item Let $ek$ be the tuple $(g_1, \ldots, g_{l-t}, \setwith{y_i}_{i \in E}, E, B)$. Note that the $ek$ should be kept secret to the entity that calls the $Gen$ function.
-%     \item \textbf{return} $(ck, ek)$
-% \end{enumerate}
-
-% \paragraph{$(com, aux) \leftarrow EquivCom(pp, ek, \mathbf{v}; r)$.} Given the public parameter $pp$, equivocation key $ek$, $l$-tuple $\mathbf{v}$, and randomness $r$: output a partially-binding commitment $com$ and auxiliary equivocation information $aux$.

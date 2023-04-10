@@ -1,5 +1,9 @@
-
-\usepackage[textwidth=450pt]{geometry}
+% !TeX root = ../dissertation/dissertation.tex
+\usepackage[
+    textwidth=450pt, 
+    textheight=700pt, 
+    margins={1in,1in,1in,1in}
+    ]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[UKenglish]{babel}
 \usepackage[UKenglish]{isodate}
@@ -26,6 +30,9 @@
 \usepackage[most]{tcolorbox}
 % \usepackage{ulem}
 \usepackage{listings}
+\usepackage[style=alphabetic, sorting=anyvt]{biblatex}
+\addbibresource{../common/ref.bib}
+
 \lstset{
     framerule=1pt,
     frame=tb,
@@ -62,7 +69,7 @@
 }
 \newtcolorbox[auto counter]{protocol}[2][]{%
     enhanced,
-    % breakable,
+    breakable,
     colback=white,
     colbacktitle=white,
     coltitle=black,
@@ -75,10 +82,17 @@
     title={\textbf{Protocol~\thetcbcounter}. #2}, %
     #1
 }
+\newtcolorbox[]{construction}[1][]{%
+    enhanced,
+    breakable,
+    colback=white,
+    colbacktitle=white,
+    coltitle=black,
+    boxrule=.6pt,
+    #1
+}
 
 \graphicspath{{./assets/}}
-\usepackage[style=alphabetic, sorting=anyvt]{biblatex}
-\addbibresource{../common/ref.bib}
 
 \hypersetup{
 	colorlinks=true,

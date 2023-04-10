@@ -1,5 +1,8 @@
 \section{Background}
 \label{sec:background}
+Before discussing our implementation and results, we introduce the necessary background material for this project. 
+We will first formalise the notation we use in this report, and highlight broad concepts that are relevant to the entire project. 
+Afterwhich, we split the remaining section into 3 subsections: each for one of the compilers we implement \cite{CDS94, StackingSigmas, SpeedStacking}.
 
 \subsection{Notation}
 Throughout this paper, we use $\lambda$ to denote the computational security parameter and $\kappa$ to denote the statistical security parameter. Computational security refers to a cryptographic system's security against a computationally bounded adversary, while statistical security refers to security that is not dependent on the computational power of the adversary but instead on the security that negligible statistical probability provides.
@@ -8,25 +11,28 @@ We denote by $x \samplefrom \mathcal D$ the sampling of "$x$" from the distribut
 
 % We denote by $x \randselect \mathcal D$ the process of sampling "$x$" fro the distribution "$\mathcal D$" using pseudorandom coins derived from a pseudo-random generator (PRG) applied to the seed "$s$". 
 
-\input{dissertation/background/disjunctive-zero-knowledge}
+\input{background/disjunctive-zero-knowledge.tex}
 
-\input{dissertation/background/sigma}
+\input{background/sigma.tex}
+\input{background/schnorr.tex}
 
 % CDS %
-\input{dissertation/background/schnorr}
-\input{dissertation/background/secret-sharing}
-\input{dissertation/background/cds-compiler}
+\subsection{CDS94}
+
+\input{background/secret-sharing.tex}
+\input{background/cds-compiler.tex}
 
 % Stacking Sigmas %
+\subsection{Stacking Sigmas}
 % Partially Binding Vector Commitment from Discrete Log
-\input{dissertation/background/comm_scheme.tex}
+\input{background/comm_scheme.tex}
 % Section on stacking sigmas - talk about how stacking works
-\input{dissertation/background/stackable}
+\input{background/stackable.tex}
 
 % Speed Stacking %
-\input{dissertation/background/homomorphisms}
+\input{background/homomorphisms.tex}
 % section on compressed sigma protocols (compression mechanism)
-\input{dissertation/background/compressed_sigma}
+\input{background/compressed_sigma.tex}
 % section on speed stacking compiler 
-\input{dissertation/background/speed-stacker}
+\input{background/speed-stacker.tex}
 

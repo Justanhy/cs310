@@ -1,144 +1,86 @@
+@inproceedings{10.1145/100216.100272,
+  author    = {Feige, U. and Shamir, A.},
+  title     = {Witness Indistinguishable and Witness Hiding Protocols},
+  year      = {1990},
+  isbn      = {0897913612},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/100216.100272},
+  doi       = {10.1145/100216.100272},
+  booktitle = {Proceedings of the Twenty-Second Annual ACM Symposium on Theory of Computing},
+  pages     = {416–426},
+  numpages  = {11},
+  location  = {Baltimore, Maryland, USA},
+  series    = {STOC '90}
+}
+
+@misc{AFL,
+  author = {Michal Zalewski},
+  title  = {American fuzzy lop},
+  year   = {2017},
+  note   = {Online; accessed November 27, 2022},
+  url    = {https://lcamtuf.coredump.cx/afl/}
+}
+
+@misc{AFL-Rust,
+  author = {Rust Fuzzing Authority},
+  title  = {afl.rs},
+  year   = {2022},
+  month  = {2},
+  note   = {Online; accessed November 27, 2022},
+  url    = {https://github.com/rust-fuzz/afl.rs}
+}
+
+@article{ARDITO2020100635,
+  title    = {rust-code-analysis: A Rust library to analyze and extract maintainability information from source codes},
+  journal  = {SoftwareX},
+  volume   = {12},
+  pages    = {100635},
+  year     = {2020},
+  issn     = {2352-7110},
+  doi      = {https://doi.org/10.1016/j.softx.2020.100635},
+  url      = {https://www.sciencedirect.com/science/article/pii/S2352711020303484},
+  author   = {Luca Ardito and Luca Barbato and Marco Castelluccio and Riccardo Coppola and Calixte Denizet and Sylvestre Ledru and Michele Valsesia},
+  keywords = {Algorithm, Software metrics, Software maintainability, Software quality},
+  abstract = {The literature proposes many software metrics for evaluating the source code non-functional properties, such as its complexity and maintainability. The literature also proposes several tools to compute those properties on source codes developed with many different software languages. However, the Rust language emergence has not been paired by the community’s effort in developing parsers and tools able to compute metrics for the Rust source code. Also, metrics tools often fall short in providing immediate means of comparing maintainability metrics between different algorithms or coding languages. We hence introduce rust-code-analysis, a Rust library that allows the extraction of a set of eleven maintainability metrics for ten different languages, including Rust. rust-code-analysis, through the Abstract Syntax Tree (AST) of a source file, allows the inspection of the code structure, analyzing source code metrics at different levels of granularity, and finding code syntax errors before compiling time. The tool also offers a command-line interface that allows exporting the results in different formats. The possibility of analyzing source codes written in different programming languages enables simple and systematic comparisons between the metrics produced from different empirical and large-scale analysis sources.}
+}
+
+@inproceedings{attema,
+  author    = {Attema, Thomas
+               and Cramer, Ronald
+               and Fehr, Serge},
+  editor    = {Malkin, Tal
+               and Peikert, Chris},
+  title     = {Compressing Proofs of k-Out-Of-n Partial Knowledge},
+  doi       = {10.1007/978-3-030-84259-8_3},
+  booktitle = {Advances in Cryptology -- CRYPTO 2021},
+  year      = {2021},
+  publisher = {Springer International Publishing},
+  address   = {Cham},
+  pages     = {65--91},
+  abstract  = {In a proof of partial knowledge, introduced by Cramer, Damg{\aa}rd and Schoenmakers (CRYPTO 1994), a prover knowing witnesses for some k-subset of n given public statements can convince the verifier of this claim without revealing which k-subset. Their solution combines {\$}{\$}{\backslash}varSigma {\$}{\$}$\Sigma$-protocol theory and linear secret sharing, and achieves linear communication complexity for general k, n. Especially the ``one-out-of-n'' case {\$}{\$}k=1{\$}{\$}k=1has seen myriad applications during the last decades, e.g., in electronic voting, ring signatures, and confidential transaction systems.},
+  isbn      = {978-3-030-84259-8}
+}
+
 @inproceedings{CD98,
-  title={Zero-Knowledge Proofs for Finite Field Arithmetic; or: Can Zero-Knowledge be for Free?},
-  author={Ronald Cramer and Ivan Damg{\aa}rd},
-  booktitle={CRYPTO},
-  year={1998}
+  title     = {Zero-Knowledge Proofs for Finite Field Arithmetic; or: Can Zero-Knowledge be for Free?},
+  author    = {Ronald Cramer and Ivan Damg{\aa}rd},
+  booktitle = {CRYPTO},
+  year      = {1998}
 }
 
 @inproceedings{CDS94,
-  title={Proofs of Partial Knowledge and Simplified Design of Witness Hiding Protocols},
-  author={Ronald Cramer and Ivan Damg{\aa}rd and Berry Schoenmakers},
-  booktitle={CRYPTO},
-  year={1994}
+  title     = {Proofs of Partial Knowledge and Simplified Design of Witness Hiding Protocols},
+  author    = {Ronald Cramer and Ivan Damg{\aa}rd and Berry Schoenmakers},
+  booktitle = {CRYPTO},
+  year      = {1994}
 }
 
-@misc{StackingSigmas,
-      author = {Aarushi Goel and Matthew Green and Mathias Hall-Andersen and Gabriel Kaptchuk},
-      title = {Stacking Sigmas: A Framework to Compose $\Sigma$-Protocols for Disjunctions},
-      howpublished = {Cryptology ePrint Archive, Paper 2021/422},
-      year = {2021},
-      note = {\url{https://eprint.iacr.org/2021/422}},
-      url = {https://eprint.iacr.org/2021/422}
-}
-
-@misc{MHAStackSig,
-    author = {Mathias Hall-Andersen},
-    title = {StackSig; Ring Signatures from Stacking},
-    year = {2021},
-    note = {Online; accessed October 25, 2022},
-    url = {https://github.com/rot256/research-stacksig}
-}
-
-@inproceedings{Schnorr,
-  title={Efficient Identification and Signatures for Smart Cards},
-  author={Claus-Peter Schnorr},
-  booktitle={CRYPTO},
-  year={1989},
-  url={https://link.springer.com/chapter/10.1007/0-387-34805-0_22}
-}
-
-@inproceedings{Guillou1988APZ,
-  title={A Practical Zero-Knowledge Protocol Fitted to Security Microprocessor Minimizing Both Transmission and Memory},
-  author={Louis C. Guillou and Jean-Jacques Quisquater},
-  booktitle={EUROCRYPT},
-  year={1988}
-}
-
-@misc{PAZK,
-    author = {Justin Thaler},
-    title = {Proofs, Arguments, and Zero-Knowledge},
-    year = {2022},
-    month = {6}, 
-    note = {\url{https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.pdf}},
-    url = {https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.pdf}
-}
-
-@misc{grouptheory,
-    title = {A Friendly Introduction to Group Theory},
-    author = {Jake Wellens},
-    note = {\url{https://math.mit.edu/~jwellens/Group\%20Theory\%20Forum.pdf}},
-    url = {https://math.mit.edu/~jwellens/Group\%20Theory\%20Forum.pdf}
-}
-
-@article{StackedGF,
-  title={Stacked Garbling for Disjunctive Zero-Knowledge Proofs},
-  author={David Heath and Vladimir Kolesnikov},
-  journal={IACR Cryptol. ePrint Arch.},
-  year={2020},
-  volume={2020},
-  pages={136}
-}
-
-@misc{SpeedStacking,
-      author = {Aarushi Goel and Mathias Hall-Andersen and Gabriel Kaptchuk and Nicholas Spooner},
-      title = {Speed-Stacking: Fast Sublinear Zero-Knowledge Proofs for Disjunctions},
-      howpublished = {Cryptology ePrint Archive, Paper 2022/1419},
-      year = {2022},
-      note = {\url{https://eprint.iacr.org/2022/1419}},
-      url = {https://eprint.iacr.org/2022/1419}
-}
-
-@misc{GPLv3,
-   author= {GNU},
-   year = {2007},
-   title = {The GNU General Public License v3.0 - GNU Project - Free Software Foundation},
-   note = {Online; accessed October 25, 2022}, 
-   url = {https://www.gnu.org/licenses/gpl-3.0.html},
-}
-
-@inproceedings{GMR85,
-author = {Goldwasser, S and Micali, S and Rackoff, C},
-title = {The Knowledge Complexity of Interactive Proof-Systems},
-year = {1985},
-isbn = {0897911512},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/22145.22178},
-doi = {10.1145/22145.22178},
-booktitle = {Proceedings of the Seventeenth Annual ACM Symposium on Theory of Computing},
-pages = {291–304},
-numpages = {14},
-location = {Providence, Rhode Island, USA},
-series = {STOC '85}
-}
-
-@techreport{irtf-cfrg-ristretto255-decaf448-04,
-    number =    {draft-irtf-cfrg-ristretto255-decaf448-04},
-    type =      {Internet-Draft},
-    institution =   {Internet Engineering Task Force},
-    publisher = {Internet Engineering Task Force},
-    note =      {Work in Progress},
-    url =       {https://datatracker.ietf.org/doc/draft-irtf-cfrg-ristretto255-decaf448/04/},
-        author =    {Henry de Valence and Jack Grigg and Mike Hamburg and Isis Lovecruft and George Tankersley and Filippo Valsorda},
-    title =     {{The ristretto255 and decaf448 Groups}},
-    pagetotal = 27,
-    year =      2022,
-    month =     oct,
-    day =       14,
-    abstract =  {This memo specifies two prime-order groups, ristretto255 and decaf448, suitable for safely implementing higher-level and complex cryptographic protocols. The ristretto255 group can be implemented using Curve25519, allowing existing Curve25519 implementations to be reused and extended to provide a prime-order group. Likewise, the decaf448 group can be implemented using edwards448.},
-}
-
-@misc{ristretto_web,
-   author = {Henry de Valence and Jack Grigg and Mike Hamburg and Isis Lovecruft and George Tankersley and Filippo Valsorda},
-   title = {Ristretto - The Ristretto Group},
-   note = {Online; accessed November 8, 2022},
-   url = {https://ristretto.group/ristretto.html},
-}
-
-@article{Edwards2007,
-   abstract = {The normal form x2 + y2 = a2+a 2x2y2 for elliptic curves simplifies formulas in the theory of elliptic curves and functions. Its principal advantage is that it allows the addition law, the group law on the elliptic curve, to be stated explicitly X = 1/a · xy′+x′y/1+xyx′y′, Y = 1/a · yy′-xx′/1-xyx′y′. The j-invariant of an elliptic curve determines 24 values of a for which the curve is equivalent to x2 + y2 = a2 + a2x2y 2, namely, the roots of (x8 + 14x4 + 1) 3 - j/16(x5 - x)4. The symmetry in x and y implies that the two transcendental functions x(t) and y(t) that parameterize x2 + y2 = a2 + a2x2y 2 in a natural way are essentially the same function, just as the parameterizing functions sin t and cos t of the circle are essentially the same function. Such a parameterizing function is given explicitly by a quotient of two simple theta series depending on a parameter τ in the upper half plane. © 2007 American Mathematical Society.},
-   author = {Harold M. Edwards},
-   doi = {10.1090/S0273-0979-07-01153-6},
-   issn = {0273-0979},
-   issue = {3},
-   journal = {Bulletin of the American Mathematical Society},
-   keywords = {Elliptic curves,Riemann surfaces of genus one,elliptic functions},
-   month = {7},
-   pages = {393-422},
-   title = {A normal form for elliptic curves},
-   volume = {44},
-   url = {https://www.ams.org/bull/2007-44-03/S0273-0979-07-01153-6/},
-   year = {2007},
+@misc{criterion,
+  author = {Brook Heisler},
+  title  = {criterion - crates.io: Rust Package Registry},
+  note   = {Online; accessed November 21, 2022},
+  url    = {https://crates.io/crates/criterion}
 }
 
 @inproceedings{DBLP:conf/focs/GoldreichMW86,
@@ -174,104 +116,162 @@ series = {STOC '85}
   bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@misc{criterion,
-   author = {Brook Heisler},
-   title = {criterion - crates.io: Rust Package Registry},
-   note = {Online; accessed November 21, 2022},
-   url = {https://crates.io/crates/criterion},
+@article{Diffie1976NewDI,
+  title   = {New Directions in Cryptography},
+  author  = {Whitfield Diffie and Martin E. Hellman},
+  journal = {Democratizing Cryptography},
+  year    = {1976}
 }
 
-@misc{Wikimedia:TDD,
-    author = {Xavier Pigeon},
-    title = {TDD Global Lifecycle},
-    year = {2015},
-    note = {Online; accessed November 27, 2022},
-    url = {https://commons.wikimedia.org/wiki/File:TDD_Global_Lifecycle.png}
+@article{Edwards2007,
+  abstract = {The normal form x2 + y2 = a2+a 2x2y2 for elliptic curves simplifies formulas in the theory of elliptic curves and functions. Its principal advantage is that it allows the addition law, the group law on the elliptic curve, to be stated explicitly X = 1/a · xy′+x′y/1+xyx′y′, Y = 1/a · yy′-xx′/1-xyx′y′. The j-invariant of an elliptic curve determines 24 values of a for which the curve is equivalent to x2 + y2 = a2 + a2x2y 2, namely, the roots of (x8 + 14x4 + 1) 3 - j/16(x5 - x)4. The symmetry in x and y implies that the two transcendental functions x(t) and y(t) that parameterize x2 + y2 = a2 + a2x2y 2 in a natural way are essentially the same function, just as the parameterizing functions sin t and cos t of the circle are essentially the same function. Such a parameterizing function is given explicitly by a quotient of two simple theta series depending on a parameter τ in the upper half plane. © 2007 American Mathematical Society.},
+  author   = {Harold M. Edwards},
+  doi      = {10.1090/S0273-0979-07-01153-6},
+  issn     = {0273-0979},
+  issue    = {3},
+  journal  = {Bulletin of the American Mathematical Society},
+  keywords = {Elliptic curves,Riemann surfaces of genus one,elliptic functions},
+  month    = {7},
+  pages    = {393-422},
+  title    = {A normal form for elliptic curves},
+  volume   = {44},
+  url      = {https://www.ams.org/bull/2007-44-03/S0273-0979-07-01153-6/},
+  year     = {2007}
 }
 
-@misc{OWASPv4.2,
-    author = {Elie Saad and Rick Mitchell},
-    title = {Web Security Testing Guide v4.2},
-    year = {2020},
-    note = {Online; accesed November 27, 2022},
-    url = {https://owasp.org/www-project-web-security-testing-guide/v42/}
+@inproceedings{GMR85,
+  author    = {Goldwasser, S and Micali, S and Rackoff, C},
+  title     = {The Knowledge Complexity of Interactive Proof-Systems},
+  year      = {1985},
+  isbn      = {0897911512},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/22145.22178},
+  doi       = {10.1145/22145.22178},
+  booktitle = {Proceedings of the Seventeenth Annual ACM Symposium on Theory of Computing},
+  pages     = {291–304},
+  numpages  = {14},
+  location  = {Providence, Rhode Island, USA},
+  series    = {STOC '85}
+}
+
+@misc{GPLv3,
+  author = {GNU},
+  year   = {2007},
+  title  = {The GNU General Public License v3.0 - GNU Project - Free Software Foundation},
+  note   = {Online; accessed October 25, 2022},
+  url    = {https://www.gnu.org/licenses/gpl-3.0.html}
+}
+
+@misc{grouptheory,
+  title  = {A Friendly Introduction to Group Theory},
+  author = {Jake Wellens},
+  note   = {\url{https://math.mit.edu/~jwellens/Group\%20Theory\%20Forum.pdf}},
+  url    = {https://math.mit.edu/~jwellens/Group\%20Theory\%20Forum.pdf}
+}
+
+@inproceedings{Guillou1988APZ,
+  title     = {A Practical Zero-Knowledge Protocol Fitted to Security Microprocessor Minimizing Both Transmission and Memory},
+  author    = {Louis C. Guillou and Jean-Jacques Quisquater},
+  booktitle = {EUROCRYPT},
+  year      = {1988}
+}
+
+@techreport{irtf-cfrg-ristretto255-decaf448-04,
+  number      = {draft-irtf-cfrg-ristretto255-decaf448-04},
+  type        = {Internet-Draft},
+  institution = {Internet Engineering Task Force},
+  publisher   = {Internet Engineering Task Force},
+  note        = {Work in Progress},
+  url         = {https://datatracker.ietf.org/doc/draft-irtf-cfrg-ristretto255-decaf448/04/},
+  author      = {Henry de Valence and Jack Grigg and Mike Hamburg and Isis Lovecruft and George Tankersley and Filippo Valsorda},
+  title       = {{The ristretto255 and decaf448 Groups}},
+  pagetotal   = 27,
+  year        = 2022,
+  month       = oct,
+  day         = 14,
+  abstract    = {This memo specifies two prime-order groups, ristretto255 and decaf448, suitable for safely implementing higher-level and complex cryptographic protocols. The ristretto255 group can be implemented using Curve25519, allowing existing Curve25519 implementations to be reused and extended to provide a prime-order group. Likewise, the decaf448 group can be implemented using edwards448.}
+}
+
+@misc{MHAStackSig,
+  author = {Mathias Hall-Andersen},
+  title  = {StackSig; Ring Signatures from Stacking},
+  year   = {2021},
+  note   = {Online; accessed October 25, 2022},
+  url    = {https://github.com/rot256/research-stacksig}
 }
 
 @misc{OWASP-Dragonv1.6,
-    author = {Mike Goodwin and Jon Gadsden and Leo Reading and Arnold Kokoroko}, 
-    title = {OWASP Threat Dragon},
-    year = {2021},
-    note = {Online; accessed November 27, 2022},
-    url = {https://owasp.org/www-project-threat-dragon/}
+  author = {Mike Goodwin and Jon Gadsden and Leo Reading and Arnold Kokoroko},
+  title  = {OWASP Threat Dragon},
+  year   = {2021},
+  note   = {Online; accessed November 27, 2022},
+  url    = {https://owasp.org/www-project-threat-dragon/}
 }
 
-@misc{AFL-Rust,
-    author = {Rust Fuzzing Authority},
-    title = {afl.rs},
-    year = {2022},
-    month = {2},
-    note = {Online; accessed November 27, 2022},
-    url = {https://github.com/rust-fuzz/afl.rs}
+@misc{OWASPv4.2,
+  author = {Elie Saad and Rick Mitchell},
+  title  = {Web Security Testing Guide v4.2},
+  year   = {2020},
+  note   = {Online; accesed November 27, 2022},
+  url    = {https://owasp.org/www-project-web-security-testing-guide/v42/}
 }
 
-@misc{AFL,
-    author = {Michal Zalewski},
-    title = {American fuzzy lop},
-    year = {2017},
-    note = {Online; accessed November 27, 2022},
-    url = {https://lcamtuf.coredump.cx/afl/}
+@misc{PAZK,
+  author = {Justin Thaler},
+  title  = {Proofs, Arguments, and Zero-Knowledge},
+  year   = {2022},
+  month  = {6},
+  note   = {\url{https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.pdf}},
+  url    = {https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.pdf}
 }
 
-@article{ARDITO2020100635,
-    title = {rust-code-analysis: A Rust library to analyze and extract maintainability information from source codes},
-    journal = {SoftwareX},
-    volume = {12},
-    pages = {100635},
-    year = {2020},
-    issn = {2352-7110},
-    doi = {https://doi.org/10.1016/j.softx.2020.100635},
-    url = {https://www.sciencedirect.com/science/article/pii/S2352711020303484},
-    author = {Luca Ardito and Luca Barbato and Marco Castelluccio and Riccardo Coppola and Calixte Denizet and Sylvestre Ledru and Michele Valsesia},
-    keywords = {Algorithm, Software metrics, Software maintainability, Software quality},
-    abstract = {The literature proposes many software metrics for evaluating the source code non-functional properties, such as its complexity and maintainability. The literature also proposes several tools to compute those properties on source codes developed with many different software languages. However, the Rust language emergence has not been paired by the community’s effort in developing parsers and tools able to compute metrics for the Rust source code. Also, metrics tools often fall short in providing immediate means of comparing maintainability metrics between different algorithms or coding languages. We hence introduce rust-code-analysis, a Rust library that allows the extraction of a set of eleven maintainability metrics for ten different languages, including Rust. rust-code-analysis, through the Abstract Syntax Tree (AST) of a source file, allows the inspection of the code structure, analyzing source code metrics at different levels of granularity, and finding code syntax errors before compiling time. The tool also offers a command-line interface that allows exporting the results in different formats. The possibility of analyzing source codes written in different programming languages enables simple and systematic comparisons between the metrics produced from different empirical and large-scale analysis sources.}
+@misc{ristretto_web,
+  author = {Henry de Valence and Jack Grigg and Mike Hamburg and Isis Lovecruft and George Tankersley and Filippo Valsorda},
+  title  = {Ristretto - The Ristretto Group},
+  note   = {Online; accessed November 8, 2022},
+  url    = {https://ristretto.group/ristretto.html}
 }
 
-@inproceedings{10.1145/100216.100272,
-author = {Feige, U. and Shamir, A.},
-title = {Witness Indistinguishable and Witness Hiding Protocols},
-year = {1990},
-isbn = {0897913612},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/100216.100272},
-doi = {10.1145/100216.100272},
-booktitle = {Proceedings of the Twenty-Second Annual ACM Symposium on Theory of Computing},
-pages = {416–426},
-numpages = {11},
-location = {Baltimore, Maryland, USA},
-series = {STOC '90}
+@inproceedings{Schnorr,
+  title     = {Efficient Identification and Signatures for Smart Cards},
+  author    = {Claus-Peter Schnorr},
+  booktitle = {CRYPTO},
+  year      = {1989},
+  url       = {https://link.springer.com/chapter/10.1007/0-387-34805-0_22}
 }
 
-@InProceedings{attema,
-author="Attema, Thomas
-and Cramer, Ronald
-and Fehr, Serge",
-editor="Malkin, Tal
-and Peikert, Chris",
-title="Compressing Proofs of k-Out-Of-n Partial Knowledge",
-doi = {10.1007/978-3-030-84259-8_3},
-booktitle="Advances in Cryptology -- CRYPTO 2021",
-year="2021",
-publisher="Springer International Publishing",
-address="Cham",
-pages="65--91",
-abstract="In a proof of partial knowledge, introduced by Cramer, Damg{\aa}rd and Schoenmakers (CRYPTO 1994), a prover knowing witnesses for some k-subset of n given public statements can convince the verifier of this claim without revealing which k-subset. Their solution combines {\$}{\$}{\backslash}varSigma {\$}{\$}$\Sigma$-protocol theory and linear secret sharing, and achieves linear communication complexity for general k, n. Especially the ``one-out-of-n'' case {\$}{\$}k=1{\$}{\$}k=1has seen myriad applications during the last decades, e.g., in electronic voting, ring signatures, and confidential transaction systems.",
-isbn="978-3-030-84259-8"
+@misc{SpeedStacking,
+  author       = {Aarushi Goel and Mathias Hall-Andersen and Gabriel Kaptchuk and Nicholas Spooner},
+  title        = {Speed-Stacking: Fast Sublinear Zero-Knowledge Proofs for Disjunctions},
+  howpublished = {Cryptology ePrint Archive, Paper 2022/1419},
+  year         = {2022},
+  note         = {\url{https://eprint.iacr.org/2022/1419}},
+  url          = {https://eprint.iacr.org/2022/1419}
 }
 
-@article{Diffie1976NewDI,
-  title={New Directions in Cryptography},
-  author={Whitfield Diffie and Martin E. Hellman},
-  journal={Democratizing Cryptography},
-  year={1976}
+@article{StackedGF,
+  title   = {Stacked Garbling for Disjunctive Zero-Knowledge Proofs},
+  author  = {David Heath and Vladimir Kolesnikov},
+  journal = {IACR Cryptol. ePrint Arch.},
+  year    = {2020},
+  volume  = {2020},
+  pages   = {136}
+}
+
+@misc{StackingSigmas,
+  author       = {Aarushi Goel and Matthew Green and Mathias Hall-Andersen and Gabriel Kaptchuk},
+  title        = {Stacking Sigmas: A Framework to Compose $\Sigma$-Protocols for Disjunctions},
+  howpublished = {Cryptology ePrint Archive, Paper 2021/422},
+  year         = {2021},
+  note         = {\url{https://eprint.iacr.org/2021/422}},
+  url          = {https://eprint.iacr.org/2021/422}
+}
+
+@misc{Wikimedia:TDD,
+  author = {Xavier Pigeon},
+  title  = {TDD Global Lifecycle},
+  year   = {2015},
+  note   = {Online; accessed November 27, 2022},
+  url    = {https://commons.wikimedia.org/wiki/File:TDD_Global_Lifecycle.png}
 }
