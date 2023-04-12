@@ -1,13 +1,28 @@
 \section{Background}
 \label{sec:background}
-Before discussing our implementation and results, we introduce the necessary background material for this project. 
-We will first formalise the notation we use in this report, and highlight broad concepts that are relevant to the entire project. 
-Afterwhich, we split the remaining section into 3 subsections: each for one of the compilers we implement \cite{CDS94, StackingSigmas, SpeedStacking}.
+Before discussing our implementation and results, we introduce the necessary background concepts for this project. 
+We firstly formalise the notation we use in this report, and highlight broad concepts that are relevant to the entire project. 
+Afterwhich, we split the remaining section into 3 subsections: 
+each for one of the compilers we implement \cite{CDS94, StackingSigmas, SpeedStacking}.
 
-\subsection{Notation}
-Throughout this paper, we use $\lambda$ to denote the computational security parameter and $\kappa$ to denote the statistical security parameter. Computational security refers to a cryptographic system's security against a computationally bounded adversary, while statistical security refers to security that is not dependent on the computational power of the adversary but instead on the security that negligible statistical probability provides.
-
-We denote by $x \samplefrom \mathcal D$ the sampling of "$x$" from the distribution "$\mathcal D$", and $\verify$ means a boolean assertion of equality on the left-hand side and right-hand side of the symbol. Additionally, we use $\circ$ to indicate the concatenation of bits ($0000 \circ 1111 = 00001111$).
+\subsection{Notation}\label{sec:notation}
+\begin{table}[h]
+  \centering
+  \label{tab:notation}
+  \caption{Notation used in this report}
+  \begin{tabular}{|A{0.1\linewidth}|M{0.8\linewidth}|}
+    \hline
+    Symbol & Details \\\hline
+    $\lambda$ & Computational security parameter. Refers to a cryptographic system's security 
+    against a computationally bounded adversary. \\\hline
+    $\kappa$ & Statistical security parameter. Refers to the security provided by negligible statistical probability. \\\hline
+    $\verify$ & Boolean assertion. \\\hline
+    $\circ$ & Bit concatenation: $0000 \circ 1111 = 00001111$ \\\hline
+    $\samplefrom$ & Sampling from a distribution: $x \samplefrom \mathcal D$ is the sampling of "$x$" from 
+    the distribution "$\mathcal D$" \\
+    \hline
+  \end{tabular}
+\end{table}
 
 % We denote by $x \randselect \mathcal D$ the process of sampling "$x$" fro the distribution "$\mathcal D$" using pseudorandom coins derived from a pseudo-random generator (PRG) applied to the seed "$s$". 
 
@@ -18,12 +33,18 @@ We denote by $x \samplefrom \mathcal D$ the sampling of "$x$" from the distribut
 
 % CDS %
 \subsection{CDS94}
-
+In this section, we introduce the components necessary for the \cite{CDS94} compiler. In addition to a $\Sigma$-protocol, which 
+is relevant to every compiler in this project, the CDS94 compiler requires a \emph{secret sharing scheme} and the compiler 
+itself. In the following 2 subsections, we introduce these components.
 \input{background/secret-sharing.tex}
 \input{background/cds-compiler.tex}
 
 % Stacking Sigmas %
 \subsection{Stacking Sigmas}
+Moving on, we introduce the concept of a \emph{partially-binding vector commitment scheme} 
+and present the Stacking Sigmas compiler proposed by \cite{StackingSigmas}. This compiler aims to improve on the 
+communication complexity of the \cite{CDS94} compiler, by reducing the communication size to $O(\log n)$, where $n$ is the 
+number of clauses in the disjunction. 
 % Partially Binding Vector Commitment from Discrete Log
 \input{background/comm_scheme.tex}
 % Section on stacking sigmas - talk about how stacking works

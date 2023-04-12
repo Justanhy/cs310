@@ -20,6 +20,8 @@ Intuitively, this means that $V$ should not learn anything from the transcripts 
 Given a sequence of statements $(x_1,x_2,\ldots, x_l)$, a \textit{disjunctive zero-knowledge proof} is a protocol to prove in zero-knowledge that $x_1 \in \mathcal L_1 \lor x_2 \in \mathcal L_2 \lor \ldots \lor x_l \in \mathcal L_l$, for NP languages $\mathcal L_i$. We term clauses for which the prover has a witness for as \textit{active} clauses. 
 \end{definition}
 
-\begin{definition}[Honest-Verifier Zero-Knowledge]
-A proof system is \textit{honest-verifier zero-knowledge} if it only requires that $\mathcal S$ is an efficient simulator for honest (non-malicious) probabilistic polynomial time verifier strategies $V$. If $V$ is malicious then the distribution of the output $\mathcal S(x)$ will no longer be indistinguishable from $\ViewPV$ for such proof systems. 
+\begin{definition}[Honest-Verifier Zero-Knowledge (HVZK)]
+A proof system is HVZK if it only requires that $\mathcal S$ is an efficient simulator 
+for honest (non-malicious) probabilistic polynomial time verifier strategies $V$. If $V$ is malicious then the distribution 
+of the output $\mathcal S(x)$ will no longer be indistinguishable from $\ViewPV$ for such proof systems. 
 \end{definition}

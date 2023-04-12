@@ -2,12 +2,13 @@
 \usepackage[
     textwidth=450pt, 
     textheight=700pt, 
-    margins={1in,1in,1in,1in}
+    % margins={1in,1in,1in,1in}
     ]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[UKenglish]{babel}
 \usepackage[UKenglish]{isodate}
 \usepackage{amsmath}
+\usepackage{array}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amsthm}
@@ -82,7 +83,7 @@
     title={\textbf{Protocol~\thetcbcounter}. #2}, %
     #1
 }
-\newtcolorbox[]{construction}[1][]{%
+\newtcolorbox[]{breakablefig}[1][]{%
     enhanced,
     breakable,
     colback=white,
@@ -91,6 +92,7 @@
     boxrule=.6pt,
     #1
 }
+
 
 \graphicspath{{./assets/}}
 
@@ -134,3 +136,8 @@
 \newcommand{\verify}{\overset {?} {=}}
 % Tables
 \newcommand{\rowheight}{0.7em}
+\newcolumntype{P}[1]{>{\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\arraybackslash}m{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{A}[1]{>{\centering}M{#1}}

@@ -14,7 +14,7 @@ A $\Sigma$-protocol has the following properties:
         Pr\left[\phi(x,a,c,z) = 1 \st a \leftarrow A(x,w;r^p); c\samplefrom \{0,1\}^\kappa; z \rightarrow Z(x,w,c;r^p)\right] = 1
     \end{gather*}
     \item \textbf{Special Soundness.} $\Pi$ is said to have special soundness if  there exists a PPT extractor $\mathcal E$, such that given any two transcripts $(a,c,z)$ and $(a,c',z')$ for statement $x$, where $c \ne c'$ and $\phi(x,a,c,z) = \phi(x,a,c',z') = 1$, an element of $w(x)$ can be computed by $\mathcal E$.
-    \item \textbf{Special Honest-Verifier Zero-Knowledge.} $\Pi$ is SHVZK if there exists a PPT simulator $\mathcal S$, such that for any $x$, $w$, $(x,w) \in \mathcal R$, the distribution over the output $\mathcal S(1^\lambda, x, c^*)$ is indistinguishable from the distribution over transcripts produced by the interaction between $V$ and $P$ when the challenge is $c^*$.
+    \item \textbf{Special Honest-Verifier Zero-Knowledge (SHVZK).} $\Pi$ is SHVZK if there exists a PPT simulator $\mathcal S$, such that for any $x$, $w$, $(x,w) \in \mathcal R$, the distribution over the output $\mathcal S(1^\lambda, x, c^*)$ is indistinguishable from the distribution over transcripts produced by the interaction between $V$ and $P$ when the challenge is $c^*$.
     \begin{multline*}
         \{(a, z) \mid c^* \samplefrom \{0,1\}^\kappa; (a,z) \leftarrow \mathcal S(1^\lambda,x,c^*)\} 
         \approx_{c^*} \\

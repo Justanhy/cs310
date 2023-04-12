@@ -1,5 +1,10 @@
 \subsubsection{CDS94 Compiler}
-In this paper, Cramer {\em{et al}} \cite{CDS94} presents 2 primary ways to compile $\Sigma$-protocols depending on the underlying choice of $\Sigma$-protocol and the secret sharing scheme. Our implementation makes use of Theorem 8 of the paper because we choose to use Schnorr's protocol (Section \ref{sec:schnorr}) and Shamir's secret sharing (Section \ref{sec:sss}). More details regarding our implementation will be discussed in a further section. 
+In this paper, Cramer {\em{et al}} \cite{CDS94} presents 2 primary ways to compile $\Sigma$-protocols depending 
+on the underlying choice of $\Sigma$-protocol and the secret sharing scheme. Our implementation makes use of Theorem 
+8 of the paper because we choose to use Schnorr's protocol (Section \ref{sec:schnorr}) and Shamir's secret sharing 
+(Section \ref{sec:sss}). More details regarding our implementation will be discussed in a further section. Now, we recall 
+theorem 8 of \cite{CDS94} -- note that we alter the notation slightly from the original paper to be more consistent 
+with the rest of this report.
 
 % In our implementation, we will use Schnorr's discrete log protocol over Ristretto25519 and Shamir's secret sharing scheme to demonstrate the compilation of $\Sigma$-protocol into a $\Sigma$-protocol for the disjunction of $n$ statements. 
 % We will attempt to make the implementation as general as possible to open up for the future possibility to take any $\Sigma$-protocol that suits our requirements and transform it disjunctive zero-knowledge $\Sigma$-protocol.
@@ -19,18 +24,22 @@ In this paper, Cramer {\em{et al}} \cite{CDS94} presents 2 primary ways to compi
 \textbf{Theorem 8 \cite{CDS94}}. Given $\Pi = (A, Z, \phi)$, $\mathcal R_\Gamma$ and $\mathcal S(k)$ where
 
 \begin{itemize}
-    \item $\Pi$ is a 3-round public coin ($\Sigma$-protocol) HVZK proof of knowledge for relation $R$, which satisfies the special soundness property.
+    \item $\Pi$ is a 3-round public coin ($\Sigma$-protocol) HVZK proof of knowledge for relation $\mathcal R$.
     \item $\{\mathcal S(k)\}$ is a family of smooth secret sharing schemes.
     \item $\mathcal R_\Gamma$ is a relation where $((x_1,\ldots,x_m),(w_1,\ldots,w_m)) \in \mathcal R_\Gamma$ if and only if ($\iff$)
     \begin{itemize}
         \item all $x_i$'s are of the same length $k$, and 
-        \item the set of indices $i$ for which $(x_i,w_i) \in R$ corresponds to a qualified set for $S(k)$
+        \item the set of indices $i$ for which $(x_i,w_i) \in \mathcal R$ corresponds to a qualified set for $S(k)$
     \end{itemize}
 \end{itemize}
 
-Then, there exists a $\Sigma$-protocol, $\Pi' = (A', Z', \phi')$, that is witness indistinguishable (Definition \ref{def:wi}) for the relation $R_\Gamma$. The description of this protocol is outlined in Protocol \ref{prot:cds-compiler}. Interested readers can refer to the original paper for the proof of this theorem \cite{CDS94}. 
+Then, there exists a $\Sigma$-protocol, $\Pi' = (A', Z', \phi')$, that is witness indistinguishable 
+(Definition \ref{def:wi}) for the relation $\mathcal R_\Gamma$. The description of this protocol is outlined in 
+Protocol \ref{prot:cds-compiler}. Interested readers can refer to the original paper for the proof of this theorem \cite{CDS94}. 
 
-\begin{protocol}[label={prot:cds-compiler}]{CDS94 Compiler. A compiler for composing $n$ instances of a $\Sigma$-protocol $\Pi$ into a single $\Sigma$-protocol $\Pi'$ that proves the \textbf{disjunction} of these $n$ instances.}
+\begin{protocol}[label={prot:cds-compiler}]{CDS94 Compiler. A compiler for composing $n$ instances of a 
+    $\Sigma$-protocol $\Pi$ into a single $\Sigma$-protocol $\Pi'$ that proves the \textbf{disjunction} 
+    of these $n$ instances.}
     Let $A$ be the set of indices $i$ of the \textit{active clauses}. \\
     \textbf{Statement:} $x = x_1,\ldots, x_n$ \\
     \textbf{Witness:} $w = \{w_i\st i \in A\ \land (x_i, w_i) \in R\}$
@@ -59,3 +68,5 @@ Then, there exists a $\Sigma$-protocol, $\Pi' = (A', Z', \phi')$, that is witnes
         \end{itemize}
     \end{itemize}
 \end{protocol}
+
+Using this compiler, we can construct a $\Sigma$-protocol that has a communication complexity linear in the number of clauses.
