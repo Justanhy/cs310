@@ -1,4 +1,4 @@
-\subsection{Schnorr's Identification Protocol}\label{sec:schnorr}
+\section{Schnorr's Identification Protocol}\label{sec:schnorr}
 There are two parties in an \textit{identification scheme}, the prover $P$ and the verifier $V$, and the objective of the protocol is for the prover to convince the verifier that they are who they claim to be. In other words, $V$ should be convinced that $P$ knows the private key that corresponds to the public key of $P$. A familiar example is the standard protocol of password authentication.
 
 \textbf{Schnorr's protocol} \cite{Schnorr} is an identification scheme where $P$ proves knowledge of the discrete log $w$ of a group element $H \in \G$, where $H = w \cdot G$ for some generator $G \in \G$. $(\G, +)$ is a finite abelian group with $+$ as the binary operator 
@@ -68,5 +68,10 @@ We can construct a simulator for Schnorr's protocol by running it "in reverse" s
     \label{fig:schnorr-sim}
 \end{figure}
 
-Since $z$ and $c$ are both chosen randomly, the resulting $\mathcal A$ is also random, and our output will have the same distribution as the distribution over transcripts in an actual interaction.
+Since $z$ and $c$ are both chosen randomly, the resulting $\mathcal A$ is also random, and our 
+output will have the same distribution as the distribution over transcripts in an actual interaction.
+Note that the simulator presented here achieves only honest-verifier zero-knowledge (Definition
+\ref{def:hvzk}) as the only input to the simulator is the statement to prove $H$. We can 
+easily modify this simulator to achieve special honest-verifier zero-knowledge (Definition 
+\ref{def:sigma}) by adding a challenge $c$ as an input to the simulator.
 

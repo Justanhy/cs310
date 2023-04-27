@@ -1,4 +1,218 @@
-\section{Design}
-\label{ch:design}
+In this chapter, we outline and discuss the design of the project, and our 
+implementation of salient components. 
+We first begin with a brief overview of our core requirements, and justify certain design choices.  
+Next, we discuss of how we approach testing -- a crucial process in the 
+verification of our software components. This is followed by a section discussing the design 
+choices we make for our benchmarks (Section \ref{design:bench}). After which, 
+we elaborate on the general approach we take in implementing the protocols described in 
+the literature. Finally, we will elaborate on the design of important components 
+and their implementation.
 
-In this chapter, we describe the overall design of our solution to the problem identified in \Cref{ch:introduction}, building on work described in \Cref{ch:background}.
+Here, we include the components associated with each compiler for easy reference:
+% General design philosphy behind each component: when we use tratis and when we use structs
+
+\begin{enumerate}
+  \item CDS94 Compiler
+  \begin{itemize}
+    \item Schnorr's Protocol     
+    \item Shamir's Secret Sharing 
+    \item CDS94 Compiler 
+  \end{itemize}
+  \item Stacking Sigmas Compiler
+  \begin{itemize}
+    \item Schnorr's Protocol 
+    \item Partially-Binding Vector Commitment scheme: Q-Binding of half-bindings 
+    \item Self-Stacking Compiler
+  \end{itemize}
+\end{enumerate}
+
+\section{Overview}\label{design:overview}
+In this section, we 
+elaborate on the core requirements that influence the design choices of 
+every component, discuss our choice of programming language, and justify 
+our choice of libraries 
+that we use throughout various components in the project. 
+\subsection{Core Requirements}
+In the design of each component, we consider the following 
+three core requirements: \emph{correctness}, \emph{generality}, and 
+\emph{usability}. 
+
+\paragraph{Correctness.} Unsurprisingly, correctness has the highest priority, 
+as we want to ensure that we are accurately comparing 
+the performance of the compilers. In Section \ref{design:testing}, 
+we discuss how we test our compilers to ensure correctness. 
+
+\paragraph{Generality.} This requirement is concerned with how easy it is for 
+future developers to use our interfaces\footnote{Rust has a different 
+terminology for interfaces called "traits". While traits and classic interfaces are not 
+exactly the same, they share many commonalities. For the sake of simplicity, we will 
+substitute terms in Rust associated with traits with those associated with classic 
+interfaces. Where this is not possible, we will explicitly use Rust terminology and 
+explain the difference.}
+ and components for their own work. 
+One of the motivations for this project is to lay the foundations for 
+future researchers to conveniently compare their own implementations 
+of existing or new compilers to ours. Additionally, this will also help 
+developers to easily build on our work in the future. 
+With this in mind, it is important that our code is easily extensible and 
+has components (which may be shared) that are modular. Thus, we have 
+organised our source code such that each component is an individual
+library and can be selectively chosen. This is coupled with interfaces 
+designed to be as general as possible, allowing
+developers to choose which components they want to use, and 
+which to implement themselves. 
+
+\paragraph{Usability.} We strive to make our compilers easy to use, understand, 
+and maintain using thorough documentation and convenient 
+methods to easily use the components. In the following sections, we
+discuss how we attempt to achieve this in each component. 
+
+\subsection{Programming Language}
+Our choice of programming language is Rust: a modern 
+language that is designed with a focus on safety and reliability.
+It promises memory safety, by using an ownership and borrowing
+system unique to Rust, and it is a strongly typed language which 
+helps to identify errors at compile-time. This helps to prevent errors such 
+as integer overflows and null pointer references. Furthermore, 
+Rust is known for its high performance and speed \cite{rust-book}, and 
+has functional programming features such as pattern matching and 
+closures. These features make Rust a good choice for our project,
+particularly because many of the components we are implementing are 
+defined mathematically which lend themselves well to functional 
+programming. Meanwhile, robustness and speed are highly ideal properties
+in any system, especially one that relies on cryptographic protocols.
+
+Additionally, Hall-Andersen's \cite{MHAStackSig}
+Stacking Sigmas compiler is also implemented in the language. This makes 
+Rust a natural choice for our project, it allows us to easily compare 
+our implementation to Hall-Andersen's. Rust has other useful benefits 
+that pertain to more specific components of our project, such as 
+testing; we highlight these in their respective sections.
+
+\subsection{Libraries}\label{sec:libraries}
+Throughout this project, a number of notable libraries are repeatedly 
+used across different components. The few that we would like to highlight 
+are:
+\begin{enumerate}
+  \item \texttt{curve25519-dalek} \cite{curve25519-dalek}: a Rust library that 
+  provides group operations on the Ristretto group \cite{ristretto_web}. In many 
+  of our protocols, a prime order group is required; we use this library as 
+  the underlying prime order group in the concrete implementations of 
+  our project. We choose the Ristretto group because it is a prime order 
+  group constructed from a non-prime-order Edwards curve \cite{Edwards2007}
+  (a family of elliptic curves), which is known for both security and speed. 
+  At the same time, the Ristretto group does not suffer from the same issues as 
+  other modern elliptic curve implementations that do not provide a prime-order group\footnote{
+    Modern elliptic curve implementations usually provide a group of order $h \cdot q$, where 
+    $h$ is a small cofactor (4 or 8), and $q$ is a large prime number. When using these 
+    implementations for protocols that require a prime order group, the abstraction from 
+    non-prime order group to prime order group is often handled by developers up the stack 
+    (by users of the library). This means that they are not as familiar with the underyling 
+      implementation, and may introduce vulnerabilities due to subtle design complications.
+  }. 
+  
+  \item \texttt{rand\_chacha} \cite{rand-chacha}: a random number generator (RNG) that uses the 
+  "ChaCha20" stream cipher \cite{bernstein2008chacha}. We use this to create RNGs 
+  that are needed for our protocols. Notably, we chose this library 
+  specifically because it also provides seedable RNGs, 
+  which is useful for testing. 
+  \item \texttt{group} \cite{group}: a library that provides general interfaces for 
+  groups and fields. In the pursuit to make our components as general as 
+  possible, we make use of the interfaces in this library to define the 
+  kind of groups and fields that are accepted by our interfaces. When users 
+  develop their own concrete implementation of our interfaces, they can 
+  choose to use any group or field that implements the interfaces in this 
+  library and are not restricted to the concrete implementations that we 
+  provide. 
+\end{enumerate} 
+
+
+\section{Testing}\label{design:testing}
+\input{design/testing.tex}
+
+\section{Benchmarks}\label{design:bench}
+\input{design/benchmarks.tex} 
+
+\section{General Design Approach for Compiler Components}\label{design:approach}
+Our general approach to designing our compiler-related software components is inspired by the 
+well known "SOLID" design principles \cite{martin2000design} of object-oriented programming. 
+Crucially, we ensure that our general design approach contributes directly to our core requirements 
+of generality and usability. We split our compiler-related software components into two broad categories: 
+general interfaces 
+and concrete implementations. The general interfaces define the structure of protocols, while the 
+concrete implementations are the actual implementations of these interfaces (with possible extensions).
+
+Firstly, we want to ensure that that we design our concrete implementations such that 
+they \textit{accept general types that implement these interfaces} instead of the concrete 
+types directly.
+For example, our Stacking Sigmas compiler is designed to 
+accept a generic type that requires an implementation of the \texttt{SigmaProtocol} interface and the 
+\texttt{EHVzk} interface, instead of accepting the concrete type, which in our case is Schnorr's protocol. 
+This allows developers to use the Stacking Sigmas compiler with any $\Sigma$-protocol implementation, as 
+long as they implement the relevant interfaces. This also supports our choice to use a 
+microservices architecture and organising our code into separate modules for each component. 
+By doing this, modules which define our interfaces should not be importing concrete types; modules 
+defining concrete types should only import the interfaces they need to implement and explicitly 
+import concrete types that are absolutely necessary. 
+
+We also want to make sure that our interfaces have \textit{a single responsibility} and do not 
+encompass too many functionalities. For example, we intentionally segregate the two interfaces 
+\texttt{SigmaProtocol} and \texttt{EHVzk}, even though we require both of them to be implemented 
+for the Stacking Sigmas compiler. This is so that we do not assume how future users will use 
+our interfaces. For the CDS94 compiler, there is the \texttt{HVzk} interface. We know that the 
+HVZK property can be thought of as a superset of the EHVZK property because a $\Sigma$-protocol that is 
+EHVZK is HVZK, but not necessarily the other way around. With this in mind, we
+should not need to implement the simulator as defined in the context of the \texttt{HVzk} interface if 
+it is already defined in terms of \texttt{EHVzk}. 
+Likewise, a future user may choose to develop a 
+\texttt{SigmaProtocol} that has a different requirement for the zero-knowledge property. By 
+segregating the interfaces into atomic functionalities, we provide users with more flexibility 
+in how they use our interfaces.
+
+Lastly, as mentioned in the testing section \ref{design:testing}, to support static analysis and 
+improve the readability of our code, we \textit{design our interfaces to reflect the 
+mathematical definitions} of the protocols as much as possible. This facilitates easy 
+comparison between our implementations and the mathematical definitions, and helps to 
+verify that our implementation is sound. 
+
+% \section{$\Sigma$-protocols}
+% \input{design/sigma.tex}
+
+% \section{Schnorr's Protocol}\label{design:schnorr}
+
+\section{Design \& Implementation of Key Components}
+In this section, we will highlight the design and implementation 
+of important components of our project in their respective subsections.
+
+\subsection{Sigma Protocols}\label{design:sigma}
+\input{design/sigma.tex}
+
+\subsection{Shamir's Secret Sharing}\label{design:sss}
+\input{design/shamir.tex}
+
+\subsection{Half-Binding \& Q-Binding}\label{design:qbinding}
+\input{design/qbinding.tex}
+
+\subsection{\texttt{HVzk} \& \texttt{EHVzk} Interface}
+These two interface encompasses the honest-verifier and extended honest-verifier zero-knowledge 
+property resepectively, which means that the only required method for these two interfaces 
+is a simulator method (Definition \ref{def:sigma}) for the concrete $\Sigma$-protocol that 
+implements this interface. As mentioned in the section on the general approach to design, 
+we split this interface from the \texttt{SigmaProtocol} interface to adhere to the 
+"single responsibility" principle in "SOLID" design \cite{martin2000design}. We provide 
+code-snippets of these two interface in Appendix \ref{code:hvzk}.
+
+\subsection{CDS94 Compiler}\label{design:cds94}
+\input{design/cds.tex}
+\subsection{Stacking Sigmas Compiler}\label{design:stacking}
+\input{design/stacksig.tex}
+
+
+
+
+
+% \section{CDS94 Compiler}\label{design:cds94}
+
+% \section{Half-Binding \& Q-Binding}\label{design:qbinding}
+
+% \section{Self-Stacking Compiler}\label{design:stacking}

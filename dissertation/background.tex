@@ -1,11 +1,11 @@
-\section{Background}
-\label{sec:background}
+% !TeX root = dissertation.tex
 Before discussing our implementation and results, we introduce the necessary background concepts for this project. 
 We firstly formalise the notation we use in this report, and highlight broad concepts that are relevant to the entire project. 
-Afterwhich, we split the remaining section into 3 subsections: 
-each for one of the compilers we implement \cite{CDS94, StackingSigmas, SpeedStacking}.
+These concepts include: zero-knowledge, disjunctive zero-knowledge, and $\Sigma$-protocols. 
+After which, we split the remaining section into subsections: 
+each for one of the compilers we implement \cite{CDS94, StackingSigmas}%, SpeedStacking}.
 
-\subsection{Notation}\label{sec:notation}
+\section{Notation}\label{sec:notation}
 \begin{table}[h]
   \centering
   \label{tab:notation}
@@ -17,9 +17,11 @@ each for one of the compilers we implement \cite{CDS94, StackingSigmas, SpeedSta
     against a computationally bounded adversary. \\\hline
     $\kappa$ & Statistical security parameter. Refers to the security provided by negligible statistical probability. \\\hline
     $\verify$ & Boolean assertion. \\\hline
-    $\circ$ & Bit concatenation: $0000 \circ 1111 = 00001111$ \\\hline
+    $\|$ & Bit concatenation: $0000 \| 1111 = 00001111$ \\\hline
     $\samplefrom$ & Sampling from a distribution: $x \samplefrom \mathcal D$ is the sampling of "$x$" from 
     the distribution "$\mathcal D$" \\
+    \hline
+    $[l]$ & The range of integers from 1 to $l$ \\
     \hline
   \end{tabular}
 \end{table}
@@ -32,7 +34,7 @@ each for one of the compilers we implement \cite{CDS94, StackingSigmas, SpeedSta
 \input{background/schnorr.tex}
 
 % CDS %
-\subsection{CDS94}
+\section{CDS94}
 In this section, we introduce the components necessary for the \cite{CDS94} compiler. In addition to a $\Sigma$-protocol, which 
 is relevant to every compiler in this project, the CDS94 compiler requires a \emph{secret sharing scheme} and the compiler 
 itself. In the following 2 subsections, we introduce these components.
@@ -40,7 +42,7 @@ itself. In the following 2 subsections, we introduce these components.
 \input{background/cds-compiler.tex}
 
 % Stacking Sigmas %
-\subsection{Stacking Sigmas}
+\section{Stacking Sigmas}
 Moving on, we introduce the concept of a \emph{partially-binding vector commitment scheme} 
 and present the Stacking Sigmas compiler proposed by \cite{StackingSigmas}. This compiler aims to improve on the 
 communication complexity of the \cite{CDS94} compiler, by reducing the communication size to $O(\log n)$, where $n$ is the 
@@ -51,9 +53,9 @@ number of clauses in the disjunction.
 \input{background/stackable.tex}
 
 % Speed Stacking %
-\input{background/homomorphisms.tex}
-% section on compressed sigma protocols (compression mechanism)
-\input{background/compressed_sigma.tex}
-% section on speed stacking compiler 
-\input{background/speed-stacker.tex}
+% \input{background/homomorphisms.tex}
+% % section on compressed sigma protocols (compression mechanism)
+% \input{background/compressed_sigma.tex}
+% % section on speed stacking compiler 
+% \input{background/speed-stacker.tex}
 

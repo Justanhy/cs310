@@ -1,0 +1,89 @@
+Similarly to CDS94, we implement the self-stacking compiler for Stacking Sigmas where 
+we are concerned with disjunctions of the same $\Sigma$-protocol. An important distinction between 
+the two compilers is that the Stacking Sigmas compiler is a 1-out-of-$n$ compiler, where $n$ is the
+number of $\Sigma$-protocols in the disjunction. Goel \emph{et al} does include a brief outline of 
+how a $d$-out-of-$n$ compiler may be constructed in Section 9 of \cite{StackingSigmas}, but we deem 
+this out of scope for the project. 
+
+In our implementation, we compile Schnorr's protocol, using the 
+compiler protocol together with the q-binding scheme (Definition \ref{sec:qbinding}).
+Overall, the methods associated with the \texttt{SigmaProtocol} library that we implement for the 
+\texttt{SelfStacker} class follow the construction in Protocol \ref{prot:stacksig-compiler} closely. 
+More interestingly, the generic types and interfaces involved are worth discussing in detail.
+
+\texttt{\texttt{Message}.} This interface is useful in the Stacking Sigmas compiler 
+for hashing the messages provided to the partial-binding vector commitments. This is 
+an important efficiency requirement outlined in Definition \ref{def:comm_scheme}. 
+With the \texttt{Message} interface, we require messages to the partial-binding vector
+commitments to be writable to a buffer, which can then be hashed. Additionally, this 
+provides a convenient interface for our benchmarks to measure the size of our messages. 
+
+\begin{lstlisting}[language=rust]
+  pub trait Message: Debug + Default + Clone {
+      fn write<W: Write>(&self, writer: &mut W)
+      where
+          Self: Sized;
+
+      fn size(&self) -> usize {
+          let mut v: Vec<u8> = Vec::new();
+          self.write(&mut v);
+          v.len()
+      }
+  }  
+\end{lstlisting}
+
+Observing this code-snippet, we can see that once we are able to use the \texttt{write} 
+method to write bits of the message to a buffer, we can trivially obtain the size of 
+the message by writing it to a vector and then obtaining the length of the vector.
+
+As mentioned earlier, this interface was implemented by Hall-Andersen in 
+\cite{MHAStackSig}, and we have extended it slightly. In particular, we further require types 
+that implement the \texttt{Message} interface to also implement the \texttt{Default} interface. 
+This is a useful addition 
+because we can use this to create a default instance of the message type when we are 
+using the q-binding scheme. Recall that this scheme requires the "0" message for the 
+\textsf{EquivCom}, \textsf{Equiv}, and \textsf{BindCom} methods.
+
+\paragraph{\texttt{Stackable}.} This interface is similar to the \texttt{Composable}
+interface in the CDS94 compiler. This interface models a $\Sigma$-protocol that is stackable 
+by the Stacking Sigmas compiler.
+
+\begin{lstlisting}[language=rust]
+  pub trait Stackable: SigmaProtocol<MessageA: Message, MessageZ: Message> + EHVzk {}
+\end{lstlisting}
+
+From its definition, we can see that the main requirements are the \texttt{SigmaProtocol} 
+interface and the \texttt{EHVzk} interface, which corresponds correctly to the definition 
+of a stackable $\Sigma$-protocol in Definition \ref{def:stackable}. 
+
+\paragraph{\texttt{StackingSigmas}.} The concrete class of the Stacking 
+Sigmas' "Self-Stacking" compiler is the \texttt{Self\-Stacker<S>} class, where \texttt{S} 
+is a class that implements the \texttt{Stackable} interface. The generic types that 
+are associated with this class are:
+\begin{itemize}
+  \item \texttt{Statement}: \texttt{StackedStatement<S>} -- a type that contains public information 
+  for the disjunctive proof: the public parameters $pp$ for the q-binding scheme, 
+  the height of the commitment tree, the number of clauses in total, and the 
+  vector of messages which correspond to the statement 
+  for each clause of type \texttt{S} .
+  \item \texttt{Witness}: \texttt{StackedWitness<S::Witness>} -- a type containing the 
+  private information for the disjunctive proof: the witnesses for the active clause (only 1), 
+  and the index of the active clause.
+  \item \texttt{MessageA}: \texttt{StackedA} -- the first message of the Stacking Sigmas 
+  protocol (Definition \ref{prot:stacksig-compiler}). This is a 2-tuple, containing 
+  the commitment key and the commitment. 
+  \item \texttt{Challenge}: \texttt{S::Challenge} -- the challenge type for the base $\Sigma$-protocol \texttt{S}.
+  \item \texttt{MessageZ}: \texttt{StackedZ<S>} -- the third message of the Stacking 
+  Sigmas protocol containing: the commitment key, the third message ($z$) of the 
+  underlying $\Sigma$-protocol, and the auxiliary value needed for the q-binding scheme.
+  \item \texttt{State}: \texttt{State94<S>} -- the relevant information generated from the first round
+  of the disjunctive protocol that should be private to the Prover. This 
+  contains the state of the underlying $\Sigma$-protocol, the first message of the 
+  underlying $\Sigma$-protocol, the initial messages given to the q-binding scheme 
+  in the first round of the Stacking Sigmas protocol, the commitment key, the equivocation 
+  key, and the auxiliary value for the q-binding scheme.
+\end{itemize}
+
+With these generic types, we implement the methods for the \texttt{SelfStacker} class
+according to Protocol \ref{prot:stacksig-compiler}. Refer to Appendix \ref{code:stacksig} 
+for the implementation.

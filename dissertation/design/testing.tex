@@ -1,0 +1,72 @@
+As mentioned in Project Management (Chapter \ref{ch:project-management}), we use Test-Driven Development to 
+ensure correctness. By writing tests before features, we encourage focus on the 
+requirements of our software and ensure that we design our components to target 
+these requirements. Once these tests are written, we have an efficient workflow to 
+consistently ensure our software is correct, even as we add new features. This improves
+development speed and reduces the time needed to identify and fix bugs.
+
+In addition, we perform extensive static analysis to complement testing and improve 
+debugging. To support static analysis, we 
+intentionally design our components and interfaces to reflect their 
+mathematical definitions in the literature. A good example of this is our implementation of q-bindings and half-bindings
+(Section \ref{design:qbinding}). Doing this allows us to easily verify that our implementations
+adhere to their mathematical definitions as closely as possible, increasing the chances of 
+identifying an issue if there is one.
+
+\paragraph{Unit \& Integration Testing.}
+We use the built-in testing framework in Rust to test our components. This framework allows us to write unit 
+tests within the same source code file as our implementation, and conveniently run them within our 
+IDE (VSCode) which consequently speeds up development. We also write integration tests with 
+the same framework, except that they are often located in a separate file to emphasise that they are testing 
+multiple components as these components have to be explicitly imported into the scope of the this testing module. 
+
+\paragraph{Code Coverage.} To complement testing, we use code coverage reports to ensure that we are testing 
+as much of our code as possible. Code coverage is a way to track and determine which sections of code (e.g. 
+functions, branches, lines etc.) are executed. This is useful for us as it highlights sections of code that 
+are neglected by our existing tests and ensures that we cover important test cases. We use the 
+\texttt{cargo-llvm-cov} \cite{cargo-llvm-cov} tool to carry out code coverage analysis. 
+This tool is a wrapper around the Rust compiler's in-built code coverage tool, 
+providing a convenient way to generate code coverage reports as they integrate directly 
+with our testing suite. 
+
+\subsection{Extracting Requirements \& Writing Tests}
+Throughout this project, the requirements of our software components are mostly derived 
+from the literature with the exception of our benchmarks. Therefore, our testing 
+strategy is centered around testing these requirements against our implementation. Of 
+course, additional unit tests are written to test the correctness of specific functions
+as well, but we will not discuss these in detail. 
+
+Extracting these requirements is a manual process that requires a thorough 
+understanding of the literature. Our approach begins with reading the literature and
+writing down the requirements explicitly. This is a tedious process,
+but it is necessary to ensure that we have a complete understanding of the protocols
+and what is required of them. We then translate these requirements into tests. 
+\begin{enumerate}
+  \item Usually, the first step is to complete a function for setting up mock data 
+  that is likely to be used in the tests. We design this function to take in a set of 
+  parameters and returns a set of mock data. These can then be separately called in 
+  each test, with parameters, to generate data specific for that test. 
+  \item Next, we write the content of the tests themselves. Because we are desining our 
+  components to model the mathematical definitions of the protocols, we can often easily 
+  determine the exact methods to call. Often, a 
+  challenge in TDD is not knowing what functions are available to test because they 
+  are not yet implemented. However, this is not a problem in this project as we have 
+  the definitions in the literature to refer to. There are two main kinds of tests 
+  that we write:
+  \begin{itemize}
+    \item \textbf{Positive Tests:} These are tests that ensure the implementation
+    works as expected. 
+    \item \textbf{Negative Tests:} These are tests that ensure the implementation
+    fails as expected.
+  \end{itemize}
+  \item Following this, we proceed to implement our components. This often starts with 
+  the interfaces (if any), and then to any classes that are required. 
+  \item Finally, we run the tests to ensure that they pass. If they do not, we 
+  investigate and either fix the implementation or the tests.
+\end{enumerate}
+
+In Appendix \ref{code:cds-tests}, we provide an example of our tests with those 
+for the CDS94 compiler. Often the first tests that are written target the main 
+requirements that we glean from the literature. As development progresses, we 
+continue to write tests or extend existing ones to ensure that we are testing 
+comprehensively. 

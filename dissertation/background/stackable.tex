@@ -1,4 +1,4 @@
-\subsubsection{Stacking Sigmas Compiler}
+\subsection{Stacking Sigmas Compiler}
 In Section 6 of \cite{StackingSigmas}, Goel \emph{et al} introduce the two main properties of stackable $\Sigma$-protocols: \textit{extended honest verifier 
 zero-knowledge}, and \textit{recyclable third round messages}. Moreover, they go on to show that many $\Sigma$-protocols satisfy these properties, 
 proving that all $\Sigma$-protocols can be made EHVZK (Observation 1), and many natural $\Sigma$-protocols have recyclable third round messages. 
@@ -9,8 +9,9 @@ related to them.
 
 \begin{definition}[Extended Honest Verifier Zero-Knowledge -- EHVZK]
   The $\Sigma$-protocol $\Pi = (A, Z, \phi)$ is EHVZK if there exists a \textit{deterministic} polynomial time "extended simulator" algorithm 
-  $\mathcal S^{\text{\tiny EHVZK}}(1^\lambda, x, c, z)$ such that the following two distributions are indistinguishable for any $(x,w) \in \mathcal R$ 
-  and $c \in \{0,1\}^\kappa$:
+  $\mathcal S^{\text{\tiny EHVZK}}(1^\lambda, x, c, z)$ such that an efficiently samplable distribution 
+  $\mathcal D_{x,c}^{(z)}$ exists, for any $(x,w) \in \mathcal R$ and $c \in \{0,1\}^\kappa$. 
+  $\mathcal D_{x,c}^(z)$ is a distribution of third round message $z$ conditioned on $x$ and $c$:
   \begin{multline*}
     \left\{
       (a,c,z) \st r^P \samplefrom \{0,1\}^\lambda; a \leftarrow A(x, w; r^P); z \leftarrow Z(x,w,c; r^P)
@@ -20,8 +21,8 @@ related to them.
       (a,c,z) \st z \samplefrom \mathcal D_{x,c}^{(z)}; a \leftarrow \mathcal S^{\text{\tiny EHVZK}}(1^\lambda, x, c, z)
     \right\}
   \end{multline*}
-  Intuitively, this means that the simulation starts with a specific third round message $z$, and determining a unique first round message $a$ with respect to 
-  $z$ and a fixed challenge $c$.
+  Intuitively this means, that the such that the transcript $(a,c,z)$ is indistinguishable from the output of the simulator
+  $\mathcal S^{\text{\tiny EHVZK}}(1^\lambda, x, c, z)$.
 \end{definition}
 
 \begin{definition}[Recyclable 3rd Round Messages]
@@ -34,6 +35,11 @@ related to them.
 \end{definition}
   Essentially, this means that the distribution of $z$ is not dependent on the statement $x$ and hence does not "leak information" about the statement. 
   Consequently, this means that $z$ can be reused for any statement $x$, even non-active clauses, and still hide the active clauses. 
+
+\begin{definition}[Stackable $\Sigma$-protocol -- Definition 9 of \cite{StackingSigmas}]
+  \label{def:stackable}
+  A $\Sigma$-protocol $\Pi = (A, Z, \phi)$ is \textit{stackable} if it is EHVZK and has recyclable third round messages.
+\end{definition}
 
   Now, we present the Stacking Sigmas Compiler for stacking disjunctions of the same protocol (Section 7 of \cite{StackingSigmas}). The compiler 
   presented in Protocol \ref{prot:stacksig-compiler} is identical to that in Figure 5 of \cite{StackingSigmas}, and is produced by Theorem 5 of \cite{StackingSigmas}.
@@ -97,4 +103,5 @@ Since we are using a Q-Binding construction, we get the following communication 
 $CC(\Pi_l) = CC(\Pi) + q(|\textsf{ck}_{1/2}| + |\textsf{com}_{1/2}| + |\textsf{r'}_{1/2}|)$. From Figure \ref{fig:half-binding}, we can see that 
 $|\textsf{ck}_{1/2}| = |g|$, $|\textsf{com}_{1/2} = 2|g|$, and $|r'_{1/2}| = 2|z|$, where $g \in \G$ and $z \in \Z_{|\G|}$. In this case, $|g|$ 
 depends on the number of bytes required to represent the group elements in $\G$, and $|z|$ depends on the size of the group $|\G|$. Therefore, 
-$CC(\Pi_l) = CC(\Pi) + q(3|g| + 2|z|) = CC(\Pi) + \log_2(l)(3|g| + 2|z|)$.
+$CC(\Pi_l) = CC(\Pi) + q(3|g| + 2|z|) = CC(\Pi) + \log_2(l)(3|g| + 2|z|)$. Hence, the communication complexity grows logarithmically with the 
+number of clauses $l$.

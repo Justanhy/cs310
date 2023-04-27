@@ -1,0 +1,107 @@
+We implement the CDS94 compiler for disjunctions over the same $\Sigma$-protocol. This means we are concerned 
+with many instances of the same $\Sigma$-protocol, even though it is possible to use CDS94 to compile 
+disjunctions over different $\Sigma$-protocols. We do this to simplify our implementation and to focus on the 
+most basic implementation of the CDS94 compiler. The disjunctions that this compiler supports are $d$-out-of-$n$
+disjunctions, where $d$ is the minimum number of active clauses, and $n$ is the total number of clauses.
+At a high level, the design of the CDS94 compiler is not complex, and simply follows the construction provided 
+in Protocol \ref{prot:cds-compiler}. That said, we make certain design decisions that are worth highlighting.
+
+Firstly, we cannot only implement the \texttt{SigmaProtocol} interface for the underlying $\Sigma$-protocol
+that we want to use with the CDS94 compiler.
+This is because the CDS94 compiler requires further restrictions on the generic 
+types that is used during a concrete implementation. Notably, Shamir's secret sharing scheme requires that 
+the shares passed to it have $x$ and $y$ coordinates that are field elements. This means we need to 
+provide a way to map the generic \texttt{Challenge} type (from \texttt{SigmaProtocol} interface) to a 
+type that implements the \texttt{PrimeField} interface from the \texttt{group} library (Section \ref{sec:libraries}).
+For Schnorr's protocol, this is not a theoretical issue because the challenges that are used are field elements
+and can be used directly with Shamir's secret sharing. However, in practice, the \texttt{Scalar} type from the
+\texttt{curve25519-dalek} library does not implement the required interface. 
+
+An alternative is to directly require that the \texttt{Challenge}
+type parameter in the \texttt{SigmaProtocol} interface to implement the \texttt{PrimeField} interface. However,
+this is arguably more restrictive than necessary. This is because, we may have existing implementations of a 
+$\Sigma$-protocol that does not use a challenge that is a field element, but we still want to use it with the
+CDS94 compiler. In this case, we can simply define a mapping function that maps the challenge to a field element
+and use it with Shamir's secret sharing. 
+Hence, to capture this relationship, we introduce the \texttt{Shareable} interface.
+
+\paragraph{\texttt{Shareable}.} A simple interface to ensure type-level compatability between 
+the generic types used in the CDS94 compiler and the generic types used in Shamir's secret sharing scheme.
+This interface is defined as follows: 
+\begin{lstlisting}[language=rust]
+  pub trait Shareable: Clone + Default {
+      type F: PrimeField;
+      // Map the type to a prime field element
+      fn share(&self) -> Self::F;
+      // Derive the instance of the type from a field element
+      fn derive(elem: Self::F) -> Self;
+      // Convert field element into usize
+      fn to_usize(elem: Self::F) -> usize;
+  } 
+\end{lstlisting}
+\begin{itemize}
+  \item The concrete type that implements this interface can be any type that also implements the \texttt{Clone} and
+  \texttt{Default} traits. 
+  \item The \texttt{F} type parameter is a type that implements the \texttt{PrimeField}
+  interface from the \texttt{group} library. 
+  \item The \texttt{share} method is a function that maps the generic
+  type to the \texttt{F} type parameter.
+\end{itemize}
+
+This allows developers to implement the \texttt{Shareable} interface for any type that they want to use in the
+CDS94 compiler, as long as it is possible to define a mapping function from the chosen type to one that 
+implements the \texttt{PrimeField} interface. 
+For example, in the case of Schnorr's protocol, the \texttt{Challenge} type is a \texttt{Scalar}
+from the \texttt{curve25519-dalek} library. This type does not implement the \texttt{PrimeField} interface, but
+we can implement the \texttt{Shareable} interface for it as follows:
+\begin{lstlisting}[language=rust]
+  impl Shareable for Scalar {
+      type F = WrappedScalar;
+      // ...
+  }
+\end{lstlisting}
+
+where \texttt{WrappedScalar} is a wrapper type that implements the \texttt{PrimeField} interface for the 
+\texttt{Scalar} type\footnote{We omit the implementation of the methods as they are specific to the 
+\texttt{WrappedScalar} type and are not relevant to the discussion here.}.
+
+
+\paragraph{\texttt{Composable}.} With the \texttt{Shareable} interface, we can now implement the \texttt{Composable}
+interface for the base $\Sigma$-protocol to be compiled by CDS94. This interface is defined as follows:
+
+\begin{lstlisting}[language=rust]
+  pub trait Composable: SigmaProtocol<Challenge: Shareable> + HVzk {}
+\end{lstlisting}
+
+This is a simple interface that enforces the requirement for the base protocol to implement 
+the \texttt{SigmaProtocol} interface, with a \texttt{Challenge} type implementing the \texttt{Shareable} 
+interface, and to also implement the \texttt{HVzk} interface.
+
+\paragraph{\texttt{CDS94}.} With the \texttt{Shareable} and \texttt{Composable} interfaces, we can now implement
+the \texttt{CDS94} compiler. We require that the base $\Sigma$-protocol to be compiled implements the
+\texttt{Composable} interface. Let this generic type corresponding to the base $\Sigma$-protocol be 
+denoted by \texttt{S}. With \texttt{S}, we can define the generic types associated with the \texttt{SigmaProtocol} interface 
+for CDS94:
+
+\begin{itemize}
+  \item \texttt{Statement}: \texttt{Statement94<S>} -- a type that contains public information 
+  for the disjunctive proof: the number of clauses, the threshold, and the statement for each 
+  clause of type \texttt{S}.
+  \item \texttt{Witness}: \texttt{Witness94<S>} -- a type containing the private information for the 
+  disjunctive proof: the witnesses for each clause, and the indexes of the active clauses 
+  \item \texttt{MessageA}: \texttt{Vec<S::MessageA>} -- a vector of messages corresponding to the 
+  first message in the $\Sigma$-protocol \texttt{S} for each clause.
+  \item \texttt{Challenge}: \texttt{S::Challenge} -- the challenge type for the base $\Sigma$-protocol \texttt{S}.
+  \item \texttt{MessageZ}: \texttt{Vec<(usize, S::Challenge, S::MessageZ)>} -- A vector of tuples containing 
+  the index of the clause, the challenge corresponding to the clause, and the third message \texttt{z} 
+  of that clause.
+  \item \texttt{State}: \texttt{State94<S>} -- the relevant information generated from the first round
+  of the disjunctive protocol that should be private to the Prover. This 
+  contains the state of each instance of the base $\Sigma$-protocol (in each active clause), 
+  the simulated challenge and 
+  third messages $c_i$ and $z_i$ respectively for each inactive clause. 
+\end{itemize}
+
+With these generic types, we implement the methods according to the construction in Protocol \ref{prot:cds-compiler}.
+Interested readers can compare how our implementation models the construction by referring to the source code 
+in Appendix \ref{code:cds}.

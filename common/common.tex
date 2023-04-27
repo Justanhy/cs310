@@ -7,6 +7,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[UKenglish]{babel}
 \usepackage[UKenglish]{isodate}
+\usepackage{longtable}
 \usepackage{amsmath}
 \usepackage{array}
 \usepackage{amsfonts}
@@ -29,9 +30,14 @@
 \usepackage{csquotes}
 \usepackage{booktabs}
 \usepackage[most]{tcolorbox}
-% \usepackage{ulem}
+\usepackage{ulem}
 \usepackage{listings}
-\usepackage[style=alphabetic, sorting=anyvt]{biblatex}
+\usepackage{../common/listings-rust}
+\usepackage[
+    backend=biber,
+    style=alphabetic, 
+    % citestyle=alphabetic
+    sorting=anyvt]{biblatex}
 \addbibresource{../common/ref.bib}
 
 \lstset{
