@@ -1,43 +1,187 @@
+% !TeX root = ../dissertation.tex
 \subsection{Partially-Binding Vector Commitments}
-In this section we introduce partially-binding vector commitment schemes which are an important component in the Stacking Sigmas compiler \cite{StackingSigmas}. These commitment schemes allow 
+In Section 5 of \cite{StackingSigmas}, Goel {\em{et al}} introduce the concept of partially-binding vector commitment schemes. 
+These commitment schemes allow a Prover to make a commitment to a vector of length $l$ with $t$ binding positions; 
+the remaining positions (indexes) in the vector are equivocable. 
+Here, we recall the definition of these commitment schemes and refer interested readers to Figure 2 of \cite{StackingSigmas} for the construction of the general $t$-out-of-$l$ 
+scheme. 
 
-\subsubsection{A 1-out-of-2 Partially-Binding Vector Commitment}
+\begin{definition}[t-out-of-l Binding Vector Commitment \cite{StackingSigmas}]\label{def:comm_scheme}
+  Given a message space $\mathcal M$, the security paramater $\lambda$, the length of the vector $l$, and the number of binding positions $t$: 
+  the tuple of PPT algorithms $(\mathsf{Setup}, \mathsf{Gen}, \mathsf{EquivCom}, \mathsf{Equiv}, \mathsf{BindCom})$ defines a $t$-out-of-$l$ 
+  partially-binding vector commitment scheme. These algorithms are defined as follows:
+  \begin{itemize}
+  \item $\mathsf{pp} \leftarrow \mathsf{Setup}(1^\lambda)$: Given the security parameter $\lambda$,
+  the $\mathsf{Setup}$ algorithm outputs public parameters $\mathsf{pp}$ for the commitment scheme.
+  \item $(\mathsf{ck},\mathsf{ek}) \leftarrow \mathsf{Gen}(\mathsf{pp},B)$: Given public parameters $\mathsf{pp}$ 
+  and a set $B$, where $B \subseteq [l] \land |B| = t$. The $\mathsf{Gen}$ algorithm returns a commitment key $\mathsf{ck}$ and equivocation key $\mathsf{ek}$.
+
+  \item $(\mathsf{com},\mathsf{aux}) \leftarrow \mathsf{EquivCom}(\mathsf{pp},\mathsf{ek},v;r)$: Given public parameter 
+  $\mathsf{pp}$, equivocation key $\mathsf{ek}$, vector $v$ with length $l$, and randomness $r$ as input, the $\mathsf{EquivCom}$ algorithm returns a 
+  partially-binding commitment $\mathsf{com}$ and auxiliary equivocation information $\mathsf{aux}$. This means that the vector $v$ can be equivocated in 
+  equivocable locations and $\mathsf{com}$ will be the same.  
+
+  \item $r \leftarrow \mathsf{Equiv}(\mathsf{pp},\mathsf{ek},v,v',\mathsf{aux})$: Given public parameters $\mathsf{pp}$, 
+  equivocation key $\mathsf{ek}$, original message vector $v$ and updated message vector $v'$ 
+  where $\forall i \in B: v_i = v'_i$, and auxiliary equivocation information $\mathsf{aux}$. $\mathsf{Equiv}$ returns equivocation 
+  randomness $r$.
+
+  \item $\mathsf{com} \leftarrow \mathsf{BindCom}(\mathsf{pp}, \mathsf{ck}, v; r)$: Given public parameters 
+  $\mathsf{pp}$, commitment key $\mathsf{ck}$, vector $v$, and randomness $r$ as input, $\mathsf{BindCom}$ returns a commitment 
+  $\mathsf{com}$. This algorithm plays a similar role to that of $\mathsf{Open}$ in a typical commitment scheme.
+  \end{itemize}
+
+  Partially-binding vector commitment schemes have the following properties
+  
+  \begin{enumerate}
+    \item \textbf{(Perfect) Hiding.} Suppose there are two vectors $\mathbf{v}^{(1)}, \mathbf{v}^{(2)} \in \mathcal M^l$ and two corresponding sets of 
+    binding positions $B^{(1)}, B^{(2)} \in {(l) \choose t}$. A perfectly hiding commitment scheme is one where the commitment key $ck$ and commitment $com$ 
+    produced by any two sets of binding position and original vectors $(\mathbf{B}^{(1)}, \mathbf{v}^{(1)})$ and $(\mathbf{B}^{(2)}, \mathbf{v}^{(2)})$ are 
+    indistinguishable from each other when they are equivocated to the same vector $\mathbf{v}'$ (provided that $\mathbf{v}'$ is a valid equivocation for 
+    both vectors). 
+
+    \item \textbf{(Computational) Partial Binding.} A malicious user (that generates $\mathsf{ck}$ itself) is not able to cheat the system by equivocating 
+    on more than $l - t$ positions.
+
+    \item \textbf{Partial Equivocation.} It is always possible to equivocate to any vector $\mathbf{v}'$ as long as $\forall i \in B: v_i = v'_i$. 
+  \end{enumerate}
+
+  There is an efficiency requirement which requires the size of the commitment to be independent from the size of the messages 
+  in the vector. This can be achieved by using a collision resistant hash function $H$. 
+  For more details on each property, we refer the reader to Definition 4 of \cite{StackingSigmas}. 
+\end{definition}
 
 
-\subsubsection{1-out-of-$2^q$ Partially-Binding Vector Commitments}
+\subsection{Half-Bindings \& Q-Bindings}\label{sec:qbinding}
+In this work, we make use of the generic 1-out-of-$2^q$ construction provided in Section 5.3 of \cite{StackingSigmas} 
+for our implementation of the Stacking Sigmas compiler. We use this 
+particular construction as it allows us to yield commitments that are logarthmic in size (in bytes) to the original 
+vector of messages (\textbf{Theorem 2 \& Corollary 1} in \cite{StackingSigmas}).
+A core ingredient in this construction is a 1-out-of-2 partially-binding vector commitment scheme, which is used recursively 
+to form a \textit{binary} "tree of commitments". 
+For brevity, we refer to the generic construction as "q-bindings" and the 1-out-of-2 construction as "half-bindings".
+The leaves of this tree are the original messages in our vector; intermediate nodes are the resulting commitments to the 
+nodes' children using half-bindings. 
+Essentially, intermediate commitments are regarded as messages as well, and are commited to recursively until there is only 
+1 root node -- the final commitment. 
 
+While the source material provides the general $t$-out-of-$l$ construction for partially-binding vector commitments, 
+it does not explicitly provide that for half-bindings. 
+In Figure \ref{fig:half-binding}, we provide the construction for half-bindings derived from the general $t$-out-of-$l$ 
+construction. 
+The proof of correctness for this construction is trivial as it can be easily seen to be a specific case of the general 
+construction when $t = 1$ and $l = 2$. 
 
+\begin{figure}[h]
+  \caption{Construction of a 1-out-of-2 partially-binding vector commitment scheme.}
+  \label{fig:half-binding}
+\end{figure}
+\begin{breakablefig}
+    \begin{minipage}{0.45\linewidth}
+      \vspace{-4em}
+      \underline{$pp \leftarrow$ Setup$(1^\lambda)$:}
+      \begin{enumerate}
+        \item $\G \leftarrow $ GenGroup$(1^\lambda)$; $g_0, h \samplefrom \G$
+        \item $\textbf{return } pp \leftarrow (\G, g_0, h)$
+      \end{enumerate}  
+    \end{minipage}
+    \begin{minipage}{0.5\linewidth}
+      \underline{$(com, aux) \leftarrow$ EquivCom$(pp, ek, m_1, m_2)$:}
+      \begin{enumerate}
+        \item Extract $ck$ from $ek$
+        \item $r \samplefrom \Z_{|\G|}^2$
+        \item com $\leftarrow$ BindCom$(pp,ck,m_1,m_2,r)$
+        \item \textbf{return} $(\text{com}, r)$
+      \end{enumerate}  
+    \end{minipage}
 
-% \newcommand{\primefield}[0]{\Z_{|\G|}}
+    \underline{$(ck, ek) \leftarrow$ Gen$(pp, B)$:}
+    \begin{enumerate}
+      \item Let $E = \{1,2\} \setminus B$ be the set of equivocal indexes. $|B| = 1$.
+      \item Generate trapdoor $td$ for $i \in E: td \samplefrom \Z_{|\G|}, g_i \leftarrow h \cdot td$
+      \item Interpolate the first element: $g_1 = \begin{cases}
+       g_2 - g_0 & \text{if $2 \in E$} \\
+       g_1 & \text{if $1 \in E$}
+      \end{cases}$
+      \item $ck \leftarrow g_1$
+      \item $ek \leftarrow (B, td, ck)$
+      \item \textbf{return} $(ck, ek)$
+    \end{enumerate}
 
-% Let $\primefield$ be a prime field (defined additively). Let $\mathcal X \subseteq \primefield$ and for $i \in \mathcal X$ we define 
-% $$
-% L_{(\mathcal X, i)}(j) := \prod_{m \in \mathcal X, m \ne i} \frac{j - m}{i - m} \in \primefield[j]
-% $$
+    \underline{$com \leftarrow$ BindCom$(pp,ck, m_1,m_2, r)$:}
+    \begin{enumerate}
+      \item Interpolate $g_2$: $g_2 = g_1 + g_0$
+      \item $(r_1, r_2) \leftarrow r$
+      \item Commit individually $\textbf{for } j \in \{1,2\}: com_j \leftarrow h\cdot r_j + g_j \cdot m_j \in \G$
+      \item \textbf{return} $(com_1,com_2)$
+    \end{enumerate}
 
-% To interpolate, 
+    \underline{$r \leftarrow$ Equiv$(pp, ek, m_1, m_2, m_1', m_2', aux)$:}
+    \begin{enumerate}
+      \item Extract $B$ and $td$ from $ek$; Let $E = \{1,2\} \setminus B$.
+      \item Parse $aux = (r_1, r_2) \in \Z_{|\G|}^2$
+      \item Interpolate $g_2 = g_1 + g_0$
+      \item for $i \in B: r'_i \leftarrow r_i$
+      \item for $i \in E: r'_i \leftarrow r_i - td \cdot (m_i' - m_i)$
+      \item \textbf{return} $r' \leftarrow (r_1', r_2')$
+    \end{enumerate}
+\end{breakablefig}
 
-% $$
-% \textbf{for } j \in [l-t]: g_j \leftarrow \sum_{i \in \mathcal X} g_i \cdot L(\mathcal X, i)(j)
-% $$
+  \paragraph*{Communication Complexity.} Observing the construction of half-bindings, we can see that the size (in bytes) of the outputs of each method 
+  is directly related to the choice of the group $\G$ and the number of bytes required to represent a group element $g \in \G$ and scalars $r \in \Z_{|\G|}$. 
+  
+  % For ease of reference, we also include the q-binding scheme (1-out-of-$2^q$ parital-binding vector commitment
+  % scheme) in Figure \ref{fig:q-binding}.
+  
+  % \begin{figure}[h]
+  %   \caption{Construction of a 1-out-of-$2^q$ partially-binding vector commitment scheme.}
+  %   \label{fig:q-binding}
+  % \end{figure}
+  % \begin{breakablefig}
+  %     \begin{minipage}{0.45\linewidth}
+  %       \vspace{-2em}
+  %       \underline{$pp \leftarrow$ Setup$(1^\lambda)$:}
+  %       \begin{enumerate}
+  %         \item $pp_A \leftarrow $ PBComm$_A$.Setup$(1^\lambda)$
+  %         \item $pp_B \leftarrow $ PBComm$_B$.Setup$(1^\lambda)$
+  %         \item \textbf{return} $(pp_A, pp_B)$
+  %       \end{enumerate}  
+  %     \end{minipage}
+  %     \begin{minipage}{0.5\linewidth}
+  %       \underline{$(ck, ek) \leftarrow $ Gen$(pp = (pp_A, pp_B), B = \{i\})$:}
+  %       \begin{enumerate}
+  %         \item Compute $i_A = i \bmod \ell_A, i_B = \lfloor i / \ell_A \rfloor$
+  %       \end{enumerate}  
+  %     \end{minipage}
+  
+  %     \underline{$(ck, ek) \leftarrow$ Gen$(pp, B)$:}
+  %     \begin{enumerate}
+  %       \item $i_A = i \bmod \ell_A$, $i_B = \lfloor i/\ell_A \rfloor$ {\footnotesize // Compute indices}
+  %       \item $\mathbf{v}^{(A)} \leftarrow \mathbf{0}$, $v(A) \leftarrow v_i \cdot \delta_{i_A}$ {\footnotesize // Form a length 
+  %       $l_A$ vector $v_A$, which is zero everywhere except at $i_A$ where it is $v_i$;}
+  %       \item $(com_A, aux_A) \leftarrow \text{PBCommA.EquivCom}(pp_A, ek_A, v(A))$;
+  %       \item Form a length $l_B$ vector $v_B$, which is zero everywhere except at $i_B$ where it is $com_A$;
+  %       \item $v(B) \leftarrow 0$, $v(B) \leftarrow com_A \cdot \delta_{i_B}$;
+  %       \item $(com_B, aux_B) \leftarrow \text{PBCommB.EquivCom}(pp_B, ek_B, v(B))$ \texttt{Return the root/outer commitment}
+  %       \item \textbf{return} $(com_B, (aux_A, aux_B))$;
+  %     \end{enumerate}
+  
+  %     \underline{$com \leftarrow$ BindCom$(pp,ck, m_1,m_2, r)$:}
+  %     \begin{enumerate}
+  %       \item Interpolate $g_2$: $g_2 = g_1 + g_0$
+  %       \item $(r_1, r_2) \leftarrow r$
+  %       \item Commit individually $\textbf{for } j \in \{1,2\}: com_j \leftarrow h\cdot r_j + g_j \cdot m_j \in \G$
+  %       \item \textbf{return} $(com_1,com_2)$
+  %     \end{enumerate}
+  
+  %     \underline{$r \leftarrow$ Equiv$(pp, ek, m_1, m_2, m_1', m_2', aux)$:}
+  %     \begin{enumerate}
+  %       \item Extract $B$ and $td$ from $ek$; Let $E = \{1,2\} \setminus B$.
+  %       \item Parse $aux = (r_1, r_2) \in \Z_{|\G|}^2$
+  %       \item Interpolate $g_2 = g_1 + g_0$
+  %       \item for $i \in B: r'_i \leftarrow r_i$
+  %       \item for $i \in E: r'_i \leftarrow r_i - td \cdot (m_i' - m_i)$
+  %       \item \textbf{return} $r' \leftarrow (r_1', r_2')$
+  %     \end{enumerate}
+  % \end{breakablefig}
 
-% This will enable us to construct the unique degree $|\mathcal X| - 1$ polynomial for which 
-% $$
-% \forall x \in \mathcal X \setminus \setwith{j}: L_{(\mathcal X, j)} (x) = 0 \land L_{(\mathcal X, j)}(j) = 1
-% $$
-
-% \paragraph{$(ck, ek) \leftarrow Gen(pp, B)$.} Given the public parameters $pp$ and the set of binding indexes $B$, output the commitment key and equivocation key $ck$ and $ek$. 
-% \begin{enumerate}
-%     \item Let $E = [l] \setminus B$ be the set of equivocal indexes. 
-%     \item Generate trapdoors for $l - t$ indexes: \textbf{for} $i \in E: y_i \samplefrom \Z_{|G|}, g_i \leftarrow h \cdot y_i$
-%     \begin{itemize}
-%         \item Sample $y_i$ randomly from our prime-ordered field. 
-%         \item Obtain $g_i$ by multiplying $h$ with $y_i$
-%     \end{itemize}
-%     \item Interpolate the first $[l-t]$ elements: \textbf{for} $j \in [l-t]: g_j \leftarrow \prod_{i\in E\cup \setwith{0}} g_j \cdot L_{(E\cup \setwith{0}, i)}(j)$
-%     \item Let $ck$ be the tuple $(g_1, \ldots, g_{l-t})$
-%     \item Let $ek$ be the tuple $(g_1, \ldots, g_{l-t}, \setwith{y_i}_{i \in E}, E, B)$. Note that the $ek$ should be kept secret to the entity that calls the $Gen$ function.
-%     \item \textbf{return} $(ck, ek)$
-% \end{enumerate}
-
-% \paragraph{$(com, aux) \leftarrow EquivCom(pp, ek, \mathbf{v}; r)$.} Given the public parameter $pp$, equivocation key $ek$, $l$-tuple $\mathbf{v}$, and randomness $r$: output a partially-binding commitment $com$ and auxiliary equivocation information $aux$.

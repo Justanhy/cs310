@@ -1,4 +1,5 @@
-\documentclass[a4paper,fleqn,11pt]{article} %report
+% !TeX root = dissertation.tex
+\documentclass[a4paper,fleqn,10pt]{report} %report
 
 %%%%%%%%%%%%%%%%%%%%
 
@@ -10,7 +11,7 @@
 %%%%%%%%%%%%%%%%%%%%
 
 \pagestyle{plain}
-\renewcommand{\headrulewidth}{0.0pt}
+\renewcommand{\headrulewidth}{0.0pt} % Set it so that header does not have divider line
 
 \makeatletter
 \fancypagestyle{plain}{
@@ -22,12 +23,14 @@
     % 	\fancyhead[LO]{\textit{\@title}}
     \fancyhead[R]{\thepage}
     \fancyhead[L]{\textit{\@title}}
+    \setlength{\headheight}{0.5in}
 }
 \makeatother
 
 %%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
+\normalem
 
 \input{../common/titlepage.tex}
 
@@ -41,14 +44,36 @@
 
 \newpage
 
+\chapter{Introduction}
 \input{introduction.tex}
+% elucidation of the problem and objectives of the project
+
+\chapter{Background}\label{sec:background}
 \input{background.tex}
+% in-depth investigation of the literature
+
+\chapter{Project Management}\label{ch:project-management}
+\input{project.tex}
+% clear description of the stages of the life cycle undertaken
+% description of the use of appropriate tools to support development
+\chapter{Design \& Implementation}\label{sec:design}
 \input{design.tex}
-\input{implementation.tex}
+% clear description and rationale of research methods used
+
+% \chapter{Implementation}\label{sec:implementation}
+% \input{implementation.tex}
+
+\chapter{Evaluation}\label{sec:evaluation}
 \input{evaluation.tex}
+% description of outcome of research (results)
+% critical appraisal of project indicating rationale for methods used, lessons learnt
+% during the project, evaluation of the outcome (review plan, and deviations)
+
+\chapter{Conclusions}\label{sec:conclusions}
 \input{conclusions.tex}
 
 \printbibliography
 
+\input{appendix.tex}
 
 \end{document}

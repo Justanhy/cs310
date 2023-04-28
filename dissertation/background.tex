@@ -1,32 +1,61 @@
-\section{Background}
-\label{sec:background}
+% !TeX root = dissertation.tex
+Before discussing our implementation and results, we introduce the necessary background concepts for this project. 
+We firstly formalise the notation we use in this report, and highlight broad concepts that are relevant to the entire project. 
+These concepts include: zero-knowledge, disjunctive zero-knowledge, and $\Sigma$-protocols. 
+After which, we split the remaining section into subsections: 
+each for one of the compilers we implement \cite{CDS94, StackingSigmas}%, SpeedStacking}.
 
-\subsection{Notation}
-Throughout this paper, we use $\lambda$ to denote the computational security parameter and $\kappa$ to denote the statistical security parameter. Computational security refers to a cryptographic system's security against a computationally bounded adversary, while statistical security refers to security that is not dependent on the computational power of the adversary but instead on the security that negligible statistical probability provides.
-
-We denote by $x \samplefrom \mathcal D$ the sampling of "$x$" from the distribution "$\mathcal D$", and $\verify$ means a boolean assertion of equality on the left-hand side and right-hand side of the symbol. Additionally, we use $\circ$ to indicate the concatenation of bits ($0000 \circ 1111 = 00001111$).
+\section{Notation}\label{sec:notation}
+\begin{table}[h]
+  \centering
+  \label{tab:notation}
+  \caption{Notation used in this report}
+  \begin{tabular}{|A{0.1\linewidth}|M{0.8\linewidth}|}
+    \hline
+    Symbol & Details \\\hline
+    $\lambda$ & Computational security parameter. Refers to a cryptographic system's security 
+    against a computationally bounded adversary. \\\hline
+    $\kappa$ & Statistical security parameter. Refers to the security provided by negligible statistical probability. \\\hline
+    $\verify$ & Boolean assertion. \\\hline
+    $\|$ & Bit concatenation: $0000 \| 1111 = 00001111$ \\\hline
+    $\samplefrom$ & Sampling from a distribution: $x \samplefrom \mathcal D$ is the sampling of "$x$" from 
+    the distribution "$\mathcal D$" \\
+    \hline
+    $[l]$ & The range of integers from 1 to $l$ \\
+    \hline
+  \end{tabular}
+\end{table}
 
 % We denote by $x \randselect \mathcal D$ the process of sampling "$x$" fro the distribution "$\mathcal D$" using pseudorandom coins derived from a pseudo-random generator (PRG) applied to the seed "$s$". 
 
-\input{dissertation/background/disjunctive-zero-knowledge}
+\input{background/disjunctive-zero-knowledge.tex}
 
-\input{dissertation/background/sigma}
+\input{background/sigma.tex}
+\input{background/schnorr.tex}
 
 % CDS %
-\input{dissertation/background/schnorr}
-\input{dissertation/background/secret-sharing}
-\input{dissertation/background/cds-compiler}
+\section{CDS94}
+In this section, we introduce the components necessary for the \cite{CDS94} compiler. In addition to a $\Sigma$-protocol, which 
+is relevant to every compiler in this project, the CDS94 compiler requires a \emph{secret sharing scheme} and the compiler 
+itself. In the following 2 subsections, we introduce these components.
+\input{background/secret-sharing.tex}
+\input{background/cds-compiler.tex}
 
 % Stacking Sigmas %
+\section{Stacking Sigmas}
+Moving on, we introduce the concept of a \emph{partially-binding vector commitment scheme} 
+and present the Stacking Sigmas compiler proposed by \cite{StackingSigmas}. This compiler aims to improve on the 
+communication complexity of the \cite{CDS94} compiler, by reducing the communication size to $O(\log n)$, where $n$ is the 
+number of clauses in the disjunction. 
 % Partially Binding Vector Commitment from Discrete Log
-\input{dissertation/background/comm_scheme.tex}
+\input{background/comm_scheme.tex}
 % Section on stacking sigmas - talk about how stacking works
-\input{dissertation/background/stackable}
+\input{background/stackable.tex}
 
 % Speed Stacking %
-\input{dissertation/background/homomorphisms}
-% section on compressed sigma protocols (compression mechanism)
-\input{dissertation/background/compressed_sigma}
-% section on speed stacking compiler 
-\input{dissertation/background/speed-stacker}
+% \input{background/homomorphisms.tex}
+% % section on compressed sigma protocols (compression mechanism)
+% \input{background/compressed_sigma.tex}
+% % section on speed stacking compiler 
+% \input{background/speed-stacker.tex}
 

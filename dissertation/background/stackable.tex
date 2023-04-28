@@ -1,1 +1,107 @@
 \subsection{Stacking Sigmas Compiler}
+In Section 6 of \cite{StackingSigmas}, Goel \emph{et al} introduce the two main properties of stackable $\Sigma$-protocols: \textit{extended honest verifier 
+zero-knowledge}, and \textit{recyclable third round messages}. Moreover, they go on to show that many $\Sigma$-protocols satisfy these properties, 
+proving that all $\Sigma$-protocols can be made EHVZK (Observation 1), and many natural $\Sigma$-protocols have recyclable third round messages. 
+
+In this section, we state the definition of these two properties as shown in \cite{StackingSigmas}, but do not dive into the details of how a large class of 
+$\Sigma$-protocols have these two properties. We encourage readers to refer to \cite{StackingSigmas} for the proofs of these properties and the observations 
+related to them.
+
+\begin{definition}[Extended Honest Verifier Zero-Knowledge -- EHVZK]
+  The $\Sigma$-protocol $\Pi = (A, Z, \phi)$ is EHVZK if there exists a \textit{deterministic} polynomial time "extended simulator" algorithm 
+  $\mathcal S^{\text{\tiny EHVZK}}(1^\lambda, x, c, z)$ such that an efficiently samplable distribution 
+  $\mathcal D_{x,c}^{(z)}$ exists, for any $(x,w) \in \mathcal R$ and $c \in \{0,1\}^\kappa$. 
+  $\mathcal D_{x,c}^(z)$ is a distribution of third round message $z$ conditioned on $x$ and $c$:
+  \begin{multline*}
+    \left\{
+      (a,c,z) \st r^P \samplefrom \{0,1\}^\lambda; a \leftarrow A(x, w; r^P); z \leftarrow Z(x,w,c; r^P)
+    \right\} \\
+    \approx
+    \left\{
+      (a,c,z) \st z \samplefrom \mathcal D_{x,c}^{(z)}; a \leftarrow \mathcal S^{\text{\tiny EHVZK}}(1^\lambda, x, c, z)
+    \right\}
+  \end{multline*}
+  Intuitively this means, that the such that the transcript $(a,c,z)$ is indistinguishable from the output of the simulator
+  $\mathcal S^{\text{\tiny EHVZK}}(1^\lambda, x, c, z)$.
+\end{definition}
+
+\begin{definition}[Recyclable 3rd Round Messages]
+  A $\Sigma$-protocol $\Pi = (A, Z, \phi)$ for $\mathcal R$ has recyclable third round messages if for every challenge $c \in \{0,1\}^\kappa$, there is an 
+  efficiently sampleable distribution $\mathcal D_c^{(z)}$:
+  $$
+    \mathcal D_c^{(z)} \approx \left\{z \st r^P \samplefrom \{0,1\}^\lambda; a \leftarrow A(x,w;r^P); z \leftarrow Z(x,w,c;r^P) \right\}\quad 
+    \forall (x,w) \in \mathcal R 
+  $$
+\end{definition}
+  Essentially, this means that the distribution of $z$ is not dependent on the statement $x$ and hence does not "leak information" about the statement. 
+  Consequently, this means that $z$ can be reused for any statement $x$, even non-active clauses, and still hide the active clauses. 
+
+\begin{definition}[Stackable $\Sigma$-protocol -- Definition 9 of \cite{StackingSigmas}]
+  \label{def:stackable}
+  A $\Sigma$-protocol $\Pi = (A, Z, \phi)$ is \textit{stackable} if it is EHVZK and has recyclable third round messages.
+\end{definition}
+
+  Now, we present the Stacking Sigmas Compiler for stacking disjunctions of the same protocol (Section 7 of \cite{StackingSigmas}). The compiler 
+  presented in Protocol \ref{prot:stacksig-compiler} is identical to that in Figure 5 of \cite{StackingSigmas}, and is produced by Theorem 5 of \cite{StackingSigmas}.
+
+  \paragraph{Theorem 5 of \cite{StackingSigmas}.} Given a \textit{stackable} $\Sigma$-protocol $\Pi = (A, Z, \phi)$ and a 
+  1-out-of-$l$ binding vector commitment scheme, we can produce a compiled $\Sigma$-protocol $\Pi' = (A', Z', \phi')$ that is also \textit{stackable}. If 
+  $\Pi$ is for the relation $\mathcal R: \mathcal X \times \mathcal W \rightarrow \{0,1\}$, then $\Pi'$ is for the relation $\mathcal R': \mathcal X^l \times 
+  ([l] \times \mathcal W) \rightarrow \{0,1\}$, where $\mathcal R'((x_1,\ldots, x_n), (a,w)) := \mathcal R(x_a, w)$.
+  The 
+  description of $\Pi'$ is shown in Protocol $\ref{prot:stacksig-compiler}$, and the proof of this theorem can be found in \cite{StackingSigmas}.
+
+\begin{protocol}[label={prot:stacksig-compiler}]{Stacking Sigmas Compiler. A compiler for composing $n$ instances of a 
+  $\Sigma$-protocol $\Pi$ into a single $\Sigma$-protocol $\Pi'$ that proves the \textbf{disjunction} 
+  of these $n$ instances.}
+  \textbf{Statement:} $x = x_1,\ldots, x_n$ \\
+  \textbf{Witness:} $w = (\alpha, w_\alpha)$
+  \begin{itemize}
+      \item \textbf{First Round:} the Prover, $P$, computes $A'(x,w; r^P) \rightarrow a$ accordingly:
+      \begin{itemize}
+          \item Parse $r^P = (r^P_\alpha \| r)$
+          \item Compute $a_\alpha \leftarrow A(x_\alpha, w_\alpha; r^P_\alpha)$
+          \item Set $\mathbf{v} = (v_1,\ldots, v_l)$, where $v_\alpha = a_\alpha$ and $\forall i \in [l] \setminus \alpha,\ v_i = 0$.
+          \item Compute $(\textsf{ck}, \textsf{ek}) \leftarrow \textsf{Gen}(\textsf{pp}, B = \{\alpha\})$.
+          \item Compute $(\textsf{com}, \textsf{aux}) \leftarrow \textsf{EquivCom}(\textsf{pp}, \textsf{ek}, \mathbf{v}; r)$.
+          \item Send $a = (\textsf{ck, com})$ to the verifier. 
+      \end{itemize}
+      \item \textbf{Second Round:} $V$ sends $c \leftarrow \{0,1\}^\lambda$ to $P$. 
+      \item \textbf{Third Round:} Prover computes $Z'(x,w,c;r^P) \rightarrow z$:
+        \begin{itemize}
+          \item Parse $r^P = (r^P_\alpha \| r)$
+          \item Compute $z^* \leftarrow Z(x_\alpha, w_\alpha, c; r^P_\alpha)$
+          \item For $i \in [l] \setminus \alpha$, compute $a_i \leftarrow \mathcal S^{\text{\tiny EHVZK}}(x_i, c, z^*)$. 
+          \item Set $\mathbf{v}' = (a_1, \ldots, a_l)$
+          \item Compute $r' \leftarrow \textsf{Equiv}(\textsf{pp, ek,} \mathbf{v}, \mathbf{v}'; \textsf{aux})$ (where $\textsf{aux}$ can be 
+          regenerated with $\textsf{r}$).
+          \item Send $z = (\textsf{ck}, z^*, r')$ to the verifier.
+        \end{itemize}
+      \item \textbf{Verification:} Verifier computes $\phi'(x,a,c_0,z) \rightarrow b$ as follows:
+      \begin{itemize}
+        \item Parse $a = (\textsf{ck, com})$ and $z = (\textsf{ck}, z^*, r')$.
+        \item Set $a_i \leftarrow \mathcal S^{\text{\tiny EHVZK}}(x_i, c, z^*)$
+        \item Set $\mathbf{v}' = (a_1, \ldots, a_l)$
+        \item Compute and return: 
+      \end{itemize}
+      \[
+          b = (\textsf{ck} \verify \textsf{ck}') \land \left(\textsf{com} \verify \textsf{BindCom}(\textsf{pp, ck}, \mathbf{v}'; r')\right) \land 
+          \left(\bigwedge_{i \in [l]} \phi(x_i, a_i, c,z^*)\right)
+        \]
+  \end{itemize}
+\end{protocol}
+
+\paragraph{Communication Complexity.} By using the Q-Binding construction (Figure 4 of \cite{StackingSigmas}) together with Half-Bindings 
+(Figure \ref{fig:half-binding}) we obtain a $1$-out-of-$2^q$ 
+binding vector commitment scheme with communication complexity $q \cdot CC(\textsf{HalfBinding})$ 
+(\textbf{Theorem 2 \& Corollary 1} in \cite{StackingSigmas}). According to the proofs in Theorem 5 \cite{StackingSigmas}, the communication complexity of 
+$\Pi'$ is 
+$CC(\Pi_l) = CC(\Pi) + |\textsf{ck}| + |\textsf{com}| + |\textsf{r'}|$, where the last three components are directly related to the choice of the 
+partially-binding vector commitment. 
+
+Since we are using a Q-Binding construction, we get the following communication complexity: 
+$CC(\Pi_l) = CC(\Pi) + q(|\textsf{ck}_{1/2}| + |\textsf{com}_{1/2}| + |\textsf{r'}_{1/2}|)$. From Figure \ref{fig:half-binding}, we can see that 
+$|\textsf{ck}_{1/2}| = |g|$, $|\textsf{com}_{1/2} = 2|g|$, and $|r'_{1/2}| = 2|z|$, where $g \in \G$ and $z \in \Z_{|\G|}$. In this case, $|g|$ 
+depends on the number of bytes required to represent the group elements in $\G$, and $|z|$ depends on the size of the group $|\G|$. Therefore, 
+$CC(\Pi_l) = CC(\Pi) + q(3|g| + 2|z|) = CC(\Pi) + \log_2(l)(3|g| + 2|z|)$. Hence, the communication complexity grows logarithmically with the 
+number of clauses $l$.

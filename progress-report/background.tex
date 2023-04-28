@@ -124,7 +124,7 @@ In our implementation, we will use Schnorr's discrete log protocol over Ristrett
 
 We will attempt to make the implementation as general as possible to open up for the future possibility to take any $\Sigma$-protocol that suits our requirements and transform it disjunctive zero-knowledge $\Sigma$-protocol.
 
-\subsubsection{The Witness Indistinguishable (WI) compilation}
+\paragraph{The Witness Indistinguishable (WI) compilation}
 
 In their paper, Cramer {\em{et al}} \cite{CDS94} presents 2 primary ways to construct a WI protocol from a $\Sigma$-protocol $\mathcal P$ (Theorem 8 and 9). 
 
@@ -151,7 +151,7 @@ Since, SSS is a smooth threshold secret sharing scheme (required for 8), and Sch
 
 Then, there exists a $\Sigma$-protocol that is witness indistinguishable for the relation $R_\Gamma$. (The proof of Theorem 8 and 9 is given in their paper.)
 
-\subsubsection{Protocol Description}
+\paragraph{Protocol Description}
 Let $A \in \Gamma$ denote the set of indices $i$ for which our prover $P$ knows a witness for $x_i$
 
 \begin{enumerate}

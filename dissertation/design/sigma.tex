@@ -1,0 +1,69 @@
+We model $\Sigma$-protocols with an interface.
+Firstly, we design a set of generic types associated with the interface which will fit into 
+the definition of the methods in the interface. These types are:
+\begin{itemize}
+  \item \texttt{Statement}: Public information about the protocol.
+  \item \texttt{Witness}: Private information about the protocol (only known to Prover).
+  \item \texttt{MessageA}: The first message of the protocol, sent from prover to verifier.
+  \item \texttt{Challenge}: The challenge sent by the verifier to the prover.
+  \item \texttt{MessageZ}: The third message of the protocol, sent from prover to verifier. 
+  \item \texttt{State}: For most $\Sigma$-protocols, there is a particular state associated 
+  to the execution of the first message. This state is often used by the prover again in 
+  the third message but must not be sent to the verifier.
+\end{itemize}
+
+In particular, the design of the generic \texttt{State} type is worth discussing in more detail.
+It is not explicitly mentioned in the formal definition of $\Sigma$-protocols, as it is 
+assumed that the prover is able to track and store the private values that they obtain and 
+require in the protocol. In the implementation, this has to be explicitly modelled and 
+we do this using a functional programming approach, instead of an object-oriented
+programming (OOP) approach. 
+Firstly, this is because the functional approach is simpler, as we do not need to 
+implement separate interfaces for the prover and verifier and subsequently include them as fields
+within the \texttt{SigmaProtocol} interface. Secondly, the functional approach is more flexible,
+as it does not restrict the user to a particular way of implementing the prover or verifier.
+The functional approach simply provides two values in the first message (the state and the 
+actual message), and the user of our interface can decide how to use these values.
+
+Now, we present the methods that are associated with our $\Sigma$-protocol interface. 
+These methods are: 
+\begin{itemize}
+  \item \texttt{first}: the first message of the protocol. This models algorithm 
+  $a \leftarrow A(x, w; r^P)$ 
+  in Definition \ref{def:sigma}.
+  \item \texttt{second}: the second message of the protocol. $c \leftarrow \{0,1\}^\kappa$.
+  \item \texttt{third}: the third message of the protocol. $z \leftarrow Z(x, w, c; r^P)$. 
+  \item \texttt{verify}: verifies the transcript. $b \leftarrow \phi(x, a, c, z)$.
+\end{itemize}
+
+In Appendix \ref{code:SigmaProtocol} we provide a code snippet of these methods within 
+the interface, which outlines which generic types are given as input and which are 
+returned as output. Referring to the code snippet, readers will observe that our 
+methods almost model the algorithms in Definition \ref{def:sigma} exactly in terms of 
+input and output. The only difference is with the \texttt{State} type that we have already 
+discussed.
+
+\subsection{Schnorr's Protocol}
+As a $\Sigma$-protocol, our first step in our implementation for Schnorr's protocol is 
+to create concrete definitions for 
+the methods and generic types of the \texttt{SigmaProtocol} interface. We use the following 
+concrete types in the interface: 
+\begin{itemize}
+  \item \texttt{Statement}: \texttt{Schnorr} -- a type that simply contains the "public key"
+  (which is the group element $H = x \cdot G$) as a field. We use the \texttt{RistrettoPoint} 
+  type from \texttt{curve25519-dalek} to represent the public key, and it is essentially a 
+  point on an Edward's curve. 
+  \item \texttt{Witness}: \texttt{Scalar} -- also from the \texttt{curve22519-dalek} library. It 
+  represents elements of the prime field in the Ristretto group. 
+  \item \texttt{MessageA}: \texttt{CompressedRistretto} -- essentially the same as the 
+  \texttt{RistrettoPoint} type, but differs in its representation. \texttt{CompressedRistretto}
+  is a compressed representation of the point, which is more efficient to store and
+  transmit.
+  \item \texttt{Challenge}: \texttt{Scalar}
+  \item \texttt{MessageZ}: \texttt{Scalar}
+  \item \texttt{State}: \texttt{Scalar} 
+\end{itemize}
+
+The key takeaway is that we assign concrete types to the associated generic types provided in 
+the interface for our implementation of Schnorr. The methods in the interface are then 
+defined according to our definition of Schnorr in Definition \ref{def:schnorr}. 

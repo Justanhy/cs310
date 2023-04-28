@@ -71,7 +71,7 @@ The first part of the project will be focused on reading necessary background re
 
 The remaining half of the project will be dedicated to implementing the SS compiler. That said, we will use a different commitment scheme that is used by Hall-Andersen \cite{MHAStackSig}, so that we can achieve some meaningful results when comparing the two. Again, once implemented, we will benchmark each implementation against one another according to the same plan that was designed for the first pair.
 
-\subsection{Possible Extensions}
+\section{Possible Extensions}
 
 If time allows for it, we will attempt to implement a compiler that transforms a SNARK (Succinct Non-Interactive Argument of Knowledge) into a SNARK for a disjunctive statement. This is based on recent work by Goel, Hall-Andersen, Kaptchuk, and Spooner \cite{SpeedStacking}.
 
@@ -83,17 +83,17 @@ This project will entail a mix of research and software development. For each of
 
 This gives us three separate phases for each implementation: research, implementation, and evaluation.
 
-\subsection{Research}
+\section{Research}
 Before proceeding with implementation, a good understanding of the design will be important in ensuring the accuracy of the implementation. Background reading in group theory, linear algebra, interactive proofs, and ZK will be beneficial (or even crucial) for understanding the main results in \cite{CDS94} and \cite{StackingSigmas}. Justin Thaler's draft survey \cite{PAZK} will be consulted to learn core concepts surrounding interactive proofs and ZK. 
 
-\subsection{Implementation}
+\section{Implementation}
 As we begin our implementation, we start by translating the design of each compiler into a set of requirements that it must have. This will help to identify the respective components that are required, and can help with time management and project planning. These requirements will be compiled into a document that can be easily referred to throughout the development process. 
 
 \textbf{Version Control.} Git will be used for version control along with Github for source code management. Commits will be regularly made to the remote repository to synchronise local repositories that may exist on different machines. 
 
 \textbf{Programming Language.} While the compilers can be built with any programming languages, initial research into existing implementations of various cryptographic protocols show that a large majority of them are implemented in Rust. These include $\Sigma$-protocols that will be given to our compilers as input. In fact, Hall-Andersen's SS compiler is also implemented in the language. Hence, Rust is the obvious choice to ensure that our benchmarks are comparable. 
 
-\subsection{Evaluation}
+\section{Evaluation}
 The accuracy of our implementation will be evaluated through black-box testing that check if the resulting protocol our compiler produces have the properties it should have. These include the \textit{witness indistinguishable} or \textit{witness hiding} property in the case of CDS. Inputs to our compilers will also have to be tested to ensure they adhere to the properties that they are supposed to have. 
 
 A benchmark test plan will be designed to evaluate the performance of our CDS implementation. Benchmarks will have to be consistent with each other in order for a fair comparison of performance. Since we are using Rust, employing \texttt{cargo bench} together with Rust's native testing and benchmarking framework \texttt{libtest} should be sufficient. Another candidate is \texttt{criterion} -- a statistics driven open source benchmarking tool that provides statistical confidence when comparing different test runs. This may provide more insightful data to compare the performance of our implementations. More research will be done on whether \texttt{libtest} or \texttt{criterion} suits this project better.

@@ -1,17 +1,79 @@
-\section{Introduction}
+% !TeX root = dissertation.tex
+Zero-Knowledge proofs and arguments \cite{GMR85} are protocols with two parties: a Prover, and a Verifier. 
+The prover's goal is to convince the verifier of the validity of an NP statement, while revealing zero additional 
+information except that the statement is valid. In other words, the verifier learns nothing new, except whether 
+the statement being proven is true or false. Early research in this area showed that all languages in NP have 
+zero-knowledge proof systems \cite{DBLP:conf/focs/GoldreichMW86}, sparking a long line of research into developing 
+more efficient zero-knowledge proofs for various use cases. Today, efficient zero-knowledge proofs are being used 
+in practice, with several use cases such as e-voting and to secure decentralized systems \cite{evoting, zcash}.
 
-Zero-Knowledge proofs and arguments \cite{GMR85} are protocols with two parties: a Prover, and a Verifier. The prover's goal is to convince the verifier of the validity of an NP statement, while revealing zero additional information except that the statement is valid. In other words, the verifier learns nothing new, except whether the statement being proven is true or false. Early research proved that all languages in NP have zero-knowledge proof systems \cite{DBLP:conf/focs/GoldreichMW86}, sparking a long line of research into this area. Today, efficient zero-knowledge proofs and arguments are being used in practice, particularly in decentralized systems. 
+In many cases, it is desirable to have a zero-knowledge proof for a \textit{disjunctive statement}, which is an NP 
+statement with a set of clauses that are connected with logical ORs:
 
-In many cases, it is desirable to have a zero-knowledge proof for a disjunctive statement, which is an NP statement with a set of clauses that are connected with logical ORs.  Disjunctive statements have very useful properties that occur commonly in practice, such as proving ones membership to a particular group, or showing the existence of a bug in a verifier's code base \cite{StackedGF}. Zero-knowledge becomes an important property in cases where revealing the exact clause (or clauses) that is true may reveal private information about the prover, such as their identity. A long line of research has focussed on how $n$ zero-knowledge proofs, each for one statement, can be composed into a new zero-knowledge proof of the disjunction of these statements. 
+$$
+clause_1 \lor clause_2 \lor \cdots \lor clause_n
+$$
 
-In their 1994 paper, Cramer, Damg{\aa}rd, and Schoenmakers \cite{CDS94} provide a generic compiler to compose 3-round public coin proofs of knowledge, or more succinctly (and more popularly) known as $\Sigma$-protocols. %perhaps discuss more
-More recently, Goel {\em et al.} \cite{StackingSigmas} improved on this further, providing a generic compiler for a large class of $\Sigma$-protocols and also reducing the communication size of the resulting proof. 
+Such zero-knowledge proofs fall under the category of "disjunctive zero-knowledge": the goal is for the Prover 
+to show that they have knowledge of at least 1 of the clauses while revealing no additional information. 
+In other words, the Prover shows that at least 1 of the clauses are true and does not reveal 
+information such as the location of these clauses or the "answer" to these clauses. 
+We can think of each clause as a statement that has an "answer" to it -- formally this "answer" 
+is known as a \textit{witness} for the statement. Clauses that the Prover has 
+knowledge of are called the \textit{active clauses}. 
+Disjunctive statements have very useful properties that occur commonly in practice, and adding zero-knowledge can be very beneficial to  
+systems that desire both privacy and verifiability. For example, a disjunctive zero-knowledge proof can be used to prove an 
+individual's membership to a particular group while revealing nothing about the identity of the individual. They can also be 
+used to reveal the existence of a bug in a verifier's code base as shown in \cite{StackedGF}. Consequently, there has been 
+wide research interest in determining how to construct disjunctive zero-knowledge proofs, and how to do so efficiently: saving 
+on communication complexity (the size, in bytes, of the messages between prover and verifier) and computational complexity.  
 
-While extensive research has been conducted, there is a lack of notable real-world implementations of these results
-\footnote{It should be noted that Hall-Andersen \cite{MHAStackSig} has provided a benchmark of applying the compiler in \cite{StackingSigmas} to Schnorr's discrete log protocol \cite{Schnorr}.}. This project seeks to build upon their work by implementing the compilers described in \cite{CDS94} and \cite{StackingSigmas}. Once implemented, we aim to provide a benchmark for both protocols to explore and measure how they differ. This will hopefully provide some valuable insights as to how these designs perform in practice, which may in turn lead to further improvements in the future that may have a broad impact on existing and upcoming cryptographic systems that rely on such a use case. 
+One approach is to modify the underlying protocols manually so that they support disjunctive statements. Exciting results from recent 
+work has shown that it is possible to achieve protocols with a communication complexity sub-linear in the number of clauses using 
+this approach \cite{StackedGF,attema}. Unfortunately, this approach does not generalise well and only work for the individual protocols 
+that they target. A solution to this is to develop generic compilers for disjunctive zero-knowledge \cite{CDS94,StackingSigmas}. These 
+compilers are able to target a large class of zero-knowledge proofs known as 3-round public coin proofs of knowledge (or more popularly 
+known as $\Sigma$-protocols).
 
-\subsection{Related work}
+Research targeting \textit{disjunctive zero-knowledge compilers} began with Cramer, Damg{\aa}rd, and Schoenmakers \cite{CDS94}. 
+They proposed a generic compiler to compose multiple instances of $\Sigma$-protocols into a disjunctive zero-knowledge proof. 
+Their results showed that the communication complexity of the resulting proof is linear in the number of clauses.
+More recently, Goel {\em et al.} \cite{StackingSigmas} improved on this further, providing a generic compiler that still targets 
+a large class of $\Sigma$-protocols while achieving a communication complexity that is sub-linear in the number of clauses.
+
+\section{Our Contributions}
+
+While extensive research has been conducted, there is a lack of notable real-world implementations 
+of these results
+\footnote{It should be noted that Hall-Andersen \cite{MHAStackSig} has provided a benchmark of applying the compiler in 
+\cite{StackingSigmas} to Schnorr's discrete log protocol \cite{Schnorr}.}. 
+In this work, we seek to fill in this gap and build upon past research and have implemented
+the CDS94 compiler \cite{CDS94} and the Stacking Sigmas compiler from \cite{StackingSigmas}. 
+We also benchmark these protocols to measure and compare the difference in their performances. 
+From our analysis of the collected data, we provide insights into the trade-offs between these 
+protocols and suggest when they might be the most useful. 
+
+As a project extension, we are also working on an implementation of the compiler 
+introduced in "Speed-Stacking: Fast Sublinear Zero-Knowledge Proofs for Disjunctions" 
+\cite{SpeedStacking}. This compiler builds on the work in \cite{StackingSigmas} and 
+explores how sublinear-sized zero-knowledge proofs can be compiled into a 
+sublinear-sized disjunctive zero-knowledge proof, which has a \textit{sublinear} 
+running time. Specifically, we are working on applying this compiler to Compressed 
+$\Sigma$-protocols \cite{attema}. This is still a work-in-progress.
+
+We hope that our work helps lay the foundation for future work to compare 
+new compilers to existing ones and in turn lead to further improvements 
+that may have a broad impact on existing and upcoming cryptographic systems that rely on such a use case. 
+
+\section{Related work}
 \label{sec:related_work}
-As part of their work in \cite{StackingSigmas}, Hall-Andersen provides an implementation of the Stacking Sigmas (SS) compiler \cite{MHAStackSig}. In this implementation, they apply the SS compiler to Schnorr over Ristretto25519 to obtain efficient ring signatures from discrete log and random oracles. 
+As part of their work in \cite{StackingSigmas}, Hall-Andersen provides an implementation of the Stacking Sigmas (SS) compiler \cite{MHAStackSig}. 
+In this implementation, they apply the Stacking Sigmas compiler to Schnorr over Ristretto25519 to obtain efficient ring signatures. 
+In our work, we include a comparison of our implementation of the compilers (both \cite{CDS94} and \cite{StackingSigmas}) to Hall-Andersen's implementation. 
+The key difference between our implementations is that we use a newer commitment scheme (present in the updated and latest version of 
+\cite{StackingSigmas}). Additionally, we also seek to improve the usability of the compiler by providing a more user-friendly API. 
+More is discussed in Section \ref{sec:implementation}.
+
+
 
 % Stacked Garbling implementation

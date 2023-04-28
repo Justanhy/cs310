@@ -1,0 +1,63 @@
+For our implementation of Shamir's Secret Sharing, we use Lagrange's interpolating 
+polynomial to interpolate the $x$ and $y$ coordinates that correspond to shares. We 
+chose to use Lagrange's interpolation formula because it is simple to implement, 
+albeit not the most efficient. This trade off is acceptable as the main goal for the project 
+is to measure the performance change with respect to the number of clauses, and 
+not the pure performance of the compiler. A more efficient implementation is therefore 
+not a priority, and can always be implemented in the future if needed. 
+
+Initially, we used an existing library \texttt{vsss-rs} \cite{vsss-rs} as our implementation of 
+Shamir's secret sharing scheme. However, we encountered a few issues with this library. Firstly, 
+the library does not provide the functionality to complete a qualified shares given the secret 
+and an unqualified set of shares. This is not surprising as this is not the main use case for 
+a secret sharing scheme like Shamir's. However, this is a necessary feature for our compiler
+as we use it to ensure that the prover is unable to arbitrarily select challenges to cheat the 
+verifier. We initially tackled this by simply adding the missing functionality to the library, 
+in the form of new functions. However, we later found out about the second issue with the library:
+its implementation of Lagrange's algorithm is inefficient.
+
+In their implementation, they call the \texttt{invert} 
+method in the inner-loop of the algorithm resulting in $n^2$ calls to the function, 
+where $n$ is the number of shares. The \texttt{invert} method is required to perform 
+division on our group elements, but it is a costly operation. 
+This can be avoided, however, by computing the numerator and denominator 
+separately and performing the \texttt{invert} function only $n$ times -- outside of the inner-loop. 
+The following snippet of code shows the comparison of the two implementations. 
+
+\begin{lstlisting}[language=rust]
+  // Inefficient implementation
+  for i in 0..n { // outer-loop
+    for j in 0..n { // inner-loop
+      if i != j
+        basis *= (x - x[j]) * (x[i] - x[j]).invert()
+      result += basis * y[i]
+    }
+  }
+
+  // More efficient implementation
+  for i in 0..n {
+    for j in 0..n {
+      if i != j {
+        numerator *= x - x[j]
+        denominator *= x[i] - x[j]
+      }
+    }
+    result += numerator * denominator.invert() * y[i]
+  }
+\end{lstlisting}
+
+Due to this issue, we created our own implementation of Shamir's secret sharing scheme. 
+We represent a Lagrange polynomial with two fields: 
+$x$-coordinates and $y$-coordinates which are both vectors of the same length. 
+For a polynomial with degree $d$, the vectors will have length $d$ as well. 
+
+An alternative we considered is to represent the polynomial with a vector of coefficients, 
+where the $i$-th element of the vector is the coefficient of the $i$-th degree term. This representation 
+is useful in the method for distributing shares given the secret, as we can use Horner's method 
+to evaluate the polynomial at a given point efficiently \cite{horner}. However, CDS94 does not 
+rely on the secret sharing scheme's functionality for distributing shares, and instead uses
+the \textsf{Complete} algorithm (Definition \ref{def:sss-completion}) to complete a qualified set.
+For this algorithm, we need to use polynomial interpolation as we are given the secret and an unqualified
+set of shares (and equivalently points on the polynomial). 
+Therefore, we choose to represent the polynomial in this way because it is more natural for use in 
+Lagrange's interpolation formula (Definition \ref{def:lagrange}). 

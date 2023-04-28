@@ -1,12 +1,15 @@
 \subsection{CDS94 Compiler}
-In this paper, Cramer {\em{et al}} \cite{CDS94} presents 2 primary ways to compile $\Sigma$-protocols depending on the underlying choice of $\Sigma$-protocol and the secret sharing scheme. Our implementation makes use of Theorem 8 of the paper because we choose to use Schnorr's protocol (Section \ref{sec:schnorr}) and Shamir's secret sharing (Section \ref{sec:sss}). More details regarding our implementation will be discussed in a further section. 
-
+In this paper, Cramer {\em{et al}} \cite{CDS94} presents 2 primary ways to compile $\Sigma$-protocols depending 
+on the underlying choice of $\Sigma$-protocol and the secret sharing scheme. Our implementation makes use of Theorem 
+8 of the paper because we choose to use Schnorr's protocol (Section \ref{sec:schnorr}) and Shamir's secret sharing 
+(Section \ref{sec:sss}). More details regarding our implementation will be discussed in a further section. Now, we recall 
+theorem 8 of \cite{CDS94} -- note that we alter the notation slightly from the original paper to be more consistent 
+with the rest of this report.
 
 % In our implementation, we will use Schnorr's discrete log protocol over Ristretto25519 and Shamir's secret sharing scheme to demonstrate the compilation of $\Sigma$-protocol into a $\Sigma$-protocol for the disjunction of $n$ statements. 
-
 % We will attempt to make the implementation as general as possible to open up for the future possibility to take any $\Sigma$-protocol that suits our requirements and transform it disjunctive zero-knowledge $\Sigma$-protocol.
 
-% \subsubsection{The Witness Indistinguishable (WI) compilation}
+% \subsection{The Witness Indistinguishable (WI) compilation}
 
 % In their paper, Cramer {\em{et al}} \cite{CDS94} presents 2 primary ways to construct a WI protocol from a $\Sigma$-protocol $\mathcal P$ (Theorem 8 and 9). 
 
@@ -21,67 +24,49 @@ In this paper, Cramer {\em{et al}} \cite{CDS94} presents 2 primary ways to compi
 \textbf{Theorem 8 \cite{CDS94}}. Given $\Pi = (A, Z, \phi)$, $\mathcal R_\Gamma$ and $\mathcal S(k)$ where
 
 \begin{itemize}
-    \item $\Pi$ is a 3-round public coin ($\Sigma$-protocol) HVZK proof of knowledge for relation $R$, which satisfies the special soundness property.
+    \item $\Pi$ is a 3-round public coin ($\Sigma$-protocol) HVZK proof of knowledge for relation $\mathcal R$.
     \item $\{\mathcal S(k)\}$ is a family of smooth secret sharing schemes.
     \item $\mathcal R_\Gamma$ is a relation where $((x_1,\ldots,x_m),(w_1,\ldots,w_m)) \in \mathcal R_\Gamma$ if and only if ($\iff$)
     \begin{itemize}
         \item all $x_i$'s are of the same length $k$, and 
-        \item the set of indices $i$ for which $(x_i,w_i) \in R$ corresponds to a qualified set for $S(k)$
+        \item the set of indices $i$ for which $(x_i,w_i) \in \mathcal R$ corresponds to a qualified set for $S(k)$
     \end{itemize}
 \end{itemize}
 
-Then, there exists a $\Sigma$-protocol, $\Pi' = (A', Z', \phi')$, that is witness indistinguishable (Definition \ref{def:wi}) for the relation $R_\Gamma$. The description of this protocol is outlined in Figure \ref{fig:cds94-compiler}. Interested readers can refer to the original paper for the proof of this theorem \cite{CDS94}. 
+Then, there exists a $\Sigma$-protocol, $\Pi' = (A', Z', \phi')$, that is witness indistinguishable 
+(Definition \ref{def:wi}) for the relation $\mathcal R_\Gamma$. The description of this protocol is outlined in 
+Protocol \ref{prot:cds-compiler}. Interested readers can refer to the original paper for the proof of this theorem \cite{CDS94}. 
 
-\begin{figure}
-    \centering
-    \begin{protocol}[]{CDS94 Compiler. Let $A$ be the set of indices $i$ of the \textit{active clauses}.} 
-       \textbf{Statement:} $x = x_1,\ldots, x_n$ \\
-       \textbf{Witness:} $w = \{w_i\st i \in A\ \land (x_i, w_i) \in R\}$
-       \begin{itemize}
-           \item \textbf{First Round:} the Prover, $P$, computes $A'(x,w; r^P) \rightarrow a$ accordingly:
-           \begin{itemize}
-               \item For each $i \in \bar A$, run the simulator for $\mathcal P$ for the statement $x_i$ to produce the transcripts $(m_1^i, c_i, m_2^i)$.
-               \item For each $i \in A$, compute $m_1^i \leftarrow A(x_i, w_i; r^P)$.
-               \item Send $a \leftarrow (m_1^1, \ldots, m_1^n)$ to $V$.
-           \end{itemize}
-           \item \textbf{Second Round:} $V$ sends $c_0 \leftarrow \{0,1\}^\lambda$ to $P$. 
-           \item \textbf{Third Round:} Prover computes $Z'(x,w,c;r^P) \rightarrow z$:
-           \begin{itemize}
-               \item Compute $Q \leftarrow Complete(c_0, U, A)$, where $U = \{c_i\st i \in \bar A\}$.
-               \item Set $c_i = share(i)$, for each $share(i) \in Q$
-               \item For $i \in A$, compute $m_2^i \leftarrow Z(x_i, w_i, c_i; r^P)$. 
-               \item For $i \in \bar A$, $m_2^i$ has already been computed in the first round using the simulator.
-               \item Send $z \leftarrow ((c_1, m_2^1), \ldots, (c_n,m_2^n))$ to $V$.
-           \end{itemize}
-           \item \textbf{Verification:} Verifier computes $\phi'(x,a,c_0,z) \rightarrow b$ as follows:
-           \begin{itemize}
-               \item Extract $c_i$ and $m_2^i$ from $z \leftarrow ((c_1, m_2^1), \ldots, (c_n,m_2^n))$
-               \item Check that all conversations $(m_1^i, c_i, m_2^i)$ would lead to acceptance by the verifier in $\mathcal P$.
-               \item Check that each $share(c_i)$ is consistent with the secret $c_0$ using the reconstruction algorithm in Definition \ref{def:sss}.
-               \item If any of the checks fail return $b \leftarrow 0$; else return $b \leftarrow 1$.
-           \end{itemize}
-       \end{itemize}
-    \end{protocol}
-    \caption{A compiler for composing $n$ instances of a $\Sigma$-protocol $\Pi$ into a single $\Sigma$-protocol $\Pi'$ that proves the \textbf{disjunction} of these $n$ instances.}
-    \label{fig:cds94-compiler}
-\end{figure}
+\begin{protocol}[label={prot:cds-compiler}]{CDS94 Compiler. A compiler for composing $n$ instances of a 
+    $\Sigma$-protocol $\Pi$ into a single $\Sigma$-protocol $\Pi'$ that proves the \textbf{disjunction} 
+    of these $n$ instances.}
+    Let $A$ be the set of indices $i$ of the \textit{active clauses}. \\
+    \textbf{Statement:} $x = x_1,\ldots, x_n$ \\
+    \textbf{Witness:} $w = \{w_i\st i \in A\ \land (x_i, w_i) \in R\}$
+    \begin{itemize}
+        \item \textbf{First Round:} the Prover, $P$, computes $A'(x,w; r^P) \rightarrow a$ accordingly:
+        \begin{itemize}
+            \item For each $i \in \bar A$, run the simulator for $\mathcal P$ for the statement $x_i$ to produce the transcripts $(m_1^i, c_i, m_2^i)$.
+            \item For each $i \in A$, compute $m_1^i \leftarrow A(x_i, w_i; r^P)$.
+            \item Send $a \leftarrow (m_1^1, \ldots, m_1^n)$ to $V$.
+        \end{itemize}
+        \item \textbf{Second Round:} $V$ sends $c_0 \leftarrow \{0,1\}^\lambda$ to $P$. 
+        \item \textbf{Third Round:} Prover computes $Z'(x,w,c;r^P) \rightarrow z$:
+        \begin{itemize}
+            \item Compute $Q \leftarrow Complete(c_0, U, A)$, where $U = \{c_i\st i \in \bar A\}$.
+            \item Set $c_i = share(i)$, for each $share(i) \in Q$
+            \item For $i \in A$, compute $m_2^i \leftarrow Z(x_i, w_i, c_i; r^P)$. 
+            \item For $i \in \bar A$, $m_2^i$ has already been computed in the first round using the simulator.
+            \item Send $z \leftarrow ((c_1, m_2^1), \ldots, (c_n,m_2^n))$ to $V$.
+        \end{itemize}
+        \item \textbf{Verification:} Verifier computes $\phi'(x,a,c_0,z) \rightarrow b$ as follows:
+        \begin{itemize}
+            \item Extract $c_i$ and $m_2^i$ from $z \leftarrow ((c_1, m_2^1), \ldots, (c_n,m_2^n))$
+            \item Check that all conversations $(m_1^i, c_i, m_2^i)$ would lead to acceptance by the verifier in $\mathcal P$.
+            \item Check that each $share(c_i)$ is consistent with the secret $c_0$ using the reconstruction algorithm in Definition \ref{def:sss}.
+            \item If any of the checks fail return $b \leftarrow 0$; else return $b \leftarrow 1$.
+        \end{itemize}
+    \end{itemize}
+\end{protocol}
 
-% \begin{enumerate}
-%     \item For each $i \in \bar A$, $P$ runs a simulator on input $x_i$ to produce transcripts of conversations in the form $(m_1^i, c_i, m_2^i)$.
-%     \begin{itemize}
-%         \item For each $i \in A$, $P$ inputs the witness $w_i$ for $x_i$ to $\mathcal P$ and takes what the prover $P^*$ in $\mathcal P$ sends as $m_1$ as $m_1^i$.
-%         \item Essentially we take the return value of the first round of $\mathcal P$ as our message $m_1^i$.
-%         \item Finally, $P$ sends all $m_1^i$ to $V$, where $i = 1, \ldots, n$
-%     \end{itemize}
-%     \item $V$ chooses a $t$-bit string $s$ at random and sends it to $P$
-%     \item $P$ forms challenges $c_i$ for $i \in A$, such that $share(c_i) \cup \{share(c_j)|j \in \bar A\}$ is a qualified set in $\Gamma$ consistent with $s$.
-%     \begin{itemize}
-%         \item For $i \in A$, $P$ uses it's knowledge of $w(x_i)$ to compute a valid $m_2^i$ for $(m_1^i, c_i)$ by running the prover's algorithm in $\mathcal P$.
-%         \item $P$ then sends $c_i, m_2^i$ for $i = 1 ,\ldots, n$ to $V$. 
-%     \end{itemize}
-%     \item $V$ checks that all conversations $(m_1^i, c_i, m_2^i)$ would lead to acceptance by the verifier in $\mathcal P$
-%     \begin{itemize}
-%         \item During this process, $V$ checks that $share(c_i)$ is consistent with secret $s$.
-%         \item Accept if all true, otherwise reject. 
-%     \end{itemize}
-% \end{enumerate}
+Using this compiler, we can construct a $\Sigma$-protocol that has a communication complexity linear in the number of clauses.

@@ -1,6 +1,6 @@
-\subsection{$\Sigma$-protocols}
-\begin{definition}[$\Sigma$-Protocol \cite{StackingSigmas}]
-Let $\mathcal R$ be an NP relation. A $\Sigma$-protocol $\Pi = (A, Z, \phi)$ for $\mathcal R$ is a 3-round protocol between a prover algorithm $P$ and a verifier algorithm $V$. The protocol consists of a tuple of probabilistic polynomial time algorithms $(A, Z, \phi)$ with the following interfaces:
+\section{$\Sigma$-protocols}
+\begin{definition}[$\Sigma$-Protocol \cite{StackingSigmas}]\label{def:sigma}
+A $\Sigma$-protocol $\Pi = (A, Z, \phi)$ for $\mathcal R$ is a 3-round protocol between a prover algorithm $P$ and a verifier algorithm $V$. The protocol consists of a tuple of probabilistic polynomial time algorithms $(A, Z, \phi)$ with the following interfaces:
 \begin{itemize}
     \item $a \leftarrow A(x,w; r^p)$ : Given statement $x$, witness $w \in w(x)$, and prover randomness $r^p$ as input; output the first message $a$ that $P$ sends to $V$ in the first round. 
     \item $c \samplefrom \{0,1\}^\kappa$: $V$ samples a random challenge $c$ and sends it to $P$ in the second round. 
@@ -9,12 +9,19 @@ Let $\mathcal R$ be an NP relation. A $\Sigma$-protocol $\Pi = (A, Z, \phi)$ for
 \end{itemize}
 A $\Sigma$-protocol has the following properties:
 \begin{enumerate}
-    \item \textbf{Completeness.} $\Pi$ is complete if for any $x$, $w \in w(x)$, and any prover randomness $r^p \samplefrom \{0,1\}^\lambda$, the verifier accepts with probability 1. 
-    \begin{gather*}
+    \item \textbf{Completeness.} $\Pi$ is complete if for any $x$, $w \in w(x)$, and any prover randomness 
+    $r^p \samplefrom \{0,1\}^\lambda$, the verifier accepts with probability 1. A proof is complete if for all valid 
+    transcripts $(a,c,z)$, $\phi(x,a,c,z) = 1$.
+    $$
+    \begin{gathered}
         Pr\left[\phi(x,a,c,z) = 1 \st a \leftarrow A(x,w;r^p); c\samplefrom \{0,1\}^\kappa; z \rightarrow Z(x,w,c;r^p)\right] = 1
-    \end{gather*}
-    \item \textbf{Special Soundness.} $\Pi$ is said to have special soundness if  there exists a PPT extractor $\mathcal E$, such that given any two transcripts $(a,c,z)$ and $(a,c',z')$ for statement $x$, where $c \ne c'$ and $\phi(x,a,c,z) = \phi(x,a,c',z') = 1$, an element of $w(x)$ can be computed by $\mathcal E$.
-    \item \textbf{Special Honest-Verifier Zero-Knowledge.} $\Pi$ is SHVZK if there exists a PPT simulator $\mathcal S$, such that for any $x$, $w$, $(x,w) \in \mathcal R$, the distribution over the output $\mathcal S(1^\lambda, x, c^*)$ is indistinguishable from the distribution over transcripts produced by the interaction between $V$ and $P$ when the challenge is $c^*$.
+    \end{gathered}
+    $$
+    \item \textbf{Special Soundness.} $\Pi$ is said to have special soundness if there exists a PPT extractor 
+    $\mathcal E$, such that given any two transcripts $(a,c,z)$ and $(a,c',z')$ for statement $x$, where $c \ne c'$ 
+    and $\phi(x,a,c,z) = \phi(x,a,c',z') = 1$, an element of $w(x)$ can be computed by $\mathcal E$. Soundness is concerned 
+    with ensuring that a prover cannot cheat -- the verifier will always reject if the transcript is invalid.
+    \item \textbf{Special Honest-Verifier Zero-Knowledge (SHVZK).} $\Pi$ is SHVZK if there exists a PPT simulator $\mathcal S$, such that for any $x$, $w$, $(x,w) \in \mathcal R$, the distribution over the output $\mathcal S(1^\lambda, x, c^*)$ is indistinguishable from the distribution over transcripts produced by the interaction between $V$ and $P$ when the challenge is $c^*$.
     \begin{multline*}
         \{(a, z) \mid c^* \samplefrom \{0,1\}^\kappa; (a,z) \leftarrow \mathcal S(1^\lambda,x,c^*)\} 
         \approx_{c^*} \\
@@ -23,12 +30,17 @@ A $\Sigma$-protocol has the following properties:
 \end{enumerate}
 \end{definition}
 
-\begin{definition}[Witness Indistinguishable (WI)]\label{def:wi}
+\begin{definition}[Witness Indistinguishable -- WI]\label{def:wi}
 A $\Sigma$-protocol is witness indistinguishable over $\mathcal R$ if for any $V'$, any large enough input $x$, any $w_1,w_2 \in w(x)$, and for any fixed challenge $c^*$, the distribution over transcripts in the form $(a_1, c, z_1)$ and $(a_2,c,z_2)$ are indistinguishable, where $a_i \leftarrow A(x,w_i;r^p)$ and $z_i \leftarrow Z(x,w_i, c^*; r^p)$ for $i \in \{1,2\}$. This means that the prover reveals no information about which are the active clauses. 
 \end{definition}
 
-\begin{definition}[Informal definition of Witness Hiding (WH)]\label{def:wh}
-For any $x$ that is generated with a certain probability distribution by a generator $\mathcal G$ which outputs pairs $(x,w) \in \mathcal R$, a $\Sigma$-protocol is witness hiding over $\mathcal G$, if it does not help even a cheating verifier to compute a witness for $x$ with non-negligible probability. Refer to \cite{10.1145/100216.100272} for details. WH is a weaker property than general zero-knowledge, as it only asserts that the verifier cannot learn about the witness (not asserting anything about other information). That said, it can replace zero-knowledge in many protocol constructions, as it is in most $\Sigma$-protocols.
+\begin{definition}[Informal definition of Witness Hiding -- WH]\label{def:wh}
+For any $x$ that is generated with a certain probability distribution by a generator $\mathcal G$ which outputs pairs 
+$(x,w) \in \mathcal R$, a $\Sigma$-protocol is witness hiding over $\mathcal G$, if it does not help even a cheating 
+verifier to compute a witness for $x$ with non-negligible probability. Refer to \cite{10.1145/100216.100272} for details. 
+WH is a weaker property than general zero-knowledge, as it only asserts that the verifier cannot learn about the witness 
+(not asserting anything about other information). That said, it can replace zero-knowledge in many protocol constructions, 
+as it is in most $\Sigma$-protocols where the witness is the only private information to hide.
 
 \end{definition}
 

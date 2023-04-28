@@ -1,0 +1,32 @@
+Before implementing half-binding and q-bindings, we implement the \texttt{PartialBindingCommScheme} interface 
+to model the definition of partially-binding vector commitments provided in Definition \ref{def:comm_scheme}. 
+This interface has methods that correspond to each function in the definition: \texttt{setup}, \texttt{gen}, 
+\texttt{bind} (equivalent to \textsf{BindCom}), \texttt{equiv}, and \texttt{equivcom}. 
+The interface also has a set of generic types to complete the definition of these methods (similar to how 
+they function in the \texttt{SigmaProtocol} interface). These generic types are:
+\begin{itemize}
+  \item \texttt{PublicParams}: public parameters for the commitment scheme. 
+  \item \texttt{BindingIndex}: a type that represents the binding index(es) of the commitment. 
+  \item \texttt{CommitKey}: a type that represents the commitment key.
+  \item \texttt{EquivKey}: a type that represents the equivocation key. 
+  \item \texttt{Commitment}: a type that represents the commitment.
+  \item \texttt{Randomness}: a type that represents the auxiliary values that are needed for equivocation. 
+  \item \texttt{Msg}: a type that represents the vector of messages. 
+\end{itemize}
+
+With this interface, we implement \texttt{HalfBinding} and \texttt{QBinding} according to their 
+construction in Figure \ref{fig:half-binding} of this report, and Figure 4 of \cite{StackingSigmas} 
+respectively. The definition of q-binding is recursive in nature, where the base case is the 
+half-binding scheme. In an attempt to improve the usability of our q-binding implementation, we introduce 
+some overhead in how we represent the tree of half-bindings. Intuitively, this could simply be a 
+recursive data structure, in which the every node has two children which continue down until the leaves. 
+However, due to Rust's strict type system and our limited experience with the language, we were unable 
+to implement this without heavily sacrificing the usability of the interface. 
+
+Instead, we represent the tree as a set of vectors of data types, where each index in the vector represents a 
+layer of the tree. We have multiple vectors for each concrete type for the half-binding implementation of the 
+\texttt{PartialBindingCommScheme} interface. While this introduces some overhead as the vector must be 
+traversed if we want to copy the data, it allows us to implement the interface in a way that has good 
+usability and is still easy to understand. We hypothesize that this is the main reason our implementation of 
+Stacking Sigmas is slower than Hall-Andersen's implementation \cite{MHAStackSig}. This will be discussed in 
+Chapter \ref{sec:evaluation} in more detail.
