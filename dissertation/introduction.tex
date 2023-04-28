@@ -5,7 +5,7 @@ information except that the statement is valid. In other words, the verifier lea
 the statement being proven is true or false. Early research in this area showed that all languages in NP have 
 zero-knowledge proof systems \cite{DBLP:conf/focs/GoldreichMW86}, sparking a long line of research into developing 
 more efficient zero-knowledge proofs for various use cases. Today, efficient zero-knowledge proofs are being used 
-in practice, with several use cases such as e-voting and to secure decentralized systems \cite{zcash, evoting}.
+in practice, with several use cases such as e-voting and to secure decentralized systems \cite{evoting, zcash}.
 
 In many cases, it is desirable to have a zero-knowledge proof for a \textit{disjunctive statement}, which is an NP 
 statement with a set of clauses that are connected with logical ORs:
@@ -14,8 +14,13 @@ $$
 clause_1 \lor clause_2 \lor \cdots \lor clause_n
 $$
 
-Such zero-knowledge proofs fall under the category of "disjunctive zero-knowledge": the goal is to prove that at least 1 of the clauses are true 
-while hiding the location of \textit{active clauses} -- the clauses that the Prover has knowledge of. 
+Such zero-knowledge proofs fall under the category of "disjunctive zero-knowledge": the goal is for the Prover 
+to show that they have knowledge of at least 1 of the clauses while revealing no additional information. 
+In other words, the Prover shows that at least 1 of the clauses are true and does not reveal 
+information such as the location of these clauses or the "answer" to these clauses. 
+We can think of each clause as a statement that has an "answer" to it -- formally this "answer" 
+is known as a \textit{witness} for the statement. Clauses that the Prover has 
+knowledge of are called the \textit{active clauses}. 
 Disjunctive statements have very useful properties that occur commonly in practice, and adding zero-knowledge can be very beneficial to  
 systems that desire both privacy and verifiability. For example, a disjunctive zero-knowledge proof can be used to prove an 
 individual's membership to a particular group while revealing nothing about the identity of the individual. They can also be 
