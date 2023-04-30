@@ -19,7 +19,7 @@ construction in Figure \ref{fig:half-binding} of this report, and Figure 4 of \c
 respectively. The definition of q-binding is recursive in nature, where the base case is the 
 half-binding scheme. In an attempt to improve the usability of our q-binding implementation, we introduce 
 some overhead in how we represent the tree of half-bindings. Intuitively, this could simply be a 
-recursive data structure, in which the every node has two children which continue down until the leaves. 
+recursive data structure, in which every node has two children which continue down until the leaves. 
 However, due to Rust's strict type system and our limited experience with the language, we were unable 
 to implement this without heavily sacrificing the usability of the interface. 
 
@@ -29,4 +29,8 @@ layer of the tree. We have multiple vectors for each concrete type for the half-
 traversed if we want to copy the data, it allows us to implement the interface in a way that has good 
 usability and is still easy to understand. We hypothesize that this is the main reason our implementation of 
 Stacking Sigmas is slower than Hall-Andersen's implementation \cite{MHAStackSig}. This will be discussed in 
-Chapter \ref{sec:evaluation} in more detail.
+Chapter \ref{sec:evaluation} in more detail. 
+
+Lastly, we would like to point out a flaw in our current implementation of the q-binding scheme. Currently, there is no data for the disjunction of 2 clauses for Stacking Sigmas (refer to Table \ref{tab:comm-size}) because of this flaw. This is because we did not define the base case of our recursion correctly, which should be 
+a simple half-binding scheme. Instead, we initialise the case for 2 clauses with a q-binding scheme 
+that makes use of two half-binding schemes, resulting in 4 clauses. This was revealed after inspecting the results of the benchmarks and realising equal communication sizes for 2 clauses and 4 clauses. We are currently working on a fix for this bug. As a temporary measure, we change the minimum number of clauses to 4 instead of 2 to avoid any errors.

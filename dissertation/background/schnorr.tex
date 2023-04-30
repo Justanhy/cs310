@@ -1,14 +1,12 @@
 \section{Schnorr's Identification Protocol}\label{sec:schnorr}
-There are two parties in an \textit{identification scheme}, the prover $P$ and the verifier $V$, and the objective of the protocol is for the prover to convince the verifier that they are who they claim to be. In other words, $V$ should be convinced that $P$ knows the private key that corresponds to the public key of $P$. A familiar example is the standard protocol of password authentication.
+An \textit{identification scheme} involves two participants, a prover $P$ and a verifier $V$, whose goal is for $P$ to prove their identity to $V$. Specifically, $V$ should be persuaded that $P$ has access to the private key that corresponds to $P$'s public key. An example of an identification scheme is the commonly used password authentication protocol.
 
-\textbf{Schnorr's protocol} \cite{Schnorr} is an identification scheme where $P$ proves knowledge of the discrete log $w$ of a group element $H \in \G$, where $H = w \cdot G$ for some generator $G \in \G$. $(\G, +)$ is a finite abelian group with $+$ as the binary operator 
-\footnote{We have chosen to define $\G$ with the $+$ operator because our implementation uses elliptic curves which are finite abelian groups over addition. The discrete log can be defined equivalently with multiplication like so: $h = g^w$}. 
-This protocol relies on the discrete log assumption \cite{Diffie1976NewDI} -- the assumption states that finding $w$ given only $H$ and $G$ is \textit{currently} computationally infeasible, assuming that $\G$ is a sufficiently large group. Conversely, proving that $H = w \cdot G$ given $w$ and $G$ can be computed efficiently. 
+Schnorr's protocol, as described in \cite{Schnorr}, is a method of proving identity in which the prover, denoted by $P$, demonstrates knowledge of the discrete log $w$ of a group element $H$ in a finite abelian group $(\G, +)$ with $+$ as the binary operator\footnote{We choose to define $\G$ with the $+$ as our implementation uses elliptic curves which are finite abelian groups over addition. The equivalent definition with a group defined over the multiplicative operator is $h = g^w$}. Specifically, $H = w \cdot G$ for some generator $G \in \G$. The protocol relies on the discrete log assumption \cite{Diffie1976NewDI}, which states that computing $w$ given $H$ and $G$ is currently computationally infeasible, assuming that $\G$ is large enough. However, proving that $H = w \cdot G$ given $w$ and $G$ can be done efficiently. 
 
-In our implementation, we plan to use the Ristretto group \cite{ristretto_web}: a construction of a prime order group from a family of elliptic curves known as Edwards curves \cite{Edwards2007}. 
+Our implementation of the protocol will use the Ristretto group \cite{ristretto_web}, which is constructed from a family of elliptic curves known as Edwards curves \cite{Edwards2007} and is of prime order. 
 
 \begin{definition}[Schnorr's Protocol \cite{Schnorr}]\label{def:schnorr}
-    Let $\G = E(\F_q)$, where $E$ is an elliptic curve over the finite field $\F_q$. Suppose that both the prover $P$ and verifier $V$ agree on $E$ and $\F_q$, then let $H \in E(\F_q)$ be the public key that corresponds to the private key $w$ such that $H = w \cdot G$. The prover convinces the verifier that they have knowledge of the private key by executing Protocol \ref{prot:schnorr}.
+    Let $\G$ be an elliptic curve over the finite field $\F_q$ and let $E(\F_q)$ denote the group of points on $\G$. Suppose that the prover $P$ and verifier $V$ agree on $\G$ and $\F_q$, and let $H \in E(\F_q)$ be the public key that corresponds to the private key $w$, where $H = w \cdot G$. The prover convinces the verifier that they possess knowledge of the private key $w$ by following Protocol \ref{prot:schnorr}.
 \end{definition}
 
 \begin{protocol}[label={prot:schnorr}]{Schnorr's protocol. Public information: $\G = E(\F_q),\ H \in \G$. Statement to prove: $H = w \cdot G$} 
@@ -39,23 +37,24 @@ In our implementation, we plan to use the Ristretto group \cite{ristretto_web}: 
         &z \cdot G \verify \mathcal A + c \cdot H&
     \end{align*}
     \tcblower
-    Communication between Prover and Verifier in Schnorr's protocol. Evaluating the final equation, we can easily see that $V$ accepts if and only if $w = w_P$.
-    \[
+    Communication between Prover and Verifier in Schnorr's protocol. Solving for the final equation shows  that $V$ accepts if and only if $w = w_P$.
+    $$
+    \begin{gathered}
     z \cdot G = \mathcal A + c \cdot H \iff
     r \cdot G + c \cdot w_P \cdot G  = r \cdot G + c \cdot w \cdot G \iff
     w  =  w_P
-    \]
+    \end{gathered}
+    $$
 \end{protocol}
 
 
 
-\textbf{A simulator for Schnorr's protocol.} From our definition of a Zero Knowledge protocol in Definition 
-\ref{def:zeroknowledge}, we shared that every zero knowledge proof or argument system has a PPT algorithm called a simulator. 
-We can construct a simulator for Schnorr's protocol by running it "in reverse" shown in Figure \ref{fig:schnorr-sim}.
+\paragraph{Simulator $\mathcal S$ for Schnorr's protocol.} From our definition of a Zero Knowledge protocol in Definition 
+\ref{def:zeroknowledge}, we shared that every zero-knowledge proof system has a PPT algorithm called a simulator. We can construct this simulator by running the protocol "in reverse" shown in Figure \ref{fig:schnorr-sim}.
 
 \begin{figure}[h]
     \centering
-    \begin{problem}[width=\linewidth/2]{Let our simulator be $S(H)$}
+    \begin{problem}[width=\linewidth/2]{Let $\mathcal S(H)$ be our simulator}
         $z \samplefrom \F_q$ 
         
         $c \samplefrom \F_q$
@@ -68,8 +67,7 @@ We can construct a simulator for Schnorr's protocol by running it "in reverse" s
     \label{fig:schnorr-sim}
 \end{figure}
 
-Since $z$ and $c$ are both chosen randomly, the resulting $\mathcal A$ is also random, and our 
-output will have the same distribution as the distribution over transcripts in an actual interaction.
+This is a valid simulator as the resulting $\mathcal A$ is random because $z$ and $c$ are chosen randomly. This means that the output of our simulator is effectively random and will have the same distribution over the transcript in a real interaction.
 Note that the simulator presented here achieves only honest-verifier zero-knowledge (Definition
 \ref{def:hvzk}) as the only input to the simulator is the statement to prove $H$. We can 
 easily modify this simulator to achieve special honest-verifier zero-knowledge (Definition 

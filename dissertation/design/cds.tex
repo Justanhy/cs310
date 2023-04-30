@@ -3,7 +3,7 @@ with many instances of the same $\Sigma$-protocol, even though it is possible to
 disjunctions over different $\Sigma$-protocols. We do this to simplify our implementation and to focus on the 
 most basic implementation of the CDS94 compiler. The disjunctions that this compiler supports are $d$-out-of-$n$
 disjunctions, where $d$ is the minimum number of active clauses, and $n$ is the total number of clauses.
-At a high level, the design of the CDS94 compiler is not complex, and simply follows the construction provided 
+At a high level, the design of the CDS94 compiler is not complex and simply follows the construction provided 
 in Protocol \ref{prot:cds-compiler}. That said, we make certain design decisions that are worth highlighting.
 
 Firstly, we cannot only implement the \texttt{SigmaProtocol} interface for the underlying $\Sigma$-protocol
@@ -19,13 +19,13 @@ and can be used directly with Shamir's secret sharing. However, in practice, the
 
 An alternative is to directly require that the \texttt{Challenge}
 type parameter in the \texttt{SigmaProtocol} interface to implement the \texttt{PrimeField} interface. However,
-this is arguably more restrictive than necessary. This is because, we may have existing implementations of a 
+this is arguably more restrictive than necessary. This is because we may have existing implementations of a 
 $\Sigma$-protocol that does not use a challenge that is a field element, but we still want to use it with the
 CDS94 compiler. In this case, we can simply define a mapping function that maps the challenge to a field element
 and use it with Shamir's secret sharing. 
 Hence, to capture this relationship, we introduce the \texttt{Shareable} interface.
 
-\paragraph{\texttt{Shareable}.} A simple interface to ensure type-level compatability between 
+\paragraph{\texttt{Shareable}.} A simple interface to ensure type-level compatibility between 
 the generic types used in the CDS94 compiler and the generic types used in Shamir's secret sharing scheme.
 This interface is defined as follows: 
 \begin{lstlisting}[language=rust]
@@ -78,7 +78,7 @@ the \texttt{SigmaProtocol} interface, with a \texttt{Challenge} type implementin
 interface, and to also implement the \texttt{HVzk} interface.
 
 \paragraph{\texttt{CDS94}.} With the \texttt{Shareable} and \texttt{Composable} interfaces, we can now implement
-the \texttt{CDS94} compiler. We require that the base $\Sigma$-protocol to be compiled implements the
+the \texttt{CDS94} compiler. We require that the base $\Sigma$-protocol be compiled implements the
 \texttt{Composable} interface. Let this generic type corresponding to the base $\Sigma$-protocol be 
 denoted by \texttt{S}. With \texttt{S}, we can define the generic types associated with the \texttt{SigmaProtocol} interface 
 for CDS94:

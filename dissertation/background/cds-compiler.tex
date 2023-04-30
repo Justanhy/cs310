@@ -21,25 +21,12 @@ with the rest of this report.
 % Since, SSS is a smooth threshold secret sharing scheme (required for 8), and Schnorr's protocol is SHVZK (required for 9), we can choose either construction. 
 % \textit{We will use \textbf{Theorem 8} in this project.}
 
-\textbf{Theorem 8 \cite{CDS94}}. Given $\Pi = (A, Z, \phi)$, $\mathcal R_\Gamma$ and $\mathcal S(k)$ where
+\textbf{Theorem 8 \cite{CDS94}}. Suppose we have a $\Sigma$-protocol $\Pi = (A, Z, \phi)$ for a relation $\mathcal R$ that fulfils the HVZK property, a smooth secret sharing scheme $S(k)$, and a relation $\mathcal R_\Gamma$ where $((x_1,\ldots,x_m),(w_1,\ldots,w_m)) \in \mathcal R_\Gamma$ if and only if $|x_i| = k$ for all $i$, and the set $Q = \{i \st (x_i,w_i) \in \mathcal R\}$  is a qualified set for $S(k)$.
 
-\begin{itemize}
-    \item $\Pi$ is a 3-round public coin ($\Sigma$-protocol) HVZK proof of knowledge for relation $\mathcal R$.
-    \item $\{\mathcal S(k)\}$ is a family of smooth secret sharing schemes.
-    \item $\mathcal R_\Gamma$ is a relation where $((x_1,\ldots,x_m),(w_1,\ldots,w_m)) \in \mathcal R_\Gamma$ if and only if ($\iff$)
-    \begin{itemize}
-        \item all $x_i$'s are of the same length $k$, and 
-        \item the set of indices $i$ for which $(x_i,w_i) \in \mathcal R$ corresponds to a qualified set for $S(k)$
-    \end{itemize}
-\end{itemize}
+With this, we can construct a $\Sigma$-protocol, $\Pi' = (A', Z', \phi')$, that is witness indistinguishable (Definition \ref{def:wi}) for the relation $\mathcal R_\Gamma$. We provide the description of this $\Sigma$-protocol in Protocol \ref{prot:cds-compiler}. Interested readers can refer to the original paper for the proof of this theorem \cite{CDS94}. 
 
-Then, there exists a $\Sigma$-protocol, $\Pi' = (A', Z', \phi')$, that is witness indistinguishable 
-(Definition \ref{def:wi}) for the relation $\mathcal R_\Gamma$. The description of this protocol is outlined in 
-Protocol \ref{prot:cds-compiler}. Interested readers can refer to the original paper for the proof of this theorem \cite{CDS94}. 
-
-\begin{protocol}[label={prot:cds-compiler}]{CDS94 Compiler. A compiler for composing $n$ instances of a 
-    $\Sigma$-protocol $\Pi$ into a single $\Sigma$-protocol $\Pi'$ that proves the \textbf{disjunction} 
-    of these $n$ instances.}
+\begin{protocol}[label={prot:cds-compiler}]{CDS94 Compiler: takes $n$ instances of 
+    $\Sigma$-protocol $\Pi$ and provides a single $\Sigma$-protocol $\Pi'$ that proves the \textbf{disjunction} of these $n$ instances.}
     Let $A$ be the set of indices $i$ of the \textit{active clauses}. \\
     \textbf{Statement:} $x = x_1,\ldots, x_n$ \\
     \textbf{Witness:} $w = \{w_i\st i \in A\ \land (x_i, w_i) \in R\}$
@@ -62,8 +49,8 @@ Protocol \ref{prot:cds-compiler}. Interested readers can refer to the original p
         \item \textbf{Verification:} Verifier computes $\phi'(x,a,c_0,z) \rightarrow b$ as follows:
         \begin{itemize}
             \item Extract $c_i$ and $m_2^i$ from $z \leftarrow ((c_1, m_2^1), \ldots, (c_n,m_2^n))$
-            \item Check that all conversations $(m_1^i, c_i, m_2^i)$ would lead to acceptance by the verifier in $\mathcal P$.
-            \item Check that each $share(c_i)$ is consistent with the secret $c_0$ using the reconstruction algorithm in Definition \ref{def:sss}.
+            \item Check that all transcripts $(m_1^i, c_i, m_2^i)$ is accepted by each verifier in $\Pi$.
+            \item Ensure each $share(c_i)$ is consistent with $c_0$ (the secret) using the reconstruction algorithm in Definition \ref{def:sss}.
             \item If any of the checks fail return $b \leftarrow 0$; else return $b \leftarrow 1$.
         \end{itemize}
     \end{itemize}

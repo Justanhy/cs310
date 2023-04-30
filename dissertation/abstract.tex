@@ -8,20 +8,20 @@
     Disjunctive statements are made up of a set of clauses joined by logical OR operators, 
     and the goal of the prover is to prove that at least one of the clauses is true. 
     
-    In this work we focus on one approach for constructing disjunctive zero-knowledge proofs: 
-    general \emph{compilers} for zero-knowledge proofs. This approach has been explored by in early work by 
+    In this work, we focus on one approach for constructing disjunctive zero-knowledge proofs: 
+    general \emph{compilers} for zero-knowledge proofs. This approach has been explored in early work by 
     Cramer and Damg{\aa}rd
     in \textquote{Proofs of Partial Knowledge and Simplified Design of Witness Hiding Protocols}, 
     and more recently by Goel {\em et al.} in \textquote{Stacking Sigmas: A Framework to Compose 
     $\Sigma$-Protocols for Disjunctions}. We implement the compilers 
     proposed in these two papers, benchmark their performance, and compare the results. 
     There has been a lack of implementations of these compilers, and this project serves to fill 
-    in this gap, as well as to provide a better understanding of their performances, and 
+    in this gap, as well as to provide a better understanding of their performances and 
     lay the groundwork for future work to benchmark against past work. 
 
     Our results validate that Goel {\em et al.}'s compiler, Stacking Sigmas, outperforms Cramer and 
-    Damg{\aa}rd's compiler, CDS94, in terms of communication complexity as the number of clauses increase. 
-    We also show that the choice of secret sharing scheme influences the 
+    Damg{\aa}rd's compiler, CDS94, in terms of communication complexity as the number of clauses increases. 
+    We also show that the choice of the secret sharing scheme influences the 
     computational complexity of the CDS94 protocol greatly. 
     % Additionally, we show that by comparing the raw size of the proof, 
     % Stacking Sigmas provides significant savings over CDS94. 

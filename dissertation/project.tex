@@ -10,24 +10,19 @@ We chose an agile software development
 methodology because there was a significant knowledge gap regarding the background material 
 at the start of the project. As a result, it was difficult to accurately estimate the 
 complexity of tasks and the time required to complete them. In the case that research and 
-learning takes longer than expected, we would have to re-prioritise our tasks and change 
+learning take longer than expected, we would have to re-prioritise our tasks and change 
 the scope of the project. 
 Agile software development methodologies are well suited for this type of project because 
 they allow for rapid iteration and adaptation to changing requirements. This actually 
 proved useful in the later half of the project when issues with the code took longer to 
 resolve than expected, causing delays. When this happened, we decided to prioritise 
 the implementation of features and benchmarks and moved the implementation of security 
-tests to the backlog. Even though this neglects and important aspect of cryptographic 
+tests to the backlog. Even though this neglects an important aspect of cryptographic 
 systems, it was necessary to ensure that we could complete the main objective of the 
 project in time.
 
 \subsection{Test Driven Development}
-To prioritise functionality and validate that our features meet the requirements of the protocols, 
-we use Test-Driven-Development (TDD) in our software 
-development process. TDD is a programming style where tests are written 
-based on requirements before features that aim to pass these tests are 
-implemented. We show an illustration of the TDD software development 
-lifecycle in Figure \ref{fig:tdd} below.
+In order to ensure that our features meet the requirements of the protocols and to prioritise functionality, we use Test-Driven-Development (TDD) in our software development process. TDD is a programming approach where tests are created based on requirements before implementing the features that aim to pass these tests. Figure \ref{fig:tdd} below illustrates the TDD software development lifecycle.
 
 \begin{figure}[h]
     \centering
@@ -36,25 +31,18 @@ lifecycle in Figure \ref{fig:tdd} below.
     \label{fig:tdd}
 \end{figure}
 
-TDD places an emphasis on first producing code that is minimally sufficient 
-to pass the written tests. After which, code is refactored until it 
-fulfils standard best practices such as readability, modularity, 
-encapsulation etcetera. This appropriately prioritises functionality over 
-readability, but still upholds written code to a high quality of design. 
-This is especially so for this project as we prioritize correctness to 
-ensure that we are providing meaningful results in our benchmarks.
+TDD prioritises the creation of code that is sufficient to pass the written 
+tests, followed by refactoring this code to meet standard best practices (readability, modularity, encapsulation etc.). This approach gives priority to functionality over readability, while still ensuring that the written code is of high quality. This is particularly important for our project as we prioritize correctness to ensure that we are providing meaningful results in our benchmarks.
 
-Writing tests before implementation also helps during regression testing, to identify bugs 
-when changes are made. This will not only improve code quality, but also make development 
-more efficient. 
+In addition to improving code quality, writing tests before implementation also helps during regression testing, allowing for the identification of bugs when changes are made. This approach can improve the efficiency of the development process.
 
 
 \subsection{Scrum and Kanban} Scrum is an agile project management framework that emphasises on 
 flexibility and continuous improvement of software \cite{scrumguide}. 
 It breaks down the development of a project 
-into short iterations called sprints, which in our case are 2 weeks long. Meanwhile, Kanban is a 
-another project management framework that share similar principles to Scrum and is often used 
-in synergy with Scrum \cite{kanbanscrum}. Kanban focusses on visualising the workflow and 
+into short iterations called sprints, which in our case are 2 weeks long. Meanwhile, Kanban is  
+another project management framework that shares similar principles to Scrum and is often used 
+in synergy with Scrum \cite{kanbanscrum}. Kanban focuses on visualising the workflow and 
 limiting the number of features being worked on at any one time. This is done using a Kanban 
 board, which is a visual representation of the tasks in the backlog, their current status, and 
 the overall workflow. 
@@ -62,22 +50,22 @@ By controlling the number of features being worked on,
 it ensures that we complete features in a timely manner and do not run the risk of multitasking 
 and causing delays. 
 
-In this project, we use Kanban to manage our features and Scrums to manage development 
-of said features. We use the Kanban board provided by Github to track all 
+In this project, we use Kanban to manage our features and Scrum to manage the development 
+of said features. We use the Kanban board provided by GitHub to track all 
 the features that we have planned for the project.
 \begin{enumerate}
   \item Features are first added to the project backlog and then moved when the next sprint is
   planned. Features may be added to the backlog during development if need be, providing 
   flexibility while keeping the current sprint manageable. 
   \item At the start of each sprint, we plan the group of features to work on 
-  for the next 2 weeks, and move them to the "To-do" column of the Kanban board. This column 
+  for the next 2 weeks and move them to the "To-do" column of the Kanban board. This column 
   is also known as the "Sprint Backlog".
   \item During the sprint, we move the features to the "Write Tests" column when we start writing 
   tests for the feature, based on the requirements.
   \item Once the tests are written, we start with the implementation and 
   move the feature to the "Implement" column. Throughout the implementation phase, we regularly 
   run tests to verify that the code is working as expected. We first focus on implementing 
-  a minimally functioning feature, and testing for correctness. After which, features are 
+  a minimally functioning feature and testing for correctness. After which, features are 
   refactored to be more optimal if time allows for it. Tests may be refactored or added 
   when necessary to be consistent with the updated code or requirements.
   \item Once the feature is 
@@ -96,7 +84,7 @@ that the code is correct and that the features meet the requirements.
 \section{Timeline}
 We split the project into 3 main stages: research and learning, development of CDS94, and 
 development of Stacking Sigmas. The two development stages also include benchmarking the 
-respective compilers and anlaysing the data collected. We did not create a separate stage 
+respective compilers and analysing the data collected. We did not create a separate stage 
 for the benchmarks because they were best done in parallel with the development of the
 compilers.
 In Table \ref{table:timetable_final}, we show the overall timeline of the project. In the "Goal" 
@@ -106,13 +94,13 @@ brackets where relevant.
 \input{../common/timetable.tex}
 
 \paragraph{Research and Learning.} In the first stage of the project (6 weeks), time was dedicated 
-to learning any background material and to study the literature. 
+to learn any background material and to study the literature. 
 This was also the time when we familiarised ourselves with the programming language of choice: Rust. 
 Tools and libraries that ended up being helpful to us in the project were also discovered during 
 this period, through research and experimentation. It was imperative that we spent this time 
 understanding the literature, as it would otherwise be difficult to implement the protocols accurately.
 To ensure that we were ready to start development, we organised meetings with the 
-project supervisor dedicated to clarifying details on the research material and to validate 
+project supervisor dedicated to clarifying details on the research material and validating 
 our understanding of the background material as a whole.  
 
 \paragraph{Development.} The second and third stages (18 weeks) are similar in that they are 
@@ -123,16 +111,16 @@ the project if necessary. Fortunately, this was not the case and we were able to
 our initial objectives in time. 
 
 This development phase is split into sprints: each of 2 weeks, except during the Christmas break 
-where it was extended to 4 weeks. The CDS94 compiler was completed in the first 2 sprints, 
+when it was extended to 4 weeks. The CDS94 compiler was completed in the first 2 sprints, 
 which surpassed our expectations. However, this did not include the implementation of the 
 benchmarks and benchmarking CDS94. The benchmarks were completed over the next 2 sprints 
-before work on 
-the Stacking Sigmas compiler began. Unforunately, this took longer than expected due to the 
+before working on 
+the Stacking Sigmas compiler began. Unfortunately, this took longer than expected due to the 
 complexity of 
 implementing the partially-binding vector commitment scheme. Furthermore, 
 issues with the code were discovered during testing, which took an entire sprint to solve. 
 During this period, we decided to not prioritise security testing on our compilers, and focus 
-on correctness and collecting data from the benchmarks instead. In the end, development and 
+on correctness and collecting data from the benchmarks instead. In the end, the development and 
 benchmarking of Stacking Sigmas required 3 sprints, which is longer than expected but still within 
 the time frame of the project. 
 
@@ -143,8 +131,7 @@ deem the project a success as we were able to complete the CDS94 and Stacking Si
 and collect insightful data from the benchmarks. 
 
 \section{Project Management Tools}
-We use Github to manage our entire project. Github is a web-based hosting service for version 
-control using Git, and it also provides project management tools. Notably, it provides a 
+Our entire project is managed using Github, which is an online hosting service for version control using Git, with added tools for project management. Notably, it provides a 
 Kanban board with "Github Projects" and sprint management with "Github Milestones". We manage 
 features using the Kanban board, creating drafts when we are planning and converting these 
 features into "Github Issues" when we are ready to start development. This automatically creates a 
@@ -161,7 +148,7 @@ challenges that arose during development.
   to prepare for the case that this phase would take longer than expected, we opted for an agile 
   development methodology to remain adaptive to changes in the project scope if necessary.
   \item \textbf{Unexpected challenges.} To prepare for unexpected delays in development, we 
-  planned the project with a clear priority of the requirements: correctness firstly, then 
+  planned the project with a clear priority of the requirements: correctness first, then 
   usability and generality, followed by performance and security. This allowed us to focus on
   the most important aspects of the project first, and to prioritise the remaining features
   accordingly. Splitting the development of the two compilers into separate stages also allowed 
@@ -174,3 +161,16 @@ challenges that arose during development.
   cryptographic primitives and other utilities. We ensured that the licenses of these libraries
   were compatible with our project. 
 \end{itemize}
+
+\section{Legal, social, ethical, and professional issues}
+We host the program publicly on Github under the GNU General Public License v3 (GPLv3), which is a free, copyleft license for software \cite{GPLv3}. This is primarily because Hall-Andersen's implementation of Stacking Sigmas is under the same license, which requires forks or extensions of the software to use the same license, disclose the original source, and state when files have been modified. To comply with this, we have also added disclaimers within the source code, as well as in the \texttt{README.md} file in the root directory of our source code. The disclaimer reads:
+
+\begin{lstlisting}[language=rust]
+//! This source code file is originally authored by Mathias Hall-Andersen and
+//! licensed under the GPL v3 License. The source code is hosted on
+//! https://github.com/rot256/research-stacksig.
+//!
+//! 29 April 2023 -- Modified by Justin Tan.
+\end{lstlisting}
+
+Additionally, our software is not production ready as it has not undergone comprehensive security testing and has not been audited. We also include a disclaimer in the \texttt{README.md} file of our project. 

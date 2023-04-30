@@ -1,9 +1,9 @@
 In this chapter, we outline and discuss the design of the project, and our 
 implementation of salient components. 
-We first begin with a brief overview of our core requirements, and justify certain design choices.  
-Next, we discuss of how we approach testing -- a crucial process in the 
+We first begin with a brief overview of our core requirements and justify certain design choices.  
+Next, we discuss how we approach testing -- a crucial process in the 
 verification of our software components. This is followed by a section discussing the design 
-choices we make for our benchmarks (Section \ref{design:bench}). After which, 
+choices we make for our benchmarks (Section \ref{design:bench}). After this, 
 we elaborate on the general approach we take in implementing the protocols described in 
 the literature. Finally, we will elaborate on the design of important components 
 and their implementation.
@@ -29,9 +29,9 @@ Here, we include the components associated with each compiler for easy reference
 \section{Overview}\label{design:overview}
 In this section, we 
 elaborate on the core requirements that influence the design choices of 
-every component, discuss our choice of programming language, and justify 
+every component, discuss our choice of programming language and justify 
 our choice of libraries 
-that we use throughout various components in the project. 
+that we use throughout various components of the project. 
 \subsection{Core Requirements}
 In the design of each component, we consider the following 
 three core requirements: \emph{correctness}, \emph{generality}, and 
@@ -43,7 +43,7 @@ the performance of the compilers. In Section \ref{design:testing},
 we discuss how we test our compilers to ensure correctness. 
 
 \paragraph{Generality.} This requirement is concerned with how easy it is for 
-future developers to use our interfaces\footnote{Rust has a different 
+future developers to use our interfaces\footnote{Rust has different 
 terminology for interfaces called "traits". While traits and classic interfaces are not 
 exactly the same, they share many commonalities. For the sake of simplicity, we will 
 substitute terms in Rust associated with traits with those associated with classic 
@@ -74,7 +74,7 @@ It promises memory safety, by using an ownership and borrowing
 system unique to Rust, and it is a strongly typed language which 
 helps to identify errors at compile-time. This helps to prevent errors such 
 as integer overflows and null pointer references. Furthermore, 
-Rust is known for its high performance and speed \cite{rust-book}, and 
+Rust is known for its high performance and speed \cite{rust-book} and 
 has functional programming features such as pattern matching and 
 closures. These features make Rust a good choice for our project,
 particularly because many of the components we are implementing are 
@@ -106,8 +106,8 @@ are:
     Modern elliptic curve implementations usually provide a group of order $h \cdot q$, where 
     $h$ is a small cofactor (4 or 8), and $q$ is a large prime number. When using these 
     implementations for protocols that require a prime order group, the abstraction from 
-    non-prime order group to prime order group is often handled by developers up the stack 
-    (by users of the library). This means that they are not as familiar with the underyling 
+    a non-prime order group to a prime order group is often handled by developers up the stack 
+    (by users of the library). This means that they are not as familiar with the underlying 
       implementation, and may introduce vulnerabilities due to subtle design complications.
   }. 
   
@@ -135,22 +135,21 @@ are:
 
 \section{General Design Approach for Compiler Components}\label{design:approach}
 Our general approach to designing our compiler-related software components is inspired by the 
-well known "SOLID" design principles \cite{martin2000design} of object-oriented programming. 
+well-known "SOLID" design principles \cite{martin2000design} of object-oriented programming. 
 Crucially, we ensure that our general design approach contributes directly to our core requirements 
 of generality and usability. We split our compiler-related software components into two broad categories: 
 general interfaces 
 and concrete implementations. The general interfaces define the structure of protocols, while the 
 concrete implementations are the actual implementations of these interfaces (with possible extensions).
 
-Firstly, we want to ensure that that we design our concrete implementations such that 
+Firstly, we want to ensure that we design our concrete implementations such that 
 they \textit{accept general types that implement these interfaces} instead of the concrete 
 types directly.
 For example, our Stacking Sigmas compiler is designed to 
 accept a generic type that requires an implementation of the \texttt{SigmaProtocol} interface and the 
 \texttt{EHVzk} interface, instead of accepting the concrete type, which in our case is Schnorr's protocol. 
 This allows developers to use the Stacking Sigmas compiler with any $\Sigma$-protocol implementation, as 
-long as they implement the relevant interfaces. This also supports our choice to use a 
-microservices architecture and organising our code into separate modules for each component. 
+long as they implement the relevant interfaces. This also supports our choice to use a microservices architecture and organise our code into separate modules for each component. 
 By doing this, modules which define our interfaces should not be importing concrete types; modules 
 defining concrete types should only import the interfaces they need to implement and explicitly 
 import concrete types that are absolutely necessary. 
@@ -194,8 +193,8 @@ of important components of our project in their respective subsections.
 \input{design/qbinding.tex}
 
 \subsection{\texttt{HVzk} \& \texttt{EHVzk} Interface}
-These two interface encompasses the honest-verifier and extended honest-verifier zero-knowledge 
-property resepectively, which means that the only required method for these two interfaces 
+These two interfaces encompass the honest-verifier and extended honest-verifier zero-knowledge 
+property respectively, which means that the only required method for these two interfaces 
 is a simulator method (Definition \ref{def:sigma}) for the concrete $\Sigma$-protocol that 
 implements this interface. As mentioned in the section on the general approach to design, 
 we split this interface from the \texttt{SigmaProtocol} interface to adhere to the 

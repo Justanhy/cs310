@@ -13,22 +13,21 @@ scheme.
   \begin{itemize}
   \item $\mathsf{pp} \leftarrow \mathsf{Setup}(1^\lambda)$: Given the security parameter $\lambda$,
   the $\mathsf{Setup}$ algorithm outputs public parameters $\mathsf{pp}$ for the commitment scheme.
+  
   \item $(\mathsf{ck},\mathsf{ek}) \leftarrow \mathsf{Gen}(\mathsf{pp},B)$: Given public parameters $\mathsf{pp}$ 
-  and a set $B$, where $B \subseteq [l] \land |B| = t$. The $\mathsf{Gen}$ algorithm returns a commitment key $\mathsf{ck}$ and equivocation key $\mathsf{ek}$.
+  and a set $B$, where $B \subseteq [l] \land |B| = t$. The $\mathsf{Gen}$ algorithm returns $\mathsf{ck}$ and $\mathsf{ek}$ which are the commitment key and the equivocation key respectively.
 
   \item $(\mathsf{com},\mathsf{aux}) \leftarrow \mathsf{EquivCom}(\mathsf{pp},\mathsf{ek},v;r)$: Given public parameter 
   $\mathsf{pp}$, equivocation key $\mathsf{ek}$, vector $v$ with length $l$, and randomness $r$ as input, the $\mathsf{EquivCom}$ algorithm returns a 
-  partially-binding commitment $\mathsf{com}$ and auxiliary equivocation information $\mathsf{aux}$. This means that the vector $v$ can be equivocated in 
-  equivocable locations and $\mathsf{com}$ will be the same.  
+  partially-binding commitment $\mathsf{com}$ and auxiliary equivocation information $\mathsf{aux}$. The equivocation information $\mathsf{aux}$ is used by the $\mathsf{Equiv}$ function to equivocate the vector at the equivocable locations. The messages at the equivocable locations in vector $v$ can be altered and $\mathsf{com}$ will be the same.  
 
   \item $r \leftarrow \mathsf{Equiv}(\mathsf{pp},\mathsf{ek},v,v',\mathsf{aux})$: Given public parameters $\mathsf{pp}$, 
   equivocation key $\mathsf{ek}$, original message vector $v$ and updated message vector $v'$ 
-  where $\forall i \in B: v_i = v'_i$, and auxiliary equivocation information $\mathsf{aux}$. $\mathsf{Equiv}$ returns equivocation 
-  randomness $r$.
+  where $\forall i \in B: v_i = v'_i$, and auxiliary equivocation information $\mathsf{aux}$. $\mathsf{Equiv}$ returns $r$: the equivocation randomness\footnote{In the context of this project, we can think of randomness $r$ and auxiliary equivocation information $\mathsf{aux}$ as the same thing because of how they are used in this work. However, the definition specifically has two separate terms for these variables as they may differ depending on the definition of the commitment scheme.}. 
 
   \item $\mathsf{com} \leftarrow \mathsf{BindCom}(\mathsf{pp}, \mathsf{ck}, v; r)$: Given public parameters 
   $\mathsf{pp}$, commitment key $\mathsf{ck}$, vector $v$, and randomness $r$ as input, $\mathsf{BindCom}$ returns a commitment 
-  $\mathsf{com}$. This algorithm plays a similar role to that of $\mathsf{Open}$ in a typical commitment scheme.
+  $\mathsf{com}$.
   \end{itemize}
 
   Partially-binding vector commitment schemes have the following properties
@@ -46,8 +45,8 @@ scheme.
     \item \textbf{Partial Equivocation.} It is always possible to equivocate to any vector $\mathbf{v}'$ as long as $\forall i \in B: v_i = v'_i$. 
   \end{enumerate}
 
-  There is an efficiency requirement which requires the size of the commitment to be independent from the size of the messages 
-  in the vector. This can be achieved by using a collision resistant hash function $H$. 
+  There is an efficiency requirement which requires the size of the commitment to be independent of the size of the messages 
+  in the vector. This can be achieved by using a collision-resistant hash function $H$. 
   For more details on each property, we refer the reader to Definition 4 of \cite{StackingSigmas}. 
 \end{definition}
 
@@ -55,15 +54,14 @@ scheme.
 \subsection{Half-Bindings \& Q-Bindings}\label{sec:qbinding}
 In this work, we make use of the generic 1-out-of-$2^q$ construction provided in Section 5.3 of \cite{StackingSigmas} 
 for our implementation of the Stacking Sigmas compiler. We use this 
-particular construction as it allows us to yield commitments that are logarthmic in size (in bytes) to the original 
+particular construction as it allows us to yield commitments that are logarithmic in size (in bytes) to the original 
 vector of messages (\textbf{Theorem 2 \& Corollary 1} in \cite{StackingSigmas}).
 A core ingredient in this construction is a 1-out-of-2 partially-binding vector commitment scheme, which is used recursively 
 to form a \textit{binary} "tree of commitments". 
 For brevity, we refer to the generic construction as "q-bindings" and the 1-out-of-2 construction as "half-bindings".
 The leaves of this tree are the original messages in our vector; intermediate nodes are the resulting commitments to the 
 nodes' children using half-bindings. 
-Essentially, intermediate commitments are regarded as messages as well, and are commited to recursively until there is only 
-1 root node -- the final commitment. 
+Essentially, intermediate commitments are regarded as messages as well and are committed to recursively until there is only 1 root node -- the final commitment. 
 
 While the source material provides the general $t$-out-of-$l$ construction for partially-binding vector commitments, 
 it does not explicitly provide that for half-bindings. 

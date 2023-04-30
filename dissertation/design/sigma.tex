@@ -8,7 +8,7 @@ the definition of the methods in the interface. These types are:
   \item \texttt{Challenge}: The challenge sent by the verifier to the prover.
   \item \texttt{MessageZ}: The third message of the protocol, sent from prover to verifier. 
   \item \texttt{State}: For most $\Sigma$-protocols, there is a particular state associated 
-  to the execution of the first message. This state is often used by the prover again in 
+  with the execution of the first message. This state is often used by the prover again in 
   the third message but must not be sent to the verifier.
 \end{itemize}
 
@@ -44,7 +44,7 @@ input and output. The only difference is with the \texttt{State} type that we ha
 discussed.
 
 \subsection{Schnorr's Protocol}
-As a $\Sigma$-protocol, our first step in our implementation for Schnorr's protocol is 
+As a $\Sigma$-protocol, our first step in our implementation of Schnorr's protocol is 
 to create concrete definitions for 
 the methods and generic types of the \texttt{SigmaProtocol} interface. We use the following 
 concrete types in the interface: 

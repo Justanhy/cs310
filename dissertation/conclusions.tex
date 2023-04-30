@@ -1,10 +1,10 @@
 Overall, we accomplished our goals of firstly implementing the CDS94 \cite{CDS94} and Stacking 
 Sigmas \cite{StackingSigmas} compiler, and secondly benchmarking their performance. Through our 
 work, we have shown that Stacking Sigmas outperforms CDS94 by providing significant savings in 
-the communication size of the proof, especially as the number of clauses increase. 
-Furthermore, while CDS94 is faster than Stacking Sigmas when the number of clauses are small,
-we show that the difference in speed is negligible because the number of clauses are small. 
-When the number of clauses increase, the difference in speed is more significant and CDS94 
+the communication size of the proof, especially as the number of clauses increases. 
+Furthermore, while CDS94 is faster than Stacking Sigmas when the number of clauses is small,
+we show that the difference in speed is negligible because the number of clauses is small. 
+When the number of clauses increases, the difference in speed is more significant and CDS94 
 performs worse than Stacking Sigmas in this case. Moreover, we also reveal that the bottleneck of the CDS94 compiler is the secret sharing scheme,
 and highlight how the choice of this scheme and its implementation has a significant impact on the performance
 of the compiler. This is all while we uphold our goal of keeping the implementation of the compiler
@@ -13,44 +13,39 @@ easily usable and extensible, in order to lay a good foundation for future work 
 Additionally, there were many useful lessons that we learnt throughout the project. Firstly, we 
 learnt the importance of proper project management and planning for a successful project. The 
 risk management plan that we created at the start of the project helped us to identify potential
-risks and to mitigate them. This allowed us to focus on the project and to avoid any distractions
+risks and to mitigate them. This allowed us to focus on the project and avoid any distractions
 that could have hindered our progress significantly. Secondly, we realised the importance 
 and convenience of good testing practices. Because of our testing practices, we were able to
 identify and fix bugs early, accelerating our progress. Lastly, we were able to learn more about 
 the inner workings of zero-knowledge proofs and other cryptographic concepts. Work in this field 
 is often theoretical, and it is interesting to see how these concepts can be implemented in practice.
 
-\section{Future work}
-\label{sec:futurework}
-There are many directions that we can take this project in the future. 
+\section{Future work}\label{sec:futurework}
+Aside from addressing the immediate limitations of this project (Section \ref{sec:limitations}), there are many directions in which we can extend the work in this project. Below we include separate paragraphs for each possible extension of our work. 
 
-\paragraph{Speed Stacking.} Firstly, our work on the 
-Speed Stacking compiler \cite{SpeedStacking} is still ongoing. We have implemented the base 
-$\Sigma$-protocol of our choice (Compressed $\Sigma$-protocols or Folding Arguments) and 
-are currently working on the compiler. Possible extensions to this, would be to use the same 
-compiler for interactive oracle proofs \cite{iops}. 
+\paragraph{Benchmarks.} Firstly, we suggest an extension to the benchmarks that we provide in our work. Currently, across the different benchmarks, there is too much boilerplate code resulting in repeated sections of code. Additionally, there are parts of the process that are done manually. These include the collection of benchmark timings into CSV (comma-separated values) for further data analysis and the creation of mock data for the benchmarks. An implementation of a benchmarking framework that provides a convenient testing interface for various compilers would be very helpful in this case. This framework should have features to produce mock data and extract raw metrics from our benchmarks into CSV automatically. This will help to enhance the benchmarking process, accelerating research time and reducing errors in data collection. Currently, there are means of generating CSV files containing raw data using the \texttt{criterion} library \cite{criterion}. However, this functionality the library provides is in the midst of being deprecated and replaced by other tools. A good start would be to look into the \texttt{cargo-criterion} tool \cite{criterion} which outputs data from benchmarks into a \texttt{json} file. Unfortunately, there was insufficient time to prioritise this within this project. 
+
+\paragraph{Speed Stacking.} Secondly, our work on the 
+Speed Stacking compiler \cite{SpeedStacking} is not complete. We have implemented the base $\Sigma$-protocol of our choice (Compressed $\Sigma$-protocols \cite{attema}) but have yet to implement the compiler proposed in the paper \cite{SpeedStacking}. Given more time, we would have wanted to include this in our contributions to this project and present the results of the benchmarks conducted on it. The current challenge with this task is designing the compiler in \cite{SpeedStacking}, which is a multi-round compiler (with more than 3 rounds), to work with our interfaces. Once this is implemented, it will become possible to benchmark this compiler with other base protocols such as interactive oracle proofs \cite{iops}. 
 
 \paragraph{Stacking Sigmas.} Next, our implementation of Stacking Sigmas is the Self-Stacking 
 implementation, where we use the same $\Sigma$-protocol for each clause. We can also implement
-the Cross-Stacking compiler, which is compatible with different $\Sigma$-protocols for each clause.
+the Cross-Stacking compiler \cite{StackingSigmas}, which is compatible with different $\Sigma$-protocols for each clause.
 This would allow us to compare the performance of the compiler when using different $\Sigma$-protocols, 
-and possibly test how the choice of $\Sigma$-protocols affects the performance of the compiler. Another 
-extension is to explore Goel {\em et al.}'s idea for a $k$-out-of-$l$ compiler (Section 9 of \cite{StackingSigmas}).
+and possibly test how the choice of $\Sigma$-protocols affects the performance of the compiler. 
+
+An alternative is to explore Goel {\em et al.}'s idea for a $k$-out-of-$l$ compiler (Section 9 of \cite{StackingSigmas}).
 This idea relies on the parallel execution of $k$ 1-out-of-$l$ proofs together with a family of hash functions to 
 ensure that the verifier can check that each execution is for a unique clause. 
 
-\paragraph{CDS94.} Similar to Stacking Sigmas, we can also explore the idea of compiling different $\Sigma$-protocols
-with CDS94. However, a more closely related idea is to explore the idea of using a different secret sharing scheme or 
-a more efficient implementation of Shamir's secret sharing scheme. This would allow us to compare the performance of
-the compiler when using different secret sharing schemes, and test how the choice of secret sharing scheme
-affects the performance of the compiler. \\
+\paragraph{CDS94.} Similar to Stacking Sigmas, we can also explore the idea of compiling different $\Sigma$-protocols with the CDS94 compiler \cite{CDS94}. This may help to reveal insights into the relationship between the compiled protocols and the resulting disjunctive proof. 
 
-All these suggestions, rely on the benchmarking model that we have implemented. A useful extension to this would be to 
-implement a benchmarking framework that provides a convenient testing interface for different compilers. This framework 
-may have features to produce mock data automatically and simply take instances of compilers and base protocols as input, 
-and subsequently run the benchmarking process. It would also be useful to automatically generate CSV files from 
-the raw data collected from these benchmarks, as they are currently manually extracted. This will help to enhance 
-the benchmarking process and make it far more convenient to use. 
+Congruently, an idea that is more closely related to this project is to explore using better secret-sharing schemes or a more efficient implementation of Shamir's secret-sharing scheme with our CDS94 compiler. This would allow us to compare the performance of
+the compiler when using different secret sharing schemes, and test how the choice of secret sharing scheme affects the performance of the compiler. Combining the previous two suggestions, it would then be interesting to identify if there exists an ideal secret-sharing scheme for the CDS94 compiler for both cross-compiling (different types of $\Sigma$-protocols) and self-compiling.
+
+\paragraph{Multi-threading.} Lastly, we hypothesise that both the Stacking Sigmas and CDS94 compiler can be further improved with multi-threading. Both compilers rely on executing the various rounds of the nested protocols (the ones that are being compiled). The inputs to these executions do not depend on each other and can be executed in parallel without affecting the resulting proof. It would be interesting to study to what extent multi-threading can improve the performance of our compilers and whether it becomes feasible to be used for real-world applications. \\ 
+
+To summarise, our work in this project has revealed various paths for further development of disjunctive zero-knowledge compilers. We hope that our efforts will help to accelerate future work in this area and drive the eventual use of these compilers in production.
 
 \section*{Acknowledgements}
 \label{sec:acknowledgements}

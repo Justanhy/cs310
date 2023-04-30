@@ -1,5 +1,5 @@
 As mentioned in Project Management (Chapter \ref{ch:project-management}), we use Test-Driven Development to 
-ensure correctness. By writing tests before features, we encourage focus on the 
+ensure correctness. By writing tests before features, we encourage a focus on the 
 requirements of our software and ensure that we design our components to target 
 these requirements. Once these tests are written, we have an efficient workflow to 
 consistently ensure our software is correct, even as we add new features. This improves
@@ -18,12 +18,12 @@ We use the built-in testing framework in Rust to test our components. This frame
 tests within the same source code file as our implementation, and conveniently run them within our 
 IDE (VSCode) which consequently speeds up development. We also write integration tests with 
 the same framework, except that they are often located in a separate file to emphasise that they are testing 
-multiple components as these components have to be explicitly imported into the scope of the this testing module. 
+multiple components as these components have to be explicitly imported into the scope of this testing module. 
 
 \paragraph{Code Coverage.} To complement testing, we use code coverage reports to ensure that we are testing 
 as much of our code as possible. Code coverage is a way to track and determine which sections of code (e.g. 
 functions, branches, lines etc.) are executed. This is useful for us as it highlights sections of code that 
-are neglected by our existing tests and ensures that we cover important test cases. We use the 
+are neglected by our existing tests and ensure that we cover important test cases. We use the 
 \texttt{cargo-llvm-cov} \cite{cargo-llvm-cov} tool to carry out code coverage analysis. 
 This tool is a wrapper around the Rust compiler's in-built code coverage tool, 
 providing a convenient way to generate code coverage reports as they integrate directly 
@@ -32,7 +32,7 @@ with our testing suite.
 \subsection{Extracting Requirements \& Writing Tests}
 Throughout this project, the requirements of our software components are mostly derived 
 from the literature with the exception of our benchmarks. Therefore, our testing 
-strategy is centered around testing these requirements against our implementation. Of 
+strategy is centred around testing these requirements against our implementation. Of 
 course, additional unit tests are written to test the correctness of specific functions
 as well, but we will not discuss these in detail. 
 
@@ -44,9 +44,9 @@ and what is required of them. We then translate these requirements into tests.
 \begin{enumerate}
   \item Usually, the first step is to complete a function for setting up mock data 
   that is likely to be used in the tests. We design this function to take in a set of 
-  parameters and returns a set of mock data. These can then be separately called in 
-  each test, with parameters, to generate data specific for that test. 
-  \item Next, we write the content of the tests themselves. Because we are desining our 
+  parameters and return a set of mock data. These can then be separately called in 
+  each test, with parameters, to generate data specific to that test. 
+  \item Next, we write the content of the tests themselves. Because we are designing our 
   components to model the mathematical definitions of the protocols, we can often easily 
   determine the exact methods to call. Often, a 
   challenge in TDD is not knowing what functions are available to test because they 
